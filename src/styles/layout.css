@@ -2,6 +2,12 @@
   @apply m-0 p-0;
 }
 
+:root {
+  --accent-primary: #007AFF;
+  --theme-accent: #007AFF;
+  --theme-stone-bg: transparent;
+}
+
 html, body, #root {
   @apply h-full overflow-hidden;
   font-family: var(--font-system);
@@ -10,3 +16,59 @@ html, body, #root {
   -webkit-user-select: none;
   user-select: none;
 }
+
+/* Custom Katana / Zanpakuto Cursor */
+.custom-cursor-katana,
+.custom-cursor-katana * {
+  cursor: url("/cursor-katana.svg") 0 0, auto !important;
+}
+
+.custom-cursor-katana a,
+.custom-cursor-katana button,
+.custom-cursor-katana input[type="button"],
+.custom-cursor-katana input[type="submit"],
+.custom-cursor-katana [role="button"] {
+  cursor: url("/cursor-katana.svg") 0 0, pointer !important;
+}
+
+/* Theme variables and styles */
+.theme-souls {
+  --accent-primary: #F59E0B;
+  --theme-accent: #F59E0B;
+}
+
+.theme-souls .font-fantasy-title {
+  font-family: 'Cinzel', 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
+  letter-spacing: 0.05em;
+}
+
+.theme-soul-reaper {
+  --accent-primary: #FF5722;
+  --theme-accent: #FF5722;
+}
+
+/* Bankai screen flash animation */
+@keyframes bankaiLightningFlash {
+  0% { opacity: 0; background: #ffffff; }
+  10% { opacity: 1; background: #ffffff; }
+  25% { opacity: 0.2; background: #FF5722; }
+  40% { opacity: 0.9; background: #ffffff; }
+  60% { opacity: 0.3; background: #000000; }
+  80% { opacity: 0.6; background: #FF9800; }
+  100% { opacity: 0; background: transparent; }
+}
+
+.animate-bankai-flash {
+  animation: bankaiLightningFlash 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+/* Bonfire spark embers animation */
+@keyframes bonfireFlameFlicker {
+  0%, 100% { transform: scale(1) translateY(0); filter: drop-shadow(0 0 10px #FF5722); }
+  50% { transform: scale(1.05) translateY(-2px); filter: drop-shadow(0 0 18px #FFA000); }
+}
+
+.animate-bonfire-ember {
+  animation: bonfireFlameFlicker 1.8s ease-in-out infinite;
+}
+

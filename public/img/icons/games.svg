@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="games-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141E30"/>
+      <stop offset="60%" stop-color="#243B55"/>
+      <stop offset="100%" stop-color="#0F2027"/>
+    </linearGradient>
+    <linearGradient id="ember-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF512F"/>
+      <stop offset="100%" stop-color="#F09819"/>
+    </linearGradient>
+    <linearGradient id="glass-glare" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.25"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Squircle Base -->
+  <rect x="8" y="8" width="112" height="112" rx="26" ry="26" fill="url(#games-bg)" filter="url(#shadow)"/>
+  <rect x="8" y="8" width="112" height="112" rx="26" ry="26" fill="url(#glass-glare)"/>
+  <rect x="8" y="8" width="112" height="112" rx="26" ry="26" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+
+  <!-- Souls Bonfire Sword & Ember Shield -->
+  <g transform="translate(0, 2)">
+    <!-- Controller / Crest Body Silhouette -->
+    <path d="M 32 52 C 32 40, 48 36, 64 36 C 80 36, 96 40, 96 52 C 96 66, 88 88, 76 88 C 70 88, 66 80, 64 80 C 62 80, 58 88, 52 88 C 40 88, 32 66, 32 52 Z" fill="#1b2a3a" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+
+    <!-- D-Pad left -->
+    <rect x="42" y="52" width="6" height="18" rx="2" fill="#64B5F6"/>
+    <rect x="36" y="58" width="18" height="6" rx="2" fill="#64B5F6"/>
+
+    <!-- Ember Buttons right -->
+    <circle cx="82" cy="56" r="3.5" fill="#FF5252"/>
+    <circle cx="76" cy="62" r="3.5" fill="#448AFF"/>
+    <circle cx="88" cy="62" r="3.5" fill="#69F0AE"/>
+    <circle cx="82" cy="68" r="3.5" fill="#FFD740"/>
+
+    <!-- Central Ember Flame -->
+    <path d="M 64 44 C 67 49, 70 53, 67 59 C 64 63, 60 62, 59 58 C 58 53, 62 48, 64 44 Z" fill="url(#ember-glow)"/>
+    <circle cx="64" cy="56" r="1.5" fill="#FFFDE7"/>
+  </g>
+</svg>

@@ -13,8 +13,10 @@ const terminal: TerminalData[] = [
         content: (
           <div className="py-1">
             <div>
-              Hi, this is Akash. I am a Btech student at the Computer Science and
-              Engineering department of MBM University.
+              Hi, I'm Aditya Dhir (@aditya44-tech / adi44).
+              Senior Software Engineer, AI Systems Builder, and Tech Advisor.
+              I specialize in designing AI-native products, building agentic workflows,
+              and architecting resilient cloud-native backend and Web3 infrastructure.
             </div>
           </div>
         )
@@ -23,14 +25,15 @@ const terminal: TerminalData[] = [
         id: "about-interests",
         title: "interests.txt",
         type: "file",
-        content: "MERN Stack / Open Source Contribution  / full stack developement"
+        content:
+          "Agentic AI / Multi-Agent Systems / RAG & Knowledge Graphs / Cloud-Native Architecture (AWS, K8s) / Web3 & Blockchain (Solidity, Polygon)"
       },
       {
         id: "about-who-cares",
-        title: "who-cares.txt",
+        title: "experience.txt",
         type: "file",
         content:
-          "I'm looking for a SDE internship. I'm open to collaboration on full stack projects."
+          "Founding Engineer @ MetaKeep | Senior Software Engineer (AI) @ NWN | 2nd Prize Winner @ Polygon Open DeFi Hackathon | Master's in Data Science & PG Diploma in Data Engineering"
       },
       {
         id: "about-contact",
@@ -42,55 +45,44 @@ const terminal: TerminalData[] = [
               Email:{" "}
               <a
                 className="text-blue-300"
-                href="mailto:aakash6263264@gmail.com"
+                href="mailto:adityasalunkhe126@gmail.com"
                 target="_blank"
                 rel="noreferrer"
               >
-                aakash6263264@gmail.com
+                adityasalunkhe126@gmail.com
               </a>
             </li>
             <li>
               Github:{" "}
               <a
                 className="text-blue-300"
-                href="https://github.com/aakashsharma003"
+                href="https://github.com/aditya44-tech"
                 target="_blank"
                 rel="noreferrer"
               >
-                @aakashsharma
+                @aditya44-tech
               </a>
             </li>
             <li>
               Linkedin:{" "}
               <a
                 className="text-blue-300"
-                href="https://www.linkedin.com/in/aakashsharma003"
+                href="https://www.linkedin.com/in/adityadhir"
                 target="_blank"
                 rel="noreferrer"
               >
-                akash-sharma
+                in/adityadhir
               </a>
             </li>
             <li>
-              Personal Website:{" "}
+              Medium:{" "}
               <a
                 className="text-blue-300"
-                href="https://aakash-sharma.vercel.app"
+                href="https://medium.com/@adityadhir97"
                 target="_blank"
                 rel="noreferrer"
               >
-                https://aakash-sharma.vercel.app
-              </a>
-            </li>
-            <li>
-              X:{" "}
-              <a
-                className="text-blue-300"
-                href="https://x.com/aakashsharma003"
-                target="_blank"
-                rel="noreferrer"
-              >
-               find me on x.com
+                @adityadhir97
               </a>
             </li>
           </ul>
@@ -100,17 +92,16 @@ const terminal: TerminalData[] = [
   },
   {
     id: "about-dream",
-    title: "my-dream.cpp",
+    title: "agentic-loop.ts",
     type: "file",
     content: (
       <div className="py-1">
         <div>
           <span className="text-yellow-400">while</span>(
-          <span className="text-blue-400">sleeping</span>) <span>{"{"}</span>
+          <span className="text-blue-400">agent.hasGoal()</span>) <span>{"{"}</span>
         </div>
         <div>
-          <span className="text-blue-400 ml-9">money</span>
-          <span className="text-yellow-400">++</span>;
+          <span className="text-blue-400 ml-9">await agent.reasonAndExecute()</span>;
         </div>
         <div>
           <span>{"}"}</span>

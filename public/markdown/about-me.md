@@ -2,33 +2,39 @@
 
 ## Introduction
 
-Hey there! 👋
+Hey there! 👋 I'm **Aditya Dhir** ([@aditya44-tech](https://github.com/aditya44-tech) / [adi44](https://github.com/adi44)).
 
-I'm a B.Tech student at the [Computer Science and Engineering](https://www.mbm.ac.in/deptt-of-computer-science-engineering) department of [MBM University](https://www.mbm.ac.in/).
+Senior Software Engineer, AI Systems Builder, and Tech Advisor. I specialize in designing **AI-native products**, building **agentic workflows**, and architecting scalable **cloud-native backend** and **Web3 infrastructure**.
 
-🚀 Passionate about Open Source, I've contributed to various organizations, helping build and improve projects that benefit the community. Coding for Open Source is not just a hobby for me — *it's a way of life!*
+With over five years of hands-on experience as a founding engineer, blockchain engineer, backend architect, and AI platform engineer, I focus on turning visionary ideas into resilient production-ready software.
 
-💻 With 6 months of experience as a full stack developer, I'm constantly evolving and embracing new technologies.
+---
 
-🌱 Currently diving deep into Next.js, TypeScript, and WebSockets, while also working on building my own library.
+## 🚀 Highlights & Experience
 
-🤝 Always excited to collaborate on impactful Open Source projects.
+- **Senior Software Engineer (AI) @ NWN**: Architecting AI platforms, multi-agent pipelines, and enterprise automation systems.
+- **Founding Engineer @ MetaKeep**: Built core Web3 infrastructure, hardware-backed wallet APIs, and tokenization rails used in production.
+- **2nd Prize Winner @ Polygon Open DeFi Hackathon**: Engineered high-throughput decentralized protocols on Polygon.
+- **Academic Foundation**: Master's in Data Science & Post Graduate Diploma in Data Engineering.
 
-Let's build something amazing together! 🌟
+---
 
+## 🛠 Tech Stack & Core Competencies
 
-## Contact
+- **Agentic AI & LLMs**: Multi-Agent Systems, RAG & Knowledge Graphs, Amazon Bedrock, OpenAI, LangChain, Prompt & Tool Engineering.
+- **Backend & Systems**: Python, TypeScript, Node.js, Go, FastAPI, Express, Microservices, Event-Driven Architecture.
+- **Cloud & DevOps**: AWS, Docker, Kubernetes, CI/CD, Terraform.
+- **Databases & Queues**: PostgreSQL, MongoDB, Redis, Apache Kafka.
+- **Web3 & Blockchain**: Solidity, Ethereum, Polygon, Smart Contracts, Security Auditing.
+- **Writing**: Author on [Medium (@adityadhir97)](https://medium.com/@adityadhir97) covering Agentic AI, system design, and software engineering.
 
-Contact me by:
+---
 
-- Email: [aakash@gmail.com](mailto:aakash6263264@gmail.com)
-- Github: [@aakashsharma003](https://github.com/macOS-Portfolio)
-- GSSOC: [GSSOC Contributer](https://gssoc.girlscript.tech/)
-- Linkedin: [aakashsharma003](https://www.linkedin.com/in/aakashsharma003)
-- Personal Website: [dev.me](https://aakash-sharma.vercel.app)
+## 📬 Contact & Links
 
+- **GitHub**: [@aditya44-tech](https://github.com/aditya44-tech)
+- **LinkedIn**: [in/adityadhir](https://www.linkedin.com/in/adityadhir)
+- **Medium**: [@adityadhir97](https://medium.com/@adityadhir97)
+- **Email**: [adityasalunkhe126@gmail.com](mailto:adityasalunkhe126@gmail.com)
 
-## Resume
-
-- download: [English](https://drive.google.com/file/d/1EDQQZQvAWodAMgEdycBP7E_6UmmVlz-x/view?usp=sharing)
 

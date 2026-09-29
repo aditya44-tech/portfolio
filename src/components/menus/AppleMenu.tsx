@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useClickOutside } from "~/hooks";
+import { user } from "~/configs";
 
 interface AppleMenuProps {
   logout: () => void;
@@ -27,15 +28,24 @@ export default function AppleMenu({
   useClickOutside(ref, toggleAppleMenu, [btnRef]);
 
   const handleSleep = () => {
-    sleep({ stopPropagation: () => {} } as React.MouseEvent<HTMLLIElement>);
+    window.dispatchEvent(new CustomEvent("system:youDied"));
+    setTimeout(() => {
+      sleep({ stopPropagation: () => {} } as React.MouseEvent<HTMLLIElement>);
+    }, 1200);
     toggleAppleMenu();
   };
   const handleRestart = () => {
-    restart({ stopPropagation: () => {} } as React.MouseEvent<HTMLLIElement>);
+    window.dispatchEvent(new CustomEvent("system:youDied"));
+    setTimeout(() => {
+      restart({ stopPropagation: () => {} } as React.MouseEvent<HTMLLIElement>);
+    }, 1200);
     toggleAppleMenu();
   };
   const handleShut = () => {
-    shut({ stopPropagation: () => {} } as React.MouseEvent<HTMLLIElement>);
+    window.dispatchEvent(new CustomEvent("system:youDied"));
+    setTimeout(() => {
+      shut({ stopPropagation: () => {} } as React.MouseEvent<HTMLLIElement>);
+    }, 1200);
     toggleAppleMenu();
   };
 
@@ -116,7 +126,7 @@ export default function AppleMenu({
       <MenuItem onClick={handleShut}>Shut Down...</MenuItem>
       <div className="h-px bg-gray-300 dark:bg-white/10 my-1 mx-2" />
       <MenuItem onClick={logout} hint="⌃⌘Q">Lock Screen</MenuItem>
-      <MenuItem onClick={logout} hint="⇧⌘Q">Log Out Akash...</MenuItem>
+      <MenuItem onClick={logout} hint="⇧⌘Q">{`Log Out ${user.name}...`}</MenuItem>
     </div>
   );
 }

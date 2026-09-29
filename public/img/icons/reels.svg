@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="reels-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D1152"/>
+      <stop offset="50%" stop-color="#7B1FA2"/>
+      <stop offset="100%" stop-color="#E91E63"/>
+    </linearGradient>
+    <linearGradient id="glass-glare" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.4"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.2"/>
+    </linearGradient>
+    <linearGradient id="gold-play" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFD54F"/>
+      <stop offset="100%" stop-color="#FF9800"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- Squircle Base with Shadow -->
+  <rect x="8" y="8" width="112" height="112" rx="26" ry="26" fill="url(#reels-bg)" filter="url(#shadow)"/>
+  <rect x="8" y="8" width="112" height="112" rx="26" ry="26" fill="url(#glass-glare)"/>
+  <rect x="8" y="8" width="112" height="112" rx="26" ry="26" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+
+  <!-- Film Strip / Cinema Clapper Pattern -->
+  <g opacity="0.95">
+    <!-- Top Clapper Bar -->
+    <rect x="24" y="26" width="80" height="18" rx="4" fill="#1A102A"/>
+    <polygon points="32,26 40,26 34,44 26,44" fill="#ffffff" opacity="0.8"/>
+    <polygon points="50,26 58,26 52,44 44,44" fill="#ffffff" opacity="0.8"/>
+    <polygon points="68,26 76,26 70,44 62,44" fill="#ffffff" opacity="0.8"/>
+    <polygon points="86,26 94,26 88,44 80,44" fill="#ffffff" opacity="0.8"/>
+
+    <!-- Main Viewport Monitor Screen -->
+    <rect x="24" y="48" width="80" height="54" rx="8" fill="#0D061A" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+    
+    <!-- Timeline Waveform Line -->
+    <path d="M 28 88 Q 36 78 44 88 T 60 88 T 76 80 T 92 88 T 100 88" fill="none" stroke="#E91E63" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Central Glowing Play Triangle -->
+    <polygon points="56,62 56,78 74,70" fill="url(#gold-play)"/>
+    <circle cx="64" cy="70" r="16" fill="none" stroke="rgba(255,213,79,0.35)" stroke-width="1.5"/>
+  </g>
+</svg>

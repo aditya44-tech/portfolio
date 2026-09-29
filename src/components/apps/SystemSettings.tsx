@@ -251,7 +251,7 @@ const GeneralPanel = () => {
       <SectionTitle>Sharing</SectionTitle>
       <Card>
         <Row label="Computer Name">
-          <span style={{ fontSize: "12px", color: dark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)" }}>Akash's MacBook Pro</span>
+          <span style={{ fontSize: "12px", color: dark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)" }}>Aditya's MacBook Pro</span>
         </Row>
       </Card>
     </div>
@@ -266,6 +266,8 @@ const AppearancePanel = () => {
     iconStyle, setIconStyle,
     tintWindows, setTintWindows,
     getWallpaper,
+    theme, setTheme,
+    customCursor, setCustomCursor,
   } = useStore((s) => ({
     accentColor: s.accentColor,
     setAccentColor: s.setAccentColor,
@@ -276,6 +278,10 @@ const AppearancePanel = () => {
     tintWindows: s.tintWindows,
     setTintWindows: s.setTintWindows,
     getWallpaper: s.getWallpaper,
+    theme: s.theme,
+    setTheme: s.setTheme,
+    customCursor: s.customCursor,
+    setCustomCursor: s.setCustomCursor,
   }));
 
   const wallpaper = getWallpaper();
@@ -349,6 +355,81 @@ const AppearancePanel = () => {
             );
           })}
         </div>
+      </Card>
+
+      <SectionTitle>Portfolio Theme &amp; Atmosphere</SectionTitle>
+      <Card>
+        <div style={{ padding: "12px 16px", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px" }}>
+          {[
+            {
+              id: "default",
+              label: "Default (Tahoe)",
+              accent: "#007AFF",
+              bg: "linear-gradient(135deg, #007AFF20, #007AFF40)",
+              desc: "Clean Apple Glass",
+            },
+            {
+              id: "souls",
+              label: "Souls (Ember)",
+              accent: "#F59E0B",
+              bg: "linear-gradient(135deg, #2D1808, #18110D)",
+              desc: "Dark Stone & Gold",
+            },
+            {
+              id: "soul-reaper",
+              label: "Soul Reaper",
+              accent: "#FF5722",
+              bg: "linear-gradient(135deg, #1A0802, #0A0A0C)",
+              desc: "Bankai Orange Reiatsu",
+            },
+          ].map((t) => {
+            const isCurrent = (theme || "default") === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setTheme(t.id as any)}
+                style={{
+                  background: isCurrent ? (dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)") : "none",
+                  border: isCurrent ? `2px solid ${t.accent}` : dark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.1)",
+                  borderRadius: "10px",
+                  padding: "8px",
+                  cursor: "pointer",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "6px",
+                  textAlign: "center",
+                }}
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    height: "36px",
+                    borderRadius: "6px",
+                    background: t.bg,
+                    border: `1px solid ${t.accent}60`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <span style={{ fontSize: "16px" }}>
+                    {t.id === "souls" ? "🔥" : t.id === "soul-reaper" ? "⚔️" : "🌊"}
+                  </span>
+                </div>
+                <div style={{ fontSize: "12px", fontWeight: isCurrent ? 700 : 500, color: dark ? "#fff" : "#1c1c1e" }}>
+                  {t.label}
+                </div>
+                <div style={{ fontSize: "10px", color: dark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.45)" }}>
+                  {t.desc}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        <Row label="Katana / Zanpakuto Cursor">
+          <Toggle checked={!!customCursor} onChange={setCustomCursor} />
+        </Row>
       </Card>
 
       <SectionTitle>Theme</SectionTitle>
@@ -688,7 +769,7 @@ const SoundPanel = () => {
     { label: "iPhone Notification", value: "music/i_phone_notification.mp3" },
     { label: "Error Alert", value: "music/error.wav" },
     { label: "Siri Sound", value: "music/siri.mp3" },
-    { label: "Akash Intro", value: "music/akashintro.wav" },
+    { label: "Aditya Intro", value: "music/akashintro.wav" },
   ];
 
   const handleSoundChange = (val: string) => {
@@ -1220,8 +1301,8 @@ const AboutPanel = () => {
           ["Memory", "16 GB"],
           ["Storage", "Powered by Cloud"],
           ["macOS", "Tahoe 26.0"],
-          ["Developer", "Akash Sharma"],
-          ["GitHub", "@aakashsharma003"],
+          ["Developer", "Aditya Dhir"],
+          ["GitHub", "@aditya44-tech"],
         ].map(([key, val]) => (
           <Row key={key} label={key}>
             <span style={{ fontSize: "12px", color: dark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)" }}>{val}</span>
@@ -1393,7 +1474,7 @@ export default function SystemSettings() {
                 <img src="/img/ui/avatar.jpg" alt="profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               </div>
               <div>
-                <div style={{ fontSize: "20px", fontWeight: 400, color: dark ? "#fff" : "#000", letterSpacing: "-0.5px" }}>Akash Sharma</div>
+                <div style={{ fontSize: "20px", fontWeight: 400, color: dark ? "#fff" : "#000", letterSpacing: "-0.5px" }}>Aditya Dhir</div>
                 <div style={{ fontSize: "13px", color: dark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)", marginTop: "2px" }}>Apple ID, iCloud, Media & App Store</div>
               </div>
             </div>

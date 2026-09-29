@@ -19,6 +19,7 @@ export const ACCENT_HEX: Record<AccentColorKey, string> = {
 };
 
 export type DockPosition = "bottom" | "left" | "right";
+export type AppTheme = "default" | "souls" | "soul-reaper";
 
 export interface WallpaperSet {
   id: string;
@@ -35,6 +36,20 @@ export const wallpaperSets: WallpaperSet[] = [
     day: "wallpapers/DefaultAerial_Tahoe_Beach.jpg",
     night: "wallpapers/DefaultAerial_Tahoe_Beach.jpg",
     thumbnail: "wallpapers/DefaultAerial_Tahoe_Beach.jpg",
+  },
+  {
+    id: "souls-ember",
+    name: "Souls: Lands Between",
+    day: "wallpapers/souls-landscape.svg",
+    night: "wallpapers/souls-landscape.svg",
+    thumbnail: "wallpapers/souls-landscape.svg",
+  },
+  {
+    id: "soul-reaper",
+    name: "Soul Reaper: Bankai",
+    day: "wallpapers/soul-reaper.svg",
+    night: "wallpapers/soul-reaper.svg",
+    thumbnail: "wallpapers/soul-reaper.svg",
   },
   {
     id: "tahoe-light",
@@ -69,6 +84,14 @@ export interface SettingsSlice {
   setWallpaperId: (id: string) => void;
   getWallpaper: () => WallpaperSet;
 
+  // Theme (Default, Souls, Soul Reaper)
+  theme: AppTheme;
+  setTheme: (theme: AppTheme) => void;
+
+  // Custom Cursor
+  customCursor: boolean;
+  setCustomCursor: (enabled: boolean) => void;
+
   // Accent color (hex string or named key)
   accentColor: string;
   setAccentColor: (color: string) => void;
@@ -102,6 +125,40 @@ const saveSetting = (key: string, value: unknown) => {
   }
 };
 
+const applyThemeClasses = (t: AppTheme) => {
+  if (typeof document === "undefined") return;
+  document.documentElement.classList.remove("theme-default", "theme-souls", "theme-soul-reaper");
+  document.documentElement.classList.add(`theme-${t}`);
+
+  if (t === "souls") {
+    document.documentElement.style.setProperty("--accent-primary", "#F59E0B");
+    document.documentElement.style.setProperty("--theme-accent", "#F59E0B");
+    document.documentElement.style.setProperty("--theme-stone-bg", "#161210");
+  } else if (t === "soul-reaper") {
+    document.documentElement.style.setProperty("--accent-primary", "#FF5722");
+    document.documentElement.style.setProperty("--theme-accent", "#FF5722");
+    document.documentElement.style.setProperty("--theme-stone-bg", "#0A0A0C");
+  } else {
+    document.documentElement.style.setProperty("--accent-primary", "#007AFF");
+    document.documentElement.style.setProperty("--theme-accent", "#007AFF");
+    document.documentElement.style.setProperty("--theme-stone-bg", "transparent");
+  }
+};
+
+const applyCursorClass = (enabled: boolean) => {
+  if (typeof document === "undefined") return;
+  if (enabled) {
+    document.documentElement.classList.add("custom-cursor-katana");
+  } else {
+    document.documentElement.classList.remove("custom-cursor-katana");
+  }
+};
+
+const initialTheme = loadSetting<AppTheme>("theme", "default");
+const initialCursor = loadSetting<boolean>("customCursor", false);
+applyThemeClasses(initialTheme);
+applyCursorClass(initialCursor);
+
 export const createSettingsSlice: StateCreator<SettingsSlice> = (set, get) => ({
   // Wallpaper
   wallpaperSets,
@@ -121,6 +178,28 @@ export const createSettingsSlice: StateCreator<SettingsSlice> = (set, get) => ({
   getWallpaper: () => {
     const id = get().activeWallpaperSet;
     return wallpaperSets.find((w) => w.id === id) ?? wallpaperSets[0];
+  },
+
+  // Theme
+  theme: initialTheme,
+  setTheme: (t) => {
+    saveSetting("theme", t);
+    applyThemeClasses(t);
+    set({ theme: t });
+    // Also change default wallpaper if user switches to Souls or Soul Reaper
+    if (t === "souls") {
+      get().setActiveWallpaperSet("souls-ember");
+    } else if (t === "soul-reaper") {
+      get().setActiveWallpaperSet("soul-reaper");
+    }
+  },
+
+  // Custom Cursor
+  customCursor: initialCursor,
+  setCustomCursor: (enabled) => {
+    saveSetting("customCursor", enabled);
+    applyCursorClass(enabled);
+    set({ customCursor: enabled });
   },
 
   // Accent color — stored as hex string

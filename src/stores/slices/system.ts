@@ -74,11 +74,19 @@ export const createSystemSlice: StateCreator<SystemSlice> = (set) => ({
   iconStyle: loadSetting<IconStyle>("iconStyle", "default"),
   tintWindows: loadSetting<boolean>("tintWindows", true),
   toggleDark: () =>
-    set((state) => {
+    set((state: any) => {
       const next = !state.dark;
       applyDarkClass(next);
       const mode: AppearanceMode = next ? "dark" : "light";
       saveSetting("appearanceMode", mode);
+      if (next && typeof state.pushNotification === "function") {
+        state.pushNotification({
+          title: "BONFIRE LIT",
+          message: "Rest at the bonfire. Estus Flasks refilled.",
+          app: "Dark Souls",
+          icon: "img/icons/games.svg",
+        });
+      }
       return { dark: next, appearanceMode: mode };
     }),
   toggleWIFI: () => set((state) => ({ wifi: !state.wifi })),

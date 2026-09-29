@@ -241,10 +241,11 @@ export default function Login(props: MacActions) {
               transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <div
-                className="font-rounded font-tabular"
+                className="font-tabular"
                 style={{
+                  fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif",
                   fontSize: 'clamp(72px, 12vw, 110px)',
-                  fontWeight: 800,
+                  fontWeight: 700,
                   color: 'white',
                   letterSpacing: '-2px',
                   lineHeight: 1,

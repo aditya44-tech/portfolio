@@ -31,56 +31,56 @@ const bear: BearData[] = [
   },
   {
     id: "project",
-    title: "Projects",
+    title: "Projects & Work",
     icon: "i-ph:git-branch",
     md: [
       {
-        id: "paytm-web",
-        title: "PaytmWeb",
-        file: "https://raw.githubusercontent.com/aakashsharma003/PaytmWeb/main/README.md",
-        icon: "i-ph:credit-card",
-        excerpt: "A demonstration Project For Paytm transactions...",
-        link: "https://github.com/aakashsharma003/paytm-web"
-      },
-      {
         id: "portfolio-macos",
-        title: "Portfolio macOS",
-        file: "https://raw.githubusercontent.com/aakashsharma003/macOS-Portfolio/main/README.md",
+        title: "macOS 26 Tahoe Portfolio",
+        file: "markdown/about-site.md",
         icon: "i-ph:desktop",
-        excerpt: "My portfolio website simulating macOS's GUI...",
-        link: "https://github.com/aakashsharma003/macos-portfolio"
+        excerpt: "macOS 26 Tahoe Liquid Glass web OS portfolio interface...",
+        link: "https://github.com/aditya44-tech/portfolio"
       },
       {
-        id: "medium-2.0",
-        title: "Medium 2.0",
-        file: "https://raw.githubusercontent.com/aakashsharma003/Medium/main/README.md",
-        icon: "i-ph:globe",
-        excerpt: "A medium modified version with serverless backend...",
-        link: "https://github.com/aakashsharma003/Medium"
+        id: "metakeep",
+        title: "MetaKeep Web3 Infrastructure",
+        file: "markdown/about-me.md",
+        icon: "i-ph:shield-check",
+        excerpt: "Enterprise hardware-backed Web3 wallet & developer infrastructure...",
+        link: "https://metakeep.com/"
       },
       {
-        id: "attendance-web",
-        title: "Mbm Attendance Web",
-        file: "https://raw.githubusercontent.com/aakashsharma003/Mbm-Attendance-Application/main/README.md",
-        icon: "i-ph:clipboard-text",
-        excerpt: "A attendance website for mbm university...",
-        link: "https://github.com/aakashsharma003/Mbm-Attendance-Application"
+        id: "agentic-ai",
+        title: "Agentic AI & Multi-Agent Systems",
+        file: "markdown/about-me.md",
+        icon: "i-ph:cpu",
+        excerpt: "Autonomous agent workflows, RAG systems, and Amazon Bedrock / OpenAI integrations...",
+        link: "https://github.com/aditya44-tech"
       },
       {
-        id: "aero-pay",
-        title: "AeroPay",
-        file: "https://raw.githubusercontent.com/aakashsharma003/AeroPay/main/README.md",
-        icon: "i-ph:money",
-        excerpt: "A payment transactions simulator...",
-        link: "https://github.com/aakashsharma003/AeroPay"
+        id: "polygon-defi",
+        title: "Polygon Open DeFi Hackathon",
+        file: "markdown/about-me.md",
+        icon: "i-ph:trophy",
+        excerpt: "2nd Prize Winner — High-performance decentralized finance protocol on Polygon...",
+        link: "https://polygon.technology/"
       },
       {
-        id: "rasl",
-        title: "rasl",
-        file: "https://raw.githubusercontent.com/Open-Source-Collab-Community/rasl/main/README.md",
-        icon: "i-ph:headphones",
-        excerpt: "A audio streaming library...",
-        link: "https://github.com/Open-Source-Collab-Community/rasl"
+        id: "nwn-ai",
+        title: "NWN AI Platform",
+        file: "markdown/about-me.md",
+        icon: "i-ph:cloud",
+        excerpt: "Production cloud-native SaaS and AI-enabled enterprise backend architecture...",
+        link: "https://github.com/aditya44-tech"
+      },
+      {
+        id: "medium-articles",
+        title: "Engineering & AI Articles",
+        file: "markdown/about-me.md",
+        icon: "i-ph:article",
+        excerpt: "Deep-dives on Agentic AI, system design, software engineering, and blockchain...",
+        link: "https://medium.com/@adityadhir97"
       }
     ]
   }

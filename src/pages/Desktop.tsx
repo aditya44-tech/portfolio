@@ -56,6 +56,8 @@ export default function Desktop(props: MacActions) {
   const [spotlightBtnRef, setSpotlightBtnRef] =
     useState<React.RefObject<HTMLDivElement> | null>(null);
   const [showAboutMac, setShowAboutMac] = useState(false);
+  const [bankaiFlash, setBankaiFlash] = useState(false);
+  const [youDiedFade, setYouDiedFade] = useState(false);
 
   const { dark, brightness, getWallpaper } = useStore((s) => ({
     dark: s.dark,
@@ -81,6 +83,20 @@ export default function Desktop(props: MacActions) {
       openApp("safari");
     };
     const handleOpenLaunchpad = () => toggleLaunchpad(true);
+    const handleBankai = () => {
+      setBankaiFlash(true);
+      setTimeout(() => setBankaiFlash(false), 1200);
+    };
+    const handleOpenAppEvent = (e: any) => {
+      if (e.detail?.id) openApp(e.detail.id);
+    };
+    const handleCloseAppEvent = (e: any) => {
+      if (e.detail?.id) closeApp(e.detail.id);
+    };
+    const handleYouDied = () => {
+      setYouDiedFade(true);
+      setTimeout(() => setYouDiedFade(false), 3800);
+    };
     
     const handleKeyDown = (e: KeyboardEvent) => {
       // System independent Command key (Cmd on Mac, Ctrl on Windows/Linux)
@@ -121,11 +137,19 @@ export default function Desktop(props: MacActions) {
 
     window.addEventListener("launchpad:openSafari", handleOpenSafari);
     window.addEventListener("siri:openLaunchpad", handleOpenLaunchpad);
+    window.addEventListener("siri:bankaiFlash", handleBankai);
+    window.addEventListener("desktop:openApp", handleOpenAppEvent);
+    window.addEventListener("desktop:closeApp", handleCloseAppEvent);
+    window.addEventListener("system:youDied", handleYouDied);
     window.addEventListener("keydown", handleKeyDown);
     
     return () => {
       window.removeEventListener("launchpad:openSafari", handleOpenSafari);
       window.removeEventListener("siri:openLaunchpad", handleOpenLaunchpad);
+      window.removeEventListener("siri:bankaiFlash", handleBankai);
+      window.removeEventListener("desktop:openApp", handleOpenAppEvent);
+      window.removeEventListener("desktop:closeApp", handleCloseAppEvent);
+      window.removeEventListener("system:youDied", handleYouDied);
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [state]);  // re-bind when state updates so closures are fresh
@@ -411,6 +435,23 @@ export default function Desktop(props: MacActions) {
         onClose={() => setContextMenu({ ...contextMenu, show: false })}
         openApp={openApp}
       />
+
+      {/* Bankai Lightning Screen Flash Effect */}
+      {bankaiFlash && (
+        <div className="fixed inset-0 z-[99999] pointer-events-none animate-bankai-flash" />
+      )}
+
+      {/* Souls "YOU DIED" Screen Fade Effect */}
+      {youDiedFade && (
+        <div className="fixed inset-0 z-[99999] bg-black/95 flex flex-col items-center justify-center pointer-events-none transition-all duration-700">
+          <div className="text-red-700 font-serif text-5xl sm:text-7xl font-bold tracking-[0.25em] select-none filter drop-shadow-[0_0_25px_rgba(220,38,38,0.85)] animate-pulse text-center">
+            YOU DIED
+          </div>
+          <div className="text-amber-500/70 font-mono text-xs mt-4 tracking-widest uppercase">
+            🔥 Resting at the bonfire...
+          </div>
+        </div>
+      )}
     </div>
   );
 }

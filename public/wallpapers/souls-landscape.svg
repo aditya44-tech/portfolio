@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2560 1600" width="2560" height="1600">
+  <defs>
+    <radialGradient id="sky-dark" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#2D1A10"/>
+      <stop offset="35%" stop-color="#18110D"/>
+      <stop offset="70%" stop-color="#0E0A08"/>
+      <stop offset="100%" stop-color="#050403"/>
+    </radialGradient>
+    <radialGradient id="tree-glow" cx="50%" cy="15%" r="45%">
+      <stop offset="0%" stop-color="#FFE082" stop-opacity="0.85"/>
+      <stop offset="25%" stop-color="#FFA000" stop-opacity="0.45"/>
+      <stop offset="60%" stop-color="#E65100" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cliff-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1C1512"/>
+      <stop offset="100%" stop-color="#080605"/>
+    </linearGradient>
+    <linearGradient id="fog" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#FFA726" stop-opacity="0.25"/>
+      <stop offset="50%" stop-color="#3E2723" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="2560" height="1600" fill="url(#sky-dark)"/>
+
+  <!-- Celestial Glow of the Erdtree -->
+  <rect width="2560" height="1600" fill="url(#tree-glow)"/>
+
+  <!-- Golden Erdtree Traces and Spectral Rays in Sky -->
+  <g opacity="0.35" stroke="#FFD54F" stroke-width="3">
+    <line x1="1280" y1="0" x2="1280" y2="900" stroke-width="48" opacity="0.15" filter="blur(20px)"/>
+    <line x1="1280" y1="0" x2="1080" y2="700" stroke-width="12" opacity="0.25"/>
+    <line x1="1280" y1="0" x2="1480" y2="700" stroke-width="12" opacity="0.25"/>
+    <line x1="1080" y1="700" x2="880" y2="1050" stroke-width="8" opacity="0.2"/>
+    <line x1="1480" y1="700" x2="1680" y2="1050" stroke-width="8" opacity="0.2"/>
+  </g>
+
+  <!-- Distant Mountain Ranges -->
+  <polygon points="0,1100 420,880 750,1050 1150,820 1550,1040 1950,860 2560,1150 2560,1600 0,1600" fill="#140E0B"/>
+  <polygon points="0,1220 350,1050 820,1180 1350,980 1820,1150 2250,1020 2560,1240 2560,1600 0,1600" fill="#0E0A08"/>
+
+  <!-- Gothic Castle / Spires on Distant Plateau -->
+  <g fill="#0A0807">
+    <rect x="1180" y="800" width="200" height="250" rx="4"/>
+    <polygon points="1180,800 1280,680 1380,800"/>
+    <rect x="1140" y="840" width="30" height="210"/>
+    <polygon points="1140,840 1155,750 1170,840"/>
+    <rect x="1390" y="840" width="30" height="210"/>
+    <polygon points="1390,840 1405,750 1420,840"/>
+    <!-- Window Embers -->
+    <rect x="1265" y="840" width="15" height="35" rx="7" fill="#FFA000" opacity="0.75"/>
+    <rect x="1240" y="900" width="12" height="25" rx="6" fill="#FF6D00" opacity="0.6"/>
+    <rect x="1308" y="900" width="12" height="25" rx="6" fill="#FF6D00" opacity="0.6"/>
+  </g>
+
+  <!-- Golden Misty Fog over Valley -->
+  <rect x="0" y="850" width="2560" height="500" fill="url(#fog)"/>
+
+  <!-- Foreground Dramatic Cliff Edge & Bonfire -->
+  <polygon points="0,1600 0,1280 620,1320 1020,1400 1450,1360 1950,1420 2560,1340 2560,1600" fill="url(#cliff-gradient)"/>
+
+  <!-- The Coiled Sword in Bonfire on Cliff -->
+  <g transform="translate(1280, 1340)">
+    <!-- Hearth Ash Mound -->
+    <ellipse cx="0" cy="40" rx="90" ry="25" fill="#080605"/>
+    <ellipse cx="0" cy="38" rx="75" ry="18" fill="#1C1410"/>
+
+    <!-- Ember Emitting Flame Glow -->
+    <circle cx="0" cy="20" r="160" fill="url(#tree-glow)" opacity="0.7"/>
+
+    <!-- Coiled Twisted Sword Blade -->
+    <path d="M -4 25 Q -12 0 0 -50 Q 8 -10 -2 -2 Q -4 10 0 25" fill="#A1887F" stroke="#3E2723" stroke-width="2"/>
+    <line x1="-15" y1="-50" x2="15" y2="-50" stroke="#FFB74D" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="0" cy="-62" r="5" fill="#FFB74D"/>
+
+    <!-- Bonfire Flames Dancing -->
+    <path d="M -25 35 Q -10 -20 0 -40 Q 15 -10 25 35 Q 0 45 -25 35 Z" fill="#FF3D00" opacity="0.9"/>
+    <path d="M -15 35 Q -5 -5 0 -25 Q 10 -5 15 35 Z" fill="#FF9100"/>
+    <path d="M -8 35 Q 0 10 0 0 Q 0 10 8 35 Z" fill="#FFEA00"/>
+
+    <!-- Sparks and Floating Embers -->
+    <circle cx="-35" cy="-20" r="2.5" fill="#FFD54F"/>
+    <circle cx="28" cy="-35" r="3" fill="#FFAB00"/>
+    <circle cx="-12" cy="-70" r="2" fill="#FFE082"/>
+    <circle cx="45" cy="-80" r="2.5" fill="#FF6D00"/>
+    <circle cx="-60" cy="-110" r="1.5" fill="#FFA726"/>
+    <circle cx="20" cy="-130" r="2" fill="#FFE082"/>
+  </g>
+
+  <!-- Ambient Vignette -->
+  <rect width="2560" height="1600" fill="none" stroke="#000000" stroke-width="80" opacity="0.45"/>
+</svg>

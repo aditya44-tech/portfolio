@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import CalendarWidget from "./widgets/CalendarWidget";
 import WeatherWidget from "./widgets/WeatherWidget";
+import { currentlyWatchingAnime } from "~/data/anime";
 import { useWindowSize } from "~/hooks/useWindowSize";
 
 interface NotificationCenterProps {
@@ -209,6 +210,54 @@ export default function NotificationCenter({ show, onClose }: NotificationCenter
                 </div>
               )}
             </motion.div>
+
+            {/* Currently Watching Anime Widget */}
+            {currentlyWatchingAnime.length > 0 && (
+              <motion.div variants={cardVariants}>
+                <div
+                  style={{
+                    ...CARD,
+                    padding: "12px 14px",
+                    cursor: "pointer",
+                    position: "relative",
+                    overflow: "hidden",
+                  }}
+                  onClick={() => {
+                    useStore.getState().openApp("anime");
+                    onClose();
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <span style={{ fontSize: 13 }}>📺</span>
+                      <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", color: "#FF9800" }}>
+                        Currently Watching
+                      </span>
+                    </div>
+                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>Tap to open</span>
+                  </div>
+
+                  <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                    <img
+                      src={currentlyWatchingAnime[0].coverImage}
+                      alt={currentlyWatchingAnime[0].title}
+                      style={{ width: 42, height: 56, objectFit: "cover", borderRadius: 8, flexShrink: 0, boxShadow: "0 2px 6px rgba(0,0,0,0.4)" }}
+                    />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {currentlyWatchingAnime[0].title}
+                      </div>
+                      <div style={{ fontSize: 11, color: "#FFB74D", marginTop: 2, fontWeight: 500 }}>
+                        {currentlyWatchingAnime[0].currentProgress}
+                      </div>
+                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginTop: 2 }}>
+                        Studio: {currentlyWatchingAnime[0].studio}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
 
             {/* Weather card */}
             <motion.div variants={cardVariants}>

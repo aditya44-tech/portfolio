@@ -1,6 +1,7 @@
 import React from "react";
 import terminal from "~/configs/terminal";
 import type { TerminalData } from "~/types";
+import { useStore } from "~/stores";
 
 const CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 const EMOJIS = ["\\(o_o)/", "(˚Δ˚)b", "(^-^*)", "(‵′)", "\\(°ˊДˋ°)/", "(‵′)"];
@@ -105,7 +106,10 @@ export default class Terminal extends React.Component<{}, TerminalState> {
       ls: this.ls,
       cat: this.cat,
       clear: this.clear,
-      help: this.help
+      help: this.help,
+      neofetch: this.neofetch,
+      bonfire: this.bonfire,
+      bankai: this.bankai,
     };
   }
 
@@ -233,6 +237,15 @@ export default class Terminal extends React.Component<{}, TerminalState> {
           <span text-red-400>clear</span> - Clear the screen
         </li>
         <li>
+          <span text-red-400>neofetch</span> - System specs &amp; Aditya's AI/Web3 stack
+        </li>
+        <li>
+          <span text-red-400>bonfire</span> - Kindle the flame &amp; rest
+        </li>
+        <li>
+          <span text-red-400>bankai</span> - Unleash Tensa Zangetsu spiritual pressure
+        </li>
+        <li>
           <span text-red-400>help</span> - Display this help menu
         </li>
         <li>
@@ -247,6 +260,105 @@ export default class Terminal extends React.Component<{}, TerminalState> {
       </ul>
     );
     this.generateResultRow(this.curInputTimes, help);
+  };
+
+  neofetch = () => {
+    const art = (
+      <div className="flex flex-col sm:flex-row gap-4 py-2 font-mono text-xs">
+        <div className="text-amber-400 font-bold whitespace-pre leading-none select-none">
+{`       .:'
+     __ :'__
+  .'\`__\`-'__\`'.
+ :__________.-'
+ :_________:
+  :_________\`-.__
+   \`.__.-.__.'`}
+        </div>
+        <div className="space-y-1">
+          <div><span className="text-red-400 font-bold">aditya</span><span className="text-white font-bold">@</span><span className="text-yellow-400 font-bold">macbook-pro</span></div>
+          <div className="text-stone-500">--------------------------</div>
+          <div><span className="text-amber-400 font-semibold">OS:</span> macOS 26.0 Tahoe (Apple Silicon M-Series)</div>
+          <div><span className="text-amber-400 font-semibold">Role:</span> Senior Engineer &amp; AI Systems Builder</div>
+          <div><span className="text-amber-400 font-semibold">Uptime:</span> 5+ years building production software</div>
+          <div><span className="text-amber-400 font-semibold">AI Stack:</span> Agentic AI, Multi-Agent Systems, Amazon Bedrock, RAG</div>
+          <div><span className="text-amber-400 font-semibold">Cloud/Backend:</span> Python, TypeScript, Node.js, AWS, Kubernetes, Kafka</div>
+          <div><span className="text-amber-400 font-semibold">Web3:</span> Solidity, Ethereum, Polygon (Hackathon 2nd Prize)</div>
+          <div><span className="text-amber-400 font-semibold">Terminal:</span> zsh 5.9 (x86_64-apple-darwin25.0)</div>
+          <div className="flex gap-1 pt-1">
+            <span className="w-3 h-3 bg-red-500 rounded-sm inline-block" />
+            <span className="w-3 h-3 bg-amber-500 rounded-sm inline-block" />
+            <span className="w-3 h-3 bg-yellow-400 rounded-sm inline-block" />
+            <span className="w-3 h-3 bg-green-500 rounded-sm inline-block" />
+            <span className="w-3 h-3 bg-blue-500 rounded-sm inline-block" />
+            <span className="w-3 h-3 bg-purple-500 rounded-sm inline-block" />
+          </div>
+        </div>
+      </div>
+    );
+    this.generateResultRow(this.curInputTimes, art);
+  };
+
+  bonfire = () => {
+    useStore.getState().pushNotification({
+      title: "BONFIRE LIT",
+      message: "Rest at the bonfire. Estus Flasks refilled. FP restored.",
+      app: "Dark Souls",
+      icon: "img/icons/games.svg",
+    });
+
+    const bonfireDisplay = (
+      <div className="py-2 space-y-2 font-mono text-xs">
+        <div className="text-amber-400 font-bold animate-bonfire-ember whitespace-pre leading-none">
+{`         (
+        ) )
+       ( ( (
+      '. ___ .'
+     ' (___) '
+      /|\\|/\\
+     / \\|/  \\
+       /|\\`}
+        </div>
+        <div className="text-amber-300 font-serif text-sm font-bold tracking-widest uppercase">
+          🔥 BONFIRE LIT
+        </div>
+        <div className="text-stone-400 text-xs">
+          HP and FP restored. Souls retrieved. Estus Flask (5/5).
+        </div>
+      </div>
+    );
+    this.generateResultRow(this.curInputTimes, bonfireDisplay);
+  };
+
+  bankai = () => {
+    window.dispatchEvent(new CustomEvent("siri:bankaiFlash"));
+
+    useStore.getState().pushNotification({
+      title: "BAN... KAI! ⚡",
+      message: "Tensa Zangetsu unleashed. Colossal spiritual pressure overflowing.",
+      app: "Bleach",
+      icon: "img/icons/anime.svg",
+    });
+
+    const bankaiDisplay = (
+      <div className="py-2 space-y-2 font-mono text-xs">
+        <div className="text-orange-500 font-bold whitespace-pre leading-none">
+{`      |\\
+      | \\
+      |  \\  TENSA ZANGETSU (天鎖斬月)
+=====[###]==============================>
+      |  /
+      | /
+      |/`}
+        </div>
+        <div className="text-orange-400 font-bold text-sm tracking-wider uppercase">
+          ⚡ "BAN... KAI! TENSA ZANGETSU!"
+        </div>
+        <div className="text-stone-300 text-xs">
+          Spiritual Pressure: <span className="text-orange-400 font-bold">120,000 Reiatsu</span> • Getsuga Tensho primed.
+        </div>
+      </div>
+    );
+    this.generateResultRow(this.curInputTimes, bankaiDisplay);
   };
 
   autoComplete = (text: string) => {

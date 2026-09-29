@@ -2,34 +2,34 @@ import type { LaunchpadData } from "~/types";
 
 const launchpadApps: LaunchpadData[] = [
   {
-    id: "library",
-    title: "Library",
-    img: "img/icons/launchpad/library-icon.png",
-    link: "https://github.com/aakashsharma003/lib"
+    id: "portfolio-repo",
+    title: "Portfolio",
+    img: "img/icons/launchpad/apple.png",
+    link: "https://github.com/aditya44-tech/portfolio"
   },
   {
-    id: "skill-exchange",
-    title: "SkillExchange",
-    img: "img/icons/launchpad/skill-exchange.png", // background should be black
-    link: "https://skill-exchange-fe.vercel.app/"
+    id: "metakeep",
+    title: "MetaKeep",
+    img: "img/icons/launchpad/meta.png",
+    link: "https://metakeep.com/"
   },
   {
-    id: "share-code",
-    title: "ShareCode",
-    img: "img/icons/launchpad/share-code-app.png",
-    link: "https://share-your-codes.vercel.app/"
+    id: "polygon-defi",
+    title: "Polygon DeFi",
+    img: "img/icons/launchpad/cube.png",
+    link: "https://polygon.technology/"
   },
   {
-    id: "paytm-web",
-    title: "Paytm",
-    img: "img/icons/launchpad/paytm-app.png",
-    link: "https://paytm-web.vercel.app/"
+    id: "medium-blog",
+    title: "Medium Blog",
+    img: "img/icons/launchpad/medium-2.0.png",
+    link: "https://medium.com/@adityadhir97"
   },
   {
-    id: "attendance-web",
-    title: "MBM Attendance",
-    img: "img/icons/launchpad/attendance-web.png",
-    link: "https://mbm-attendance-web.vercel.app/"
+    id: "github-profile",
+    title: "GitHub",
+    img: "img/icons/github.png",
+    link: "https://github.com/aditya44-tech"
   }
 ];
 
