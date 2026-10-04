@@ -8,19 +8,19 @@ import { useStore } from "~/stores";
 import { useClickOutside } from "~/hooks";
 
 interface SliderProps {
-  icon: string;
+  iconClass: string;
   value: number;
   setValue: (value: number) => void;
   dark?: boolean;
 }
 
-const SliderComponent = ({ icon, value, setValue, dark }: SliderProps) => (
+const SliderComponent = ({ iconClass, value, setValue, dark }: SliderProps) => (
   <div className="slider flex">
     <div className="size-7 flex-center bg-c-100" border="t l b c-300 rounded-l-full">
-      {icon.startsWith("i-ph:") ? (
-        <span className={icon} text="xs c-500" />
+      {iconClass.includes("ph:") ? (
+        <span className={iconClass} text="xs c-500" />
       ) : (
-        <img src={icon} alt="" style={{ width: "14px", height: "14px", filter: dark ? "invert(1)" : "none", opacity: 0.7 }} />
+        <img src={iconClass} alt="" style={{ width: "14px", height: "14px", filter: dark ? "invert(1)" : "none", opacity: 0.7 }} />
       )}
     </div>
     <Slider
@@ -443,12 +443,12 @@ export default function ControlCenterMenu({
 
             <div className="cc-grid col-span-4 px-2.5 py-2 space-y-1 flex flex-col justify-around">
               <span className="font-medium ml-0.5" style={{ fontSize: '12px' }}>Display</span>
-              <SliderComponent icon="i-ph:sun" value={brightness} setValue={setBrightness} />
+              <SliderComponent iconClass="i-ph:sun" value={brightness} setValue={setBrightness} />
             </div>
 
             <div className="cc-grid col-span-4 px-2.5 py-2 space-y-1 flex flex-col justify-around">
               <span className="font-medium ml-0.5" style={{ fontSize: '12px' }}>Sound</span>
-              <SliderComponent icon="i-ph:speaker-high" value={volume} setValue={setVolume} />
+              <SliderComponent iconClass="i-ph:speaker-high" value={volume} setValue={setVolume} />
             </div>
 
             <div className="player cc-grid col-span-4 hstack space-x-2.5" p="y-2 l-2 r-4">

@@ -1,4 +1,6 @@
 import type { StateCreator } from "zustand";
+import { wallpapersData } from "~/data/wallpapers";
+import type { WallpaperCategory, WallpaperMode } from "~/data/wallpapers";
 
 // Accent color can be a named key or a hex string
 export type AccentColorKey =
@@ -8,14 +10,14 @@ export type AccentColorKey =
 export type AccentColor = AccentColorKey | string; // allow hex
 
 export const ACCENT_HEX: Record<AccentColorKey, string> = {
-  blue: "#007AFF",
+  blue: "#0A84FF",
   purple: "#AF52DE",
-  pink: "#FF2D55",
-  red: "#FF3B30",
-  orange: "#FF9500",
-  yellow: "#FFCC00",
-  green: "#34C759",
-  graphite: "#8E8E93",
+  pink: "#FF375F",
+  red: "#FF453A",
+  orange: "#FF9F0A",
+  yellow: "#FFD60A",
+  green: "#32D74B",
+  graphite: "#98989D",
 };
 
 export type DockPosition = "bottom" | "left" | "right";
@@ -27,52 +29,19 @@ export interface WallpaperSet {
   day: string;
   night: string;
   thumbnail?: string;
+  category: WallpaperCategory;
+  mode: WallpaperMode;
 }
 
-export const wallpaperSets: WallpaperSet[] = [
-  {
-    id: "tahoe",
-    name: "macOS Tahoe",
-    day: "wallpapers/DefaultAerial_Tahoe_Beach.jpg",
-    night: "wallpapers/DefaultAerial_Tahoe_Beach.jpg",
-    thumbnail: "wallpapers/DefaultAerial_Tahoe_Beach.jpg",
-  },
-  {
-    id: "souls-ember",
-    name: "Souls: Lands Between",
-    day: "wallpapers/souls-landscape.svg",
-    night: "wallpapers/souls-landscape.svg",
-    thumbnail: "wallpapers/souls-landscape.svg",
-  },
-  {
-    id: "soul-reaper",
-    name: "Soul Reaper: Bankai",
-    day: "wallpapers/soul-reaper.svg",
-    night: "wallpapers/soul-reaper.svg",
-    thumbnail: "wallpapers/soul-reaper.svg",
-  },
-  {
-    id: "tahoe-light",
-    name: "Tahoe Light",
-    day: "wallpapers/macOS_Tahoe_LightDefault.jpg",
-    night: "wallpapers/DefaultAerial_Tahoe_Beach.jpg",
-    thumbnail: "wallpapers/macOS_Tahoe_LightDefault.jpg",
-  },
-  {
-    id: "tahoe-beach",
-    name: "Tahoe Beach",
-    day: "wallpapers/DefaultAerial_Tahoe_Beach.jpg",
-    night: "wallpapers/DefaultAerial_Tahoe_Beach.jpg",
-    thumbnail: "wallpapers/DefaultAerial_Tahoe_Beach.jpg",
-  },
-  {
-    id: "ventura",
-    name: "macOS Ventura",
-    day: "img/ui/macOS-ventura-light.jpg",
-    night: "img/ui/macOS-ventura-dark.jpg",
-    thumbnail: "img/ui/macOS-ventura-light.jpg",
-  },
-];
+export const wallpaperSets: WallpaperSet[] = wallpapersData.map((w) => ({
+  id: w.id,
+  name: w.title,
+  day: w.day,
+  night: w.night,
+  thumbnail: w.thumbnail,
+  category: w.category,
+  mode: w.mode,
+}));
 
 export interface SettingsSlice {
   // Wallpaper
@@ -102,6 +71,10 @@ export interface SettingsSlice {
   setDockPosition: (pos: DockPosition) => void;
   dockAutoHide: boolean;
   setDockAutoHide: (v: boolean) => void;
+  darkMenubar: boolean;
+  setDarkMenubar: (v: boolean) => void;
+  showBatteryPercentage: boolean;
+  setShowBatteryPercentage: (v: boolean) => void;
 
   // Notification
   notificationSound: string;
@@ -139,8 +112,8 @@ const applyThemeClasses = (t: AppTheme) => {
     document.documentElement.style.setProperty("--theme-accent", "#FF5722");
     document.documentElement.style.setProperty("--theme-stone-bg", "#0A0A0C");
   } else {
-    document.documentElement.style.setProperty("--accent-primary", "#007AFF");
-    document.documentElement.style.setProperty("--theme-accent", "#007AFF");
+    document.documentElement.style.setProperty("--accent-primary", "#0A84FF");
+    document.documentElement.style.setProperty("--theme-accent", "#0A84FF");
     document.documentElement.style.setProperty("--theme-stone-bg", "transparent");
   }
 };
@@ -154,22 +127,34 @@ const applyCursorClass = (enabled: boolean) => {
   }
 };
 
-const initialTheme = loadSetting<AppTheme>("theme", "default");
-const initialCursor = loadSetting<boolean>("customCursor", false);
+// Portfolio themes were removed from Appearance: everyone runs Default.
+const initialTheme: AppTheme = "default";
+saveSetting("theme", "default");
+const initialCursor = false;
+saveSetting("customCursor", false);
 applyThemeClasses(initialTheme);
 applyCursorClass(initialCursor);
+// Re-apply the stored accent (theme bootstrap would otherwise reset it).
+if (typeof document !== "undefined") {
+  document.documentElement.style.setProperty("--accent-primary", loadSetting("accentColor", "#0A84FF"));
+}
+
+const storedWallpaperId = loadSetting("activeWallpaperSet", "tahoe");
+const initialWallpaperId = wallpaperSets.some((w) => w.id === storedWallpaperId)
+  ? storedWallpaperId
+  : "tahoe";
 
 export const createSettingsSlice: StateCreator<SettingsSlice> = (set, get) => ({
   // Wallpaper
   wallpaperSets,
-  activeWallpaperSet: loadSetting("activeWallpaperSet", "tahoe"),
+  activeWallpaperSet: initialWallpaperId,
   setActiveWallpaperSet: (id) => {
     saveSetting("activeWallpaperSet", id);
     saveSetting("wallpaperId", id);
     set({ activeWallpaperSet: id, wallpaperId: id });
   },
   /** @deprecated */
-  wallpaperId: loadSetting("wallpaperId", "tahoe"),
+  wallpaperId: initialWallpaperId,
   setWallpaperId: (id) => {
     saveSetting("wallpaperId", id);
     saveSetting("activeWallpaperSet", id);
@@ -186,8 +171,11 @@ export const createSettingsSlice: StateCreator<SettingsSlice> = (set, get) => ({
     saveSetting("theme", t);
     applyThemeClasses(t);
     set({ theme: t });
-    // Also change default wallpaper if user switches to Souls or Soul Reaper
-    if (t === "souls") {
+    // Each theme card applies its signature wallpaper so the atmosphere
+    // always matches (Default restores Tahoe).
+    if (t === "default") {
+      get().setActiveWallpaperSet("tahoe");
+    } else if (t === "souls") {
       get().setActiveWallpaperSet("souls-ember");
     } else if (t === "soul-reaper") {
       get().setActiveWallpaperSet("soul-reaper");
@@ -203,7 +191,7 @@ export const createSettingsSlice: StateCreator<SettingsSlice> = (set, get) => ({
   },
 
   // Accent color — stored as hex string
-  accentColor: loadSetting("accentColor", "#007AFF"),
+  accentColor: loadSetting("accentColor", "#0A84FF"),
   setAccentColor: (color) => {
     // If named key, resolve to hex
     const hex = ACCENT_HEX[color as AccentColorKey] ?? color;
@@ -229,6 +217,20 @@ export const createSettingsSlice: StateCreator<SettingsSlice> = (set, get) => ({
   setDockAutoHide: (v) => {
     saveSetting("dockAutoHide", v);
     set({ dockAutoHide: v });
+  },
+
+  // Dark menubar always (classic blurred dark bar instead of transparent)
+  darkMenubar: loadSetting("darkMenubar", false),
+  setDarkMenubar: (v) => {
+    saveSetting("darkMenubar", v);
+    set({ darkMenubar: v });
+  },
+
+  // Show battery percentage next to the menubar battery icon
+  showBatteryPercentage: loadSetting("showBatteryPercentage", true),
+  setShowBatteryPercentage: (v) => {
+    saveSetting("showBatteryPercentage", v);
+    set({ showBatteryPercentage: v });
   },
 
   // Notification sound

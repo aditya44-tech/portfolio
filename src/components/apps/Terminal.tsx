@@ -48,7 +48,7 @@ const HowDare = ({ setRMRF }: { setRMRF: (value: boolean) => void }) => {
     ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = "#2e9244";
+    ctx.fillStyle = "#A1A1A6";
     ctx.font = `${FONT_SIZE}px arial`;
 
     drops.forEach((y, x) => {
@@ -119,16 +119,14 @@ export default class Terminal extends React.Component<{}, TerminalState> {
   }
 
   reset = () => {
-    const terminal = document.querySelector("#terminal-content") as HTMLElement;
-    terminal.innerHTML = "";
+    this.setState({ content: [] });
   };
 
   addRow = (row: JSX.Element) => {
-    if (this.state.content.find((item) => item.key === row.key)) return;
-
-    const content = this.state.content;
-    content.push(row);
-    this.setState({ content });
+    this.setState((prev) => {
+      if (prev.content.find((item) => item.key === row.key)) return null;
+      return { content: [...prev.content, row] };
+    });
   };
 
   getCurDirName = () => {
@@ -184,7 +182,7 @@ export default class Terminal extends React.Component<{}, TerminalState> {
       result.push(
         <span
           key={`terminal-result-ls-${this.curInputTimes}-${item.id}`}
-          className={`${item.type === "file" ? "text-white" : "text-purple-300"}`}
+          className={`${item.type === "file" ? "" : "font-bold"}`}
         >
           {item.title}
         </span>
@@ -222,40 +220,40 @@ export default class Terminal extends React.Component<{}, TerminalState> {
     const help = (
       <ul className="list-disc ml-6 pb-1.5">
         <li>
-          <span text-red-400>cat {"<file>"}</span> - See the content of {"<file>"}
+          <span className="font-bold">cat {"<file>"}</span> - See the content of {"<file>"}
         </li>
         <li>
-          <span text-red-400>cd {"<dir>"}</span> - Move into
+          <span className="font-bold">cd {"<dir>"}</span> - Move into
           {" <dir>"}, "cd .." to move to the parent directory, "cd" or "cd ~" to return to
           root
         </li>
         <li>
-          <span text-red-400>ls</span> - See files and directories in the current
+          <span className="font-bold">ls</span> - See files and directories in the current
           directory
         </li>
         <li>
-          <span text-red-400>clear</span> - Clear the screen
+          <span className="font-bold">clear</span> - Clear the screen
         </li>
         <li>
-          <span text-red-400>neofetch</span> - System specs &amp; Aditya's AI/Web3 stack
+          <span className="font-bold">neofetch</span> - System specs &amp; Aditya's AI/Web3 stack
         </li>
         <li>
-          <span text-red-400>bonfire</span> - Kindle the flame &amp; rest
+          <span className="font-bold">bonfire</span> - Kindle the flame &amp; rest
         </li>
         <li>
-          <span text-red-400>bankai</span> - Unleash Tensa Zangetsu spiritual pressure
+          <span className="font-bold">bankai</span> - Unleash Tensa Zangetsu spiritual pressure
         </li>
         <li>
-          <span text-red-400>help</span> - Display this help menu
+          <span className="font-bold">help</span> - Display this help menu
         </li>
         <li>
-          <span text-red-400>rm -rf /</span> - :)
+          <span className="font-bold">rm -rf /</span> - :)
         </li>
         <li>
-          press <span text-red-400>up arrow / down arrow</span> - Select history commands
+          press <span className="font-bold">up arrow / down arrow</span> - Select history commands
         </li>
         <li>
-          press <span text-red-400>tab</span> - Auto complete
+          press <span className="font-bold">tab</span> - Auto complete
         </li>
       </ul>
     );
@@ -265,7 +263,7 @@ export default class Terminal extends React.Component<{}, TerminalState> {
   neofetch = () => {
     const art = (
       <div className="flex flex-col sm:flex-row gap-4 py-2 font-mono text-xs">
-        <div className="text-amber-400 font-bold whitespace-pre leading-none select-none">
+        <div className="term-text font-bold whitespace-pre leading-none select-none">
 {`       .:'
      __ :'__
   .'\`__\`-'__\`'.
@@ -275,22 +273,22 @@ export default class Terminal extends React.Component<{}, TerminalState> {
    \`.__.-.__.'`}
         </div>
         <div className="space-y-1">
-          <div><span className="text-red-400 font-bold">aditya</span><span className="text-white font-bold">@</span><span className="text-yellow-400 font-bold">macbook-pro</span></div>
-          <div className="text-stone-500">--------------------------</div>
-          <div><span className="text-amber-400 font-semibold">OS:</span> macOS 26.0 Tahoe (Apple Silicon M-Series)</div>
-          <div><span className="text-amber-400 font-semibold">Role:</span> Senior Engineer &amp; AI Systems Builder</div>
-          <div><span className="text-amber-400 font-semibold">Uptime:</span> 5+ years building production software</div>
-          <div><span className="text-amber-400 font-semibold">AI Stack:</span> Agentic AI, Multi-Agent Systems, Amazon Bedrock, RAG</div>
-          <div><span className="text-amber-400 font-semibold">Cloud/Backend:</span> Python, TypeScript, Node.js, AWS, Kubernetes, Kafka</div>
-          <div><span className="text-amber-400 font-semibold">Web3:</span> Solidity, Ethereum, Polygon (Hackathon 2nd Prize)</div>
-          <div><span className="text-amber-400 font-semibold">Terminal:</span> zsh 5.9 (x86_64-apple-darwin25.0)</div>
+          <div><span className="font-bold">aditya</span><span className="term-muted font-bold">@</span><span className="font-bold">macbook-pro</span></div>
+          <div className="term-faint">--------------------------</div>
+          <div><span className="term-muted font-semibold">OS:</span> macOS 26.0 Tahoe (Apple Silicon M-Series)</div>
+          <div><span className="term-muted font-semibold">Role:</span> Senior Engineer &amp; AI Systems Builder</div>
+          <div><span className="term-muted font-semibold">Uptime:</span> 5+ years building production software</div>
+          <div><span className="term-muted font-semibold">AI Stack:</span> Agentic AI, Multi-Agent Systems, Amazon Bedrock, RAG</div>
+          <div><span className="term-muted font-semibold">Cloud/Backend:</span> Python, TypeScript, Node.js, AWS, Kubernetes, Kafka</div>
+          <div><span className="term-muted font-semibold">Web3:</span> Solidity, Ethereum, Polygon (Hackathon 2nd Prize)</div>
+          <div><span className="term-muted font-semibold">Terminal:</span> zsh 5.9 (x86_64-apple-darwin25.0)</div>
           <div className="flex gap-1 pt-1">
-            <span className="w-3 h-3 bg-red-500 rounded-sm inline-block" />
-            <span className="w-3 h-3 bg-amber-500 rounded-sm inline-block" />
-            <span className="w-3 h-3 bg-yellow-400 rounded-sm inline-block" />
-            <span className="w-3 h-3 bg-green-500 rounded-sm inline-block" />
-            <span className="w-3 h-3 bg-blue-500 rounded-sm inline-block" />
-            <span className="w-3 h-3 bg-purple-500 rounded-sm inline-block" />
+            <span className="w-3 h-3 rounded-sm inline-block" style={{ background: "#FFFFFF", border: "1px solid var(--term-faint)" }} />
+            <span className="w-3 h-3 rounded-sm inline-block" style={{ background: "#D4D4D4", border: "1px solid var(--term-faint)" }} />
+            <span className="w-3 h-3 rounded-sm inline-block" style={{ background: "#A3A3A3", border: "1px solid var(--term-faint)" }} />
+            <span className="w-3 h-3 rounded-sm inline-block" style={{ background: "#737373", border: "1px solid var(--term-faint)" }} />
+            <span className="w-3 h-3 rounded-sm inline-block" style={{ background: "#404040", border: "1px solid var(--term-faint)" }} />
+            <span className="w-3 h-3 rounded-sm inline-block" style={{ background: "#000000", border: "1px solid var(--term-faint)" }} />
           </div>
         </div>
       </div>
@@ -308,7 +306,7 @@ export default class Terminal extends React.Component<{}, TerminalState> {
 
     const bonfireDisplay = (
       <div className="py-2 space-y-2 font-mono text-xs">
-        <div className="text-amber-400 font-bold animate-bonfire-ember whitespace-pre leading-none">
+        <div className="term-text font-bold animate-bonfire-ember whitespace-pre leading-none">
 {`         (
         ) )
        ( ( (
@@ -318,10 +316,10 @@ export default class Terminal extends React.Component<{}, TerminalState> {
      / \\|/  \\
        /|\\`}
         </div>
-        <div className="text-amber-300 font-serif text-sm font-bold tracking-widest uppercase">
-          🔥 BONFIRE LIT
+        <div className="term-text font-serif text-sm font-bold tracking-widest uppercase">
+          BONFIRE LIT
         </div>
-        <div className="text-stone-400 text-xs">
+        <div className="term-muted text-xs">
           HP and FP restored. Souls retrieved. Estus Flask (5/5).
         </div>
       </div>
@@ -333,7 +331,7 @@ export default class Terminal extends React.Component<{}, TerminalState> {
     window.dispatchEvent(new CustomEvent("siri:bankaiFlash"));
 
     useStore.getState().pushNotification({
-      title: "BAN... KAI! ⚡",
+      title: "BAN... KAI!",
       message: "Tensa Zangetsu unleashed. Colossal spiritual pressure overflowing.",
       app: "Bleach",
       icon: "img/icons/anime.svg",
@@ -341,7 +339,7 @@ export default class Terminal extends React.Component<{}, TerminalState> {
 
     const bankaiDisplay = (
       <div className="py-2 space-y-2 font-mono text-xs">
-        <div className="text-orange-500 font-bold whitespace-pre leading-none">
+        <div className="term-text font-bold whitespace-pre leading-none">
 {`      |\\
       | \\
       |  \\  TENSA ZANGETSU (天鎖斬月)
@@ -350,11 +348,11 @@ export default class Terminal extends React.Component<{}, TerminalState> {
       | /
       |/`}
         </div>
-        <div className="text-orange-400 font-bold text-sm tracking-wider uppercase">
-          ⚡ "BAN... KAI! TENSA ZANGETSU!"
+        <div className="term-text font-bold text-sm tracking-wider uppercase">
+          "BAN... KAI! TENSA ZANGETSU!"
         </div>
-        <div className="text-stone-300 text-xs">
-          Spiritual Pressure: <span className="text-orange-400 font-bold">120,000 Reiatsu</span> • Getsuga Tensho primed.
+        <div className="term-muted text-xs">
+          Spiritual Pressure: <span className="term-text font-bold">120,000 Reiatsu</span> • Getsuga Tensho primed.
         </div>
       </div>
     );
@@ -453,14 +451,14 @@ export default class Terminal extends React.Component<{}, TerminalState> {
     const newRow = (
       <div key={`terminal-input-row-${id}`} flex>
         <div className="w-max hstack space-x-1.5">
-          <span text-yellow-200>
-            @demaxxer <span text-green-300>{this.getCurDirName()}</span>
+          <span className="font-bold">
+            @aditya <span className="term-muted">{this.getCurDirName()}</span>
           </span>
-          <span text-red-400>{">"}</span>
+          <span className="font-bold">{">"}</span>
         </div>
         <input
           id={`terminal-input-${id}`}
-          className="flex-1 px-1 text-white outline-none bg-transparent"
+          className="flex-1 px-1 outline-none bg-transparent term-text"
           onKeyDown={this.keyPress}
           autoFocus={true}
         />
@@ -481,15 +479,14 @@ export default class Terminal extends React.Component<{}, TerminalState> {
   render() {
     return (
       <div
-        className="terminal font-terminal font-normal relative h-full bg-gray-800/90 overflow-y-scroll"
-        text="white sm"
+        className="terminal font-terminal font-normal relative h-full term-bg term-text overflow-y-scroll text-sm"
         onClick={() => this.focusOnInput(this.curInputTimes)}
       >
         {this.state.rmrf && (
           <HowDare setRMRF={(value: boolean) => this.setState({ rmrf: value })} />
         )}
         <div p="y-2 x-1.5">
-          <span className="text-green-300">help</span>: Hey, you found the terminal!
+          <span className="font-bold">help</span>: Hey, you found the terminal!
           Type `help` to get started.
         </div>
         <div id="terminal-content" p="x-1.5 b-2">

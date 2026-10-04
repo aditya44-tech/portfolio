@@ -1,5 +1,6 @@
 export default function Battery() {
   const batteryState = useBattery();
+  const showBatteryPercentage = useStore((s) => s.showBatteryPercentage);
 
   const width = () => {
     return 0.1 + batteryState.level * 0.96;
@@ -15,7 +16,7 @@ export default function Battery() {
 
   return (
     <div className="hstack space-x-2">
-      <span text-xs>{(batteryState.level * 100).toFixed()}%</span>
+      {showBatteryPercentage && (<span text-xs>{(batteryState.level * 100).toFixed()}%</span>)}
       <div className="relative hstack">
         <span className="i-ph:battery-medium text-2xl" />
         <div className={`battery-level ${color()}`} style={{ width: `${width()}rem` }} />

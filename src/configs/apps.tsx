@@ -105,7 +105,7 @@ const apps: AppsData[] = [
     hideOnMobile: true,
     y: -40,
     titlebar: "transparent",
-    img: "img/icons/spotify.svg",
+    img: "img/icons/spotify-logo.svg",
     content: <Spotify />,
   },
   {
@@ -239,19 +239,6 @@ const apps: AppsData[] = [
     content: <Mail />,
   },
   {
-    id: "app-store",
-    title: "App Store",
-    desktop: true,
-    width: 760,
-    height: 540,
-    minWidth: 580,
-    minHeight: 420,
-    x: -30,
-    y: 20,
-    img: "img/icons/app-store.png",
-    content: <AppStore />,
-  },
-  {
     id: "youtube",
     title: "YouTube",
     desktop: true,
@@ -277,7 +264,7 @@ const apps: AppsData[] = [
     minHeight: 480,
     x: -15,
     y: 10,
-    img: "img/icons/aftereffects.svg",
+    img: "img/icons/aftereffects-app.svg",
     content: <Reels />,
   },
   {
@@ -290,7 +277,7 @@ const apps: AppsData[] = [
     minHeight: 460,
     x: 25,
     y: -15,
-    img: "img/icons/steam.svg",
+    img: "img/icons/steam-logo.svg",
     content: <GameLibrary />,
   },
   {
@@ -303,7 +290,7 @@ const apps: AppsData[] = [
     minHeight: 440,
     x: -35,
     y: 20,
-    img: "img/icons/crunchyroll.svg",
+    img: "img/icons/crunchyroll-icon.svg",
     content: <AnimeShelf />,
   },
 ];

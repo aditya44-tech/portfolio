@@ -61,7 +61,7 @@ export default function BatteryWidget() {
       <div>
         <div style={{ fontSize: 16, fontWeight: 500, color: "white", lineHeight: 1 }}>
           {pct}%
-          {charging && <span style={{ fontSize: 12, marginLeft: 4 }}>⚡</span>}
+          {charging && <span className="i-ph:lightning" style={{ fontSize: 12, marginLeft: 4, color: "#ffd60a" }} />}
         </div>
         <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>
           {charging ? "Charging" : level === null ? "Estimated" : pct > 20 ? "Normal" : "Low battery"}

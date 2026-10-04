@@ -76,7 +76,20 @@ export default defineConfig({
       display: ['var(--font-display)'],
       rounded: ['var(--font-rounded)'],
       mono: ['var(--font-mono)'],
-    }
+    },
+    // Canonical macOS theme tokens (see src/styles/theme.css) as utilities,
+    // e.g. bg-accent, text-themetext, rounded-window, rounded-dock.
+    colors: {
+      accent: 'var(--accent-blue)',
+      accentAlt: 'var(--accent-alt)',
+      themebg: 'var(--bg)',
+      themetext: 'var(--text-primary)',
+      themesecondary: 'var(--text-secondary)',
+    },
+    borderRadius: {
+      window: 'var(--radius-window)',
+      dock: 'var(--radius-dock)',
+    },
   },
   transformers: [
     transformerDirectives(),

@@ -8,6 +8,30 @@ const launchpadApps: LaunchpadData[] = [
     link: "https://github.com/aditya44-tech/portfolio"
   },
   {
+    id: "sentinel",
+    title: "Sentinel",
+    img: "img/icons/launchpad/attendance-web.png",
+    link: "https://github.com/aditya44-tech/Sentinel"
+  },
+  {
+    id: "safesearch",
+    title: "SafeSearch",
+    img: "img/icons/github.png",
+    link: "https://github.com/aditya44-tech/SafeSearch"
+  },
+  {
+    id: "airwatch",
+    title: "AirWatch",
+    img: "img/icons/launchpad/gungnir.png",
+    link: "https://github.com/aditya44-tech/AirWatch"
+  },
+  {
+    id: "editing-portfolio",
+    title: "Editing Portfolio",
+    img: "img/icons/launchpad/vercel.svg",
+    link: "https://github.com/aditya44-tech/Editing-Portfolio"
+  },
+  {
     id: "metakeep",
     title: "MetaKeep",
     img: "img/icons/launchpad/meta.png",

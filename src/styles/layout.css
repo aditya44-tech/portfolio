@@ -76,8 +76,8 @@ body {
 
 /* Bonfire spark embers animation */
 @keyframes bonfireFlameFlicker {
-  0%, 100% { transform: scale(1) translateY(0); filter: drop-shadow(0 0 10px #FF5722); }
-  50% { transform: scale(1.05) translateY(-2px); filter: drop-shadow(0 0 18px #FFA000); }
+  0%, 100% { transform: scale(1) translateY(0); filter: drop-shadow(0 0 10px rgba(140, 140, 140, 0.7)); }
+  50% { transform: scale(1.05) translateY(-2px); filter: drop-shadow(0 0 18px rgba(200, 200, 200, 0.9)); }
 }
 
 .animate-bonfire-ember {

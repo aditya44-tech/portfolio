@@ -229,7 +229,7 @@ export default function NotificationCenter({ show, onClose }: NotificationCenter
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <span style={{ fontSize: 13 }}>📺</span>
+                      <span className="i-ph:television" style={{ fontSize: 14 }} />
                       <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", color: "#FF9800" }}>
                         Currently Watching
                       </span>

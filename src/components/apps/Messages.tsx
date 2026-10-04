@@ -22,7 +22,7 @@ const CONVERSATIONS: Conversation[] = [
   {
     id: "1",
     name: "Recruiter @ Google",
-    avatar: "🏢",
+    avatar: "i-ph:buildings",
     preview: "We'd love to schedule a call!",
     time: "Now",
     unread: 2,
@@ -36,7 +36,7 @@ const CONVERSATIONS: Conversation[] = [
   },
   {
     id: "2",
-    name: "Team SkillExchange",
+    name: "Team Sentinel",
     avatar: "i-ph:lightbulb",
     preview: "PR #42 merged successfully",
     time: "2m",
@@ -49,23 +49,23 @@ const CONVERSATIONS: Conversation[] = [
   {
     id: "3",
     name: "Mom",
-    avatar: "👩",
+    avatar: "i-ph:user",
     preview: "Beta aa ja khaana thanda ho raha hai",
     time: "1h",
     messages: [
       { id: "1", text: "Beta aa ja khaana thanda ho raha hai", from: "them", time: "8:00 AM" },
-      { id: "2", text: "Coming in 5 min maa 😅", from: "me", time: "8:02 AM" },
+      { id: "2", text: "Coming in 5 min maa", from: "me", time: "8:02 AM" },
     ],
   },
   {
     id: "4",
     name: "GitHub Notifications",
-    avatar: "🐙",
+    avatar: "i-ph:github-logo",
     preview: "New star on macOS-Portfolio!",
     time: "3h",
     messages: [
-      { id: "1", text: "⭐ aakashsharma003/macOS-Portfolio received a new star!", from: "them", time: "7:00 AM" },
-      { id: "2", text: "🔔 New issue opened: 'Feature request: Dark mode improvements'", from: "them", time: "7:30 AM" },
+      { id: "1", text: "aditya44-tech/portfolio received a new star!", from: "them", time: "7:00 AM" },
+      { id: "2", text: "New issue opened: 'Feature request: Dark mode improvements'", from: "them", time: "7:30 AM" },
     ],
   },
 ];

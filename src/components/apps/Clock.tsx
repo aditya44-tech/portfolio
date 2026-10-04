@@ -1,12 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
 
 const WORLD_CLOCKS = [
-  { city: "Jodhpur", timezone: "Asia/Kolkata", flag: "🇮🇳", offset: "+5:30" },
-  { city: "San Francisco", timezone: "America/Los_Angeles", flag: "🇺🇸", offset: "-7:00" },
-  { city: "New York", timezone: "America/New_York", flag: "🇺🇸", offset: "-4:00" },
-  { city: "London", timezone: "Europe/London", flag: "🇬🇧", offset: "+1:00" },
-  { city: "Tokyo", timezone: "Asia/Tokyo", flag: "🇯🇵", offset: "+9:00" },
-  { city: "Berlin", timezone: "Europe/Berlin", flag: "🇩🇪", offset: "+2:00" },
+  { city: "Jodhpur", timezone: "Asia/Kolkata", flag: "IN", offset: "+5:30" },
+  { city: "San Francisco", timezone: "America/Los_Angeles", flag: "US", offset: "-7:00" },
+  { city: "New York", timezone: "America/New_York", flag: "US", offset: "-4:00" },
+  { city: "London", timezone: "Europe/London", flag: "GB", offset: "+1:00" },
+  { city: "Tokyo", timezone: "Asia/Tokyo", flag: "JP", offset: "+9:00" },
+  { city: "Berlin", timezone: "Europe/Berlin", flag: "DE", offset: "+2:00" },
 ];
 
 interface AlarmItem {

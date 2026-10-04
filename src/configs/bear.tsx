@@ -37,50 +37,66 @@ const bear: BearData[] = [
       {
         id: "portfolio-macos",
         title: "macOS 26 Tahoe Portfolio",
-        file: "markdown/about-site.md",
+        file: "markdown/projects/portfolio.md",
         icon: "i-ph:desktop",
-        excerpt: "macOS 26 Tahoe Liquid Glass web OS portfolio interface...",
+        excerpt: "This site — a complete macOS Tahoe desktop recreated on the web...",
         link: "https://github.com/aditya44-tech/portfolio"
       },
       {
-        id: "metakeep",
-        title: "MetaKeep Web3 Infrastructure",
-        file: "markdown/about-me.md",
+        id: "sentinel",
+        title: "Sentinel — AI Dropout Prediction",
+        file: "markdown/projects/sentinel.md",
+        icon: "i-ph:graduation-cap",
+        excerpt: "Flags at-risk students with 0–100 scoring + AI narratives. Hack2Ignite 2026...",
+        link: "https://github.com/aditya44-tech/Sentinel"
+      },
+      {
+        id: "editing-portfolio",
+        title: "ADITYA44 Editing Portfolio",
+        file: "markdown/projects/editing-portfolio.md",
+        icon: "i-ph:browser",
+        excerpt: "Dark-mode video editing portfolio — 3D carousel, hover previews, live site...",
+        link: "https://github.com/aditya44-tech/Editing-Portfolio"
+      },
+      {
+        id: "safesearch",
+        title: "SafeSignal — AI Safety System",
+        file: "markdown/projects/safesearch.md",
         icon: "i-ph:shield-check",
-        excerpt: "Enterprise hardware-backed Web3 wallet & developer infrastructure...",
-        link: "https://metakeep.com/"
+        excerpt: "Workplace safety early warnings — dual AI assessment + SMS alerts...",
+        link: "https://github.com/aditya44-tech/SafeSearch"
       },
       {
-        id: "agentic-ai",
-        title: "Agentic AI & Multi-Agent Systems",
-        file: "markdown/about-me.md",
-        icon: "i-ph:cpu",
-        excerpt: "Autonomous agent workflows, RAG systems, and Amazon Bedrock / OpenAI integrations...",
-        link: "https://github.com/aditya44-tech"
-      },
-      {
-        id: "polygon-defi",
-        title: "Polygon Open DeFi Hackathon",
-        file: "markdown/about-me.md",
+        id: "leetcode-tracker",
+        title: "LeetCode Tracker Extension",
+        file: "markdown/projects/leetcode-tracker-extension.md",
         icon: "i-ph:trophy",
-        excerpt: "2nd Prize Winner — High-performance decentralized finance protocol on Polygon...",
-        link: "https://polygon.technology/"
+        excerpt: "Chrome extension tracking solves, difficulty and company-wise questions...",
+        link: "https://github.com/aditya44-tech/leetcode-tracker-extension"
       },
       {
-        id: "nwn-ai",
-        title: "NWN AI Platform",
-        file: "markdown/about-me.md",
+        id: "airwatch",
+        title: "AirWatch — AQI Dashboard",
+        file: "markdown/projects/airwatch.md",
         icon: "i-ph:cloud",
-        excerpt: "Production cloud-native SaaS and AI-enabled enterprise backend architecture...",
-        link: "https://github.com/aditya44-tech"
+        excerpt: "Real-time air quality for Indian cities — maps, forecasts, AI advisories...",
+        link: "https://github.com/aditya44-tech/AirWatch"
       },
       {
-        id: "medium-articles",
-        title: "Engineering & AI Articles",
-        file: "markdown/about-me.md",
-        icon: "i-ph:article",
-        excerpt: "Deep-dives on Agentic AI, system design, software engineering, and blockchain...",
-        link: "https://medium.com/@adityasalunkhe97"
+        id: "civicconnect",
+        title: "CivicConnect",
+        file: "markdown/projects/civicconnect.md",
+        icon: "i-ph:lightbulb",
+        excerpt: "Citizens report local issues and track resolution end to end...",
+        link: "https://github.com/aditya44-tech/CivicConnect"
+      },
+      {
+        id: "swasthyasetu",
+        title: "SwasthyaSetu — Rural AI Doctor",
+        file: "markdown/projects/swasthyasetu.md",
+        icon: "i-ph:shield",
+        excerpt: "AI triage for ASHA workers and doctors — multilingual, offline-ready...",
+        link: "https://github.com/aditya44-tech/SwasthyaSetu"
       }
     ]
   }

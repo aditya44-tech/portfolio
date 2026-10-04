@@ -23,10 +23,12 @@ export default function Dock({
   toggleLaunchpad,
   hide
 }: DockProps) {
-  const { dockSize, dockMag } = useStore((state) => ({
+  const { dockSize, dockMag, dockMagnification } = useStore((state) => ({
     dockSize: state.dockSize,
-    dockMag: state.dockMag
+    dockMag: state.dockMag,
+    dockMagnification: state.dockMagnification
   }));
+  const effectiveMag = dockMagnification ? dockMag : 1;
 
   const [bouncingApp, setBouncingApp] = useState<string | null>(null);
 
@@ -102,8 +104,8 @@ export default function Dock({
         onMouseMove={(e) => mouseX.set(e.nativeEvent.x)}
         onMouseLeave={() => mouseX.set(null)}
         style={{
-          height: `${(dockSize + 15) / 16}rem`,
-          padding: '4px 10px',
+          height: `${(dockSize + 26) / 16}rem`,
+          padding: '5px 12px',
         }}
       >
         {desktopApps.map((app) => (
@@ -118,7 +120,7 @@ export default function Dock({
             isOpen={app.desktop && showApps[app.id]}
             link={app.link}
             dockSize={dockSize}
-            dockMag={dockMag}
+            dockMag={effectiveMag}
             isBouncing={bouncingApp === app.id}
           />
         ))}
@@ -149,7 +151,7 @@ export default function Dock({
             isOpen={false}
             link={app.link}
             dockSize={dockSize}
-            dockMag={dockMag}
+            dockMag={effectiveMag}
             isBouncing={bouncingApp === app.id}
           />
         ))}

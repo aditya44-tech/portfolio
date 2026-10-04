@@ -194,19 +194,19 @@ export default function DynamicIsland({ currentApp }: DynamicIslandProps) {
                   </div>
                 </div>
               ) : (
-                /* Now Playing content */
+                /* Now Playing content — live track from the shared OS player */
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-3">
                     <img
-                      src={music.cover}
-                      alt="album"
+                      src={audioState.track.cover}
+                      alt="album cover"
                       style={{ width: 40, height: 40, borderRadius: 8, objectFit: "cover" }}
                     />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ color: "white", fontSize: 13, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                        {music.title}
+                        {audioState.track.title}
                       </div>
-                      <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 11 }}>{music.artist}</div>
+                      <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 11 }}>{audioState.track.artist}</div>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
@@ -216,7 +216,7 @@ export default function DynamicIsland({ currentApp }: DynamicIslandProps) {
                         {audioState.playing ? <span className="i-ph:pause-fill text-xl" /> : <span className="i-ph:play-fill text-xl" />}
                       </button>
                       <button
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={(e) => { e.stopPropagation(); controls.next(); }}
                         style={{ background: "none", border: "none", color: "white", cursor: "pointer", padding: 4, display: "flex", alignItems: "center" }}
                       >
                         <span className="i-ph:skip-forward-fill text-base" />
@@ -227,8 +227,8 @@ export default function DynamicIsland({ currentApp }: DynamicIslandProps) {
                   <div style={{ width: "100%", height: 3, borderRadius: 2, background: "rgba(255,255,255,0.15)", overflow: "hidden" }}>
                     <motion.div
                       style={{ height: "100%", borderRadius: 2, background: "var(--accent-green)", originX: 0 }}
-                      animate={{ scaleX: audioState.playing ? [0.1, 0.9] : 0.1 }}
-                      transition={audioState.playing ? { duration: 200, ease: "linear", repeat: 0 } : { duration: 0.3 }}
+                      animate={{ scaleX: Math.max(0.02, audioState.progress || 0) }}
+                      transition={{ duration: 0.3, ease: "linear" }}
                     />
                   </div>
                 </div>

@@ -115,7 +115,6 @@ export default function AppleMenu({
       <MenuItem onClick={handleAbout}>About This Mac</MenuItem>
       <div className="h-px bg-gray-300 dark:bg-white/10 my-1 mx-2" />
       <MenuItem onClick={() => open("system-settings")}>System Settings...</MenuItem>
-      <MenuItem onClick={() => open("app-store")}>App Store...</MenuItem>
       <div className="h-px bg-gray-300 dark:bg-white/10 my-1 mx-2" />
       <MenuItem>Recent Items ›</MenuItem>
       <div className="h-px bg-gray-300 dark:bg-white/10 my-1 mx-2" />

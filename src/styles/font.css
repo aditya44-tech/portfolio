@@ -27,9 +27,11 @@
 }
 
 /* ----------------------------------------------------------------
-   Inter — free, OFL-licensed SF Pro look-alike (variable).
-   Kept AFTER -apple-system so genuine SF renders on Apple devices
-   and Inter provides the closest match everywhere else.
+   Inter — free, OFL-licensed SF Pro look-alike (variable, 100–900).
+   Self-hosted woff2 (weights 400/500/600/700 covered) + Google Fonts
+   <link> in index.html as a progressive-enhancement fallback.
+   Kept AFTER -apple-system in the stack so genuine San Francisco
+   renders on Apple devices and Inter matches everywhere else.
    ---------------------------------------------------------------- */
 @font-face {
   font-family: "Inter";
@@ -46,6 +48,13 @@
   font-display: swap;
   src: url("./fonts/InterVariable-Italic.woff2") format("woff2");
 }
+
+/* ----------------------------------------------------------------
+   NOTE: SF Pro is intentionally NOT bundled here. Apple's font license
+   restricts SF Pro to software built for Apple platforms — the legal
+   way to get real SF rendering on Apple devices is the -apple-system
+   stack defined in theme.css (--font-system / --font-display).
+   ---------------------------------------------------------------- */
 
 .font-avenir {
   font-family: var(--font-avenir);
@@ -81,106 +90,4 @@ body:not(pre) {
 /* Tabular nums for clock / counters / timers */
 .font-tabular {
   font-feature-settings: 'tnum' 1, 'cv11' 1;
-}
-
-/* SF Pro Text */
-@font-face {
-  font-family: "SF Pro Text";
-  font-style: normal;
-  font-weight: 400;
-  src: url("./fonts/SF-Pro-Text-Regular.otf") format("opentype");
-}
-@font-face {
-  font-family: "SF Pro Text";
-  font-style: normal;
-  font-weight: 500;
-  src: url("./fonts/SF-Pro-Text-Medium.otf") format("opentype");
-}
-@font-face {
-  font-family: "SF Pro Text";
-  font-style: normal;
-  font-weight: 600;
-  src: url("./fonts/SF-Pro-Text-Semibold.otf") format("opentype");
-}
-@font-face {
-  font-family: "SF Pro Text";
-  font-style: normal;
-  font-weight: 700;
-  src: url("./fonts/SF-Pro-Text-Bold.otf") format("opentype");
-}
-
-/* SF Pro Display */
-@font-face {
-  font-family: "SF Pro Display";
-  font-style: normal;
-  font-weight: 400;
-  src: url("./fonts/SF-Pro-Display-Regular.otf") format("opentype");
-}
-@font-face {
-  font-family: "SF Pro Display";
-  font-style: normal;
-  font-weight: 500;
-  src: url("./fonts/SF-Pro-Display-Medium.otf") format("opentype");
-}
-@font-face {
-  font-family: "SF Pro Display";
-  font-style: normal;
-  font-weight: 600;
-  src: url("./fonts/SF-Pro-Display-Semibold.otf") format("opentype");
-}
-@font-face {
-  font-family: "SF Pro Display";
-  font-style: normal;
-  font-weight: 700;
-  src: url("./fonts/SF-Pro-Display-Bold.otf") format("opentype");
-}
-@font-face {
-  font-family: "SF Pro Display";
-  font-style: normal;
-  font-weight: 800;
-  src: url("./fonts/SF-Pro-Display-Heavy.otf") format("opentype");
-}
-@font-face {
-  font-family: "SF Pro Display";
-  font-style: normal;
-  font-weight: 900;
-  src: url("./fonts/SF-Pro-Display-Black.otf") format("opentype");
-}
-
-/* SF Pro Rounded */
-@font-face {
-  font-family: "SF Pro Rounded";
-  font-style: normal;
-  font-weight: 400;
-  src: url("./fonts/SF-Pro-Rounded-Regular.otf") format("opentype");
-}
-@font-face {
-  font-family: "SF Pro Rounded";
-  font-style: normal;
-  font-weight: 500;
-  src: url("./fonts/SF-Pro-Rounded-Medium.otf") format("opentype");
-}
-@font-face {
-  font-family: "SF Pro Rounded";
-  font-style: normal;
-  font-weight: 600;
-  src: url("./fonts/SF-Pro-Rounded-Semibold.otf") format("opentype");
-}
-@font-face {
-  font-family: "SF Pro Rounded";
-  font-style: normal;
-  font-weight: 700;
-  src: url("./fonts/SF-Pro-Rounded-Bold.otf") format("opentype");
-}
-@font-face {
-  font-family: "SF Pro Rounded";
-  font-style: normal;
-  font-weight: 800;
-  src: url("./fonts/SF-Pro-Rounded-Heavy.otf") format("opentype");
-}
-@font-face {
-  font-family: "SF Pro Rounded";
-  font-style: normal;
-  font-weight: 900;
-  src: url("./fonts/SF-Pro-Rounded-Black.otf") format("opentype");
 }

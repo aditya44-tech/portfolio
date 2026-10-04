@@ -23,7 +23,7 @@ const MESSAGES: MailMessage[] = [
     body: "Congratulations! Your PR #42 'feat: macOS 26 Tahoe UI' has been merged into main.\n\nChanges included:\n• Liquid Glass design system\n• Dynamic Island component\n• New app icons\n• Redesigned dock\n\nView the merged PR on GitHub.",
     time: "10:42 AM",
     unread: true,
-    avatar: "🐙",
+    avatar: "i-ph:github-logo",
   },
   {
     id: "2",

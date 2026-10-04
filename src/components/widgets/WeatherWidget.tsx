@@ -139,8 +139,8 @@ export default function WeatherWidget({ compact }: WeatherWidgetProps) {
       {/* Stats */}
       <div style={{ display: "flex", gap: 14, marginTop: 12, paddingTop: 10, borderTop: "0.5px solid rgba(255,255,255,0.09)" }}>
         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>H:{WEATHER_DATA.high}° L:{WEATHER_DATA.low}°</span>
-        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>💧 {WEATHER_DATA.humidity}%</span>
-        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>💨 {WEATHER_DATA.wind}km/h</span>
+        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}><span className="i-ph:drop" /> {WEATHER_DATA.humidity}%</span>
+        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}><span className="i-ph:wind" /> {WEATHER_DATA.wind}km/h</span>
       </div>
 
       {/* Alert */}

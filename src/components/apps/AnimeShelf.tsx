@@ -1,189 +1,542 @@
 import React, { useState } from "react";
 import { animeData, currentlyWatchingAnime, type AnimeItem } from "~/data/anime";
+import SafeImage from "~/components/SafeImage";
+
+/* ------------------------------------------------------------------
+   Crunchyroll — streaming-shelf UI built from scratch (own code, own
+   layout; Crunchyroll eye logo used nominatively as the app mark).
+   Dark + CR orange (#f47521): hero feature, continue-watching rail,
+   poster grid, filterable My Lists, detail view.
+   Type inherits the global Apple system stack — never overridden here.
+------------------------------------------------------------------- */
+
+type HomeTab = "home" | "lists";
+type Filter = "all" | "watching" | "completed" | "favorites";
+const isFavorite = (a: AnimeItem) => a.score >= 9.7;
+const ORANGE = "#f47521";
+
+const FILTERS: { id: Filter; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "watching", label: "Watching" },
+  { id: "completed", label: "Completed" },
+  { id: "favorites", label: "Favorites" },
+];
 
 export default function AnimeShelf() {
-  const [activeTab, setActiveTab] = useState<"home" | "browse" | "simulcasts" | "news">("home");
-  const [hoveredAnime, setHoveredAnime] = useState<string | null>(null);
+  const [tab, setTab] = useState<HomeTab>("home");
+  const [filter, setFilter] = useState<Filter>("all");
+  const [query, setQuery] = useState("");
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  const featured = animeData.find((a) => a.featured) ?? animeData[0];
+
+  const counts: Record<Filter, number> = {
+    all: animeData.length,
+    watching: animeData.filter((a) => a.status === "Currently Watching").length,
+    completed: animeData.filter((a) => a.status === "Completed").length,
+    favorites: animeData.filter(isFavorite).length,
+  };
+
+  const list = animeData.filter((a) => {
+    if (filter === "watching" && a.status !== "Currently Watching") return false;
+    if (filter === "completed" && a.status !== "Completed") return false;
+    if (filter === "favorites" && !isFavorite(a)) return false;
+    const q = query.trim().toLowerCase();
+    if (
+      q &&
+      !(
+        a.title.toLowerCase().includes(q) ||
+        a.genres.some((g) => g.toLowerCase().includes(q)) ||
+        a.studio.toLowerCase().includes(q)
+      )
+    )
+      return false;
+    return true;
+  });
+
+  const open = animeData.find((a) => a.id === openId);
 
   return (
-    <div className="flex flex-col h-full bg-[#000000] text-white font-sans overflow-y-auto overflow-x-hidden selection:bg-[#f47521] selection:text-white">
-      {/* Top Navigation Bar */}
-      <div className="bg-[#141519] h-16 flex items-center justify-between px-6 sticky top-0 z-50 border-b border-[#24252a]">
-        <div className="flex items-center gap-8 h-full">
-          {/* Logo (CR color #F47521) */}
-          <div className="flex items-center gap-2 text-[#f47521] font-black text-xl tracking-tight cursor-pointer">
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
-              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 4.195c4.31 0 7.805 3.495 7.805 7.805S16.31 19.805 12 19.805 4.195 16.31 4.195 12 7.69 4.195 12 4.195z" />
-              <path d="M12 7.747c-2.348 0-4.253 1.905-4.253 4.253 0 2.348 1.905 4.253 4.253 4.253 2.348 0 4.253-1.905 4.253-4.253 0-2.348-1.905-4.253-4.253-4.253zm0 6.643c-1.32 0-2.39-1.07-2.39-2.39s1.07-2.39 2.39-2.39 2.39 1.07 2.39 2.39-1.07 2.39-2.39 2.39z" />
-            </svg>
-            CRUNCHYROLL
-          </div>
-          {/* Nav Links */}
-          <div className="flex items-center h-full gap-1">
-            {["home", "browse", "manga", "games", "news"].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => tab !== "manga" && tab !== "games" && setActiveTab(tab as any)}
-                className={`px-4 h-full flex items-center text-sm font-semibold transition-colors capitalize ${
-                  activeTab === tab ? "text-white border-b-[3px] border-[#f47521]" : "text-[#a0a0a0] hover:text-[#d0d0d0] hover:bg-white/5"
-                }`}
-              >
-                {tab} <span className="ml-1 text-[10px] opacity-50">▼</span>
-              </button>
-            ))}
-          </div>
+    <div
+      className="flex flex-col h-full overflow-hidden select-none"
+      style={{ background: "#000", color: "#e8e8e8" }}
+    >
+      {/* Crunchyroll chrome */}
+      <div
+        className="flex items-center gap-6 px-5 flex-shrink-0"
+        style={{ height: 56, background: "#000", borderBottom: "1px solid #232428" }}
+      >
+        <button
+          onClick={() => {
+            setOpenId(null);
+            setTab("home");
+          }}
+          className="flex items-center gap-2"
+        >
+          <img
+            src="img/icons/crunchyroll-icon.svg"
+            alt="Crunchyroll"
+            className="w-8 h-8"
+            draggable={false}
+          />
+          <span className="font-black tracking-tight" style={{ fontSize: 19, color: ORANGE }}>
+            crunchyroll
+          </span>
+        </button>
+        <div className="flex items-center h-full gap-1">
+          {(
+            [
+              { id: "home", label: "Home" },
+              { id: "lists", label: "My Lists" },
+            ] as { id: HomeTab; label: string }[]
+          ).map((t) => (
+            <button
+              key={t.id}
+              onClick={() => {
+                setOpenId(null);
+                setTab(t.id);
+              }}
+              className="px-3 h-full transition-colors"
+              style={{
+                fontSize: 14,
+                fontWeight: 600,
+                color: tab === t.id && !open ? "#fff" : "#a0a0a0",
+                borderBottom:
+                  tab === t.id && !open ? `3px solid ${ORANGE}` : "3px solid transparent",
+              }}
+            >
+              {t.label}
+            </button>
+          ))}
         </div>
-        {/* Right Actions */}
-        <div className="flex items-center gap-6">
-          <button className="text-[#a0a0a0] hover:text-white transition">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-          </button>
-          <button className="text-[#a0a0a0] hover:text-white transition">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-          </button>
-          <div className="flex items-center gap-2 hover:bg-white/5 p-1 rounded cursor-pointer transition">
-             <div className="w-8 h-8 rounded-full bg-orange-500 overflow-hidden">
-               <img src="https://avatars.githubusercontent.com/u/101980860?v=4" alt="profile" />
-             </div>
-             <span className="text-[10px] text-gray-500">▼</span>
-          </div>
+        <div className="ml-auto text-[11px] font-semibold" style={{ color: "#8a8a8e" }}>
+          ★ {((animeData.reduce((s, a) => s + a.score, 0) / animeData.length) || 0).toFixed(1)}{" "}
+          avg · {animeData.length} series
         </div>
       </div>
 
-      {activeTab === "home" && (
-        <div className="flex-1 pb-20">
-          {/* Hero Carousel Area */}
-          <div className="relative w-full h-[450px] md:h-[500px] overflow-hidden bg-[#141519]">
-             {animeData[0] && (
-                <>
-                  <div className="absolute inset-0">
-                    <img src={animeData[0].bannerImage} alt="hero" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#000000] via-transparent to-transparent" />
-                  </div>
-                  <div className="relative z-10 w-full max-w-[1200px] mx-auto h-full flex flex-col justify-center px-8 md:px-16 pt-10">
-                    <img src={animeData[0].coverImage} alt="logo" className="w-48 h-auto object-contain mb-4 hidden" />
-                    <h1 className="text-4xl md:text-5xl font-black text-white mb-2 leading-tight max-w-2xl" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
-                      {animeData[0].title}
-                    </h1>
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="px-1.5 py-0.5 bg-[#f47521] text-black text-[11px] font-bold uppercase rounded-sm">Sub | Dub</span>
-                      <span className="text-sm font-semibold text-[#a0a0a0]">Action, Supernatural</span>
-                    </div>
-                    <p className="text-[#d0d0d0] text-sm max-w-xl leading-relaxed mb-8 line-clamp-3">
-                      {animeData[0].whyILoveIt}
-                    </p>
-                    <div className="flex items-center gap-4">
-                       <button className="bg-[#f47521] hover:bg-[#ff8c42] text-black font-bold uppercase tracking-wider px-8 py-3 rounded-sm flex items-center gap-2 transition transform active:scale-95">
-                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd"></path></svg>
-                         Start Watching
-                       </button>
-                       <button className="bg-transparent border border-white/40 hover:border-white text-white font-bold uppercase tracking-wider px-6 py-3 rounded-sm flex items-center gap-2 transition">
-                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                         Add to Watchlist
-                       </button>
-                    </div>
-                  </div>
-                </>
-             )}
-          </div>
-
-          {/* Continue Watching Row */}
-          <div className="px-8 md:px-16 mt-8">
-            <h2 className="text-xl font-bold mb-4">Continue Watching</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {currentlyWatchingAnime.map((anime) => (
-                <div key={anime.id} className="group cursor-pointer">
-                   <div className="relative aspect-video overflow-hidden bg-[#141519] rounded-sm mb-2 border border-white/5 group-hover:border-white/20 transition">
-                      <img src={anime.bannerImage} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" alt={anime.title} />
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition" />
-                      
-                      {/* Play overlay on hover */}
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                         <div className="w-12 h-12 bg-black/60 rounded-full flex items-center justify-center border-2 border-white">
-                           <svg className="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd"></path></svg>
-                         </div>
-                      </div>
-
-                      {/* Progress bar */}
-                      <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#24252a]">
-                         <div className="h-full bg-[#f47521]" style={{ width: '65%' }}></div>
-                      </div>
-                   </div>
-                   <h3 className="text-sm font-semibold text-[#d0d0d0] group-hover:text-[#f47521] transition truncate">
-                     {anime.title}
-                   </h3>
-                   <div className="text-[11px] text-[#a0a0a0] mt-0.5">{anime.currentProgress}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Just Updated / Favorites Row */}
-          <div className="px-8 md:px-16 mt-12 mb-10">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Top Recommendations for You</h2>
-              <button className="text-sm font-semibold text-[#a0a0a0] hover:text-white uppercase tracking-wider transition">View All</button>
-            </div>
-            <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-3">
-              {animeData.map((anime) => (
-                <div 
-                  key={anime.id} 
-                  className="group cursor-pointer relative"
-                  onMouseEnter={() => setHoveredAnime(anime.id)}
-                  onMouseLeave={() => setHoveredAnime(null)}
+      {open ? (
+        <DetailView anime={open} onBack={() => setOpenId(null)} onSelect={setOpenId} />
+      ) : tab === "home" ? (
+        <div className="flex-1 overflow-y-auto">
+          {/* Hero feature */}
+          <div className="relative w-full overflow-hidden" style={{ height: 380 }}>
+            <SafeImage
+              src={featured.bannerImage}
+              alt=""
+              ratio="21 / 9"
+              className="w-full h-full object-cover"
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to right, rgba(0,0,0,0.92) 20%, rgba(0,0,0,0.45) 55%, transparent 85%)",
+              }}
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background: "linear-gradient(to top, #000 2%, transparent 40%)",
+              }}
+            />
+            <div className="absolute bottom-0 left-0 p-8 max-w-2xl">
+              <span
+                className="px-1.5 py-0.5 font-bold uppercase rounded-sm"
+                style={{ background: ORANGE, color: "#000", fontSize: 11 }}
+              >
+                Sub | Dub
+              </span>
+              <h1
+                className="font-black text-white leading-tight mt-2"
+                style={{ fontSize: 34, textShadow: "2px 2px 8px rgba(0,0,0,0.8)" }}
+              >
+                {featured.title}
+              </h1>
+              <div className="mt-1.5" style={{ fontSize: 13, color: "#a0a0a0" }}>
+                ★ {featured.score.toFixed(1)} · {featured.genres.slice(0, 3).join(", ")} ·{" "}
+                {featured.studio}
+              </div>
+              <p
+                className="mt-2 line-clamp-2 leading-relaxed"
+                style={{ fontSize: 13, color: "#d0d0d0" }}
+              >
+                {featured.whyILoveIt}
+              </p>
+              <div className="flex items-center gap-3 mt-4">
+                <button
+                  onClick={() => setOpenId(featured.id)}
+                  className="font-bold uppercase tracking-wider transition active:scale-95"
+                  style={{
+                    background: ORANGE,
+                    color: "#000",
+                    fontSize: 13,
+                    padding: "10px 26px",
+                  }}
                 >
-                   {/* Portrait Cover */}
-                   <div className="relative aspect-[2/3] overflow-hidden bg-[#141519] mb-2">
-                     <img src={anime.coverImage} className="w-full h-full object-cover" alt={anime.title} />
-                     <div className="absolute top-2 right-2 bg-black/70 px-1.5 py-0.5 rounded-sm text-[10px] font-bold text-white border border-white/20">
-                       ⭐ {anime.score}
-                     </div>
-                   </div>
-                   <h3 className="text-[13px] font-medium text-[#d0d0d0] group-hover:text-[#f47521] transition line-clamp-2 leading-tight">
-                     {anime.title}
-                   </h3>
-                   <div className="text-[11px] text-[#a0a0a0] mt-1">{anime.genres[0]}</div>
+                  ▶ Start Watching
+                </button>
+                <button
+                  onClick={() => {
+                    setFilter("favorites");
+                    setTab("lists");
+                  }}
+                  className="font-bold uppercase tracking-wider transition hover:border-white"
+                  style={{
+                    background: "transparent",
+                    border: "1px solid rgba(255,255,255,0.4)",
+                    color: "#fff",
+                    fontSize: 13,
+                    padding: "9px 22px",
+                  }}
+                >
+                  + My List
+                </button>
+              </div>
+            </div>
+          </div>
 
-                   {/* Hover Detail Card (simplified for inline) */}
-                   {hoveredAnime === anime.id && (
-                     <div className="absolute z-50 left-full top-0 ml-2 w-[300px] bg-[#141519] border border-[#24252a] p-4 shadow-2xl hidden md:block">
-                        <h4 className="text-lg font-bold mb-1">{anime.title}</h4>
-                        <div className="flex items-center gap-2 mb-3 text-[11px] font-bold">
-                           <span className="text-[#32b55b]">{anime.score} Score</span>
-                           <span className="text-[#a0a0a0]">{anime.year}</span>
-                           <span className="text-[#a0a0a0]">{anime.episodes}</span>
-                        </div>
-                        <p className="text-xs text-[#d0d0d0] leading-relaxed mb-4 line-clamp-4">
-                          {anime.whyILoveIt}
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <button className="flex-1 bg-[#f47521] hover:bg-[#ff8c42] text-black font-bold uppercase py-2 text-xs flex items-center justify-center gap-1">
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd"></path></svg>
-                            Play
-                          </button>
-                          <button className="w-8 h-8 flex items-center justify-center border border-white/40 hover:border-white">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                          </button>
-                        </div>
-                     </div>
-                   )}
-                </div>
+          {/* Continue watching */}
+          <div className="px-8 mt-7">
+            <h2 className="font-bold text-white" style={{ fontSize: 17 }}>
+              Continue Watching
+            </h2>
+            <div
+              className="grid gap-4 mt-3"
+              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))" }}
+            >
+              {currentlyWatchingAnime.map((a) => (
+                <button key={a.id} onClick={() => setOpenId(a.id)} className="group text-left">
+                  <div
+                    className="relative overflow-hidden rounded-sm transition group-hover:ring-2"
+                    style={{ aspectRatio: "16 / 9", background: "#141519" }}
+                  >
+                    <SafeImage
+                      src={a.bannerImage}
+                      alt={a.title}
+                      ratio="16 / 9"
+                      className="w-full h-full object-cover transition duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div
+                        className="rounded-full flex items-center justify-center"
+                        style={{
+                          width: 48,
+                          height: 48,
+                          background: "rgba(0,0,0,0.6)",
+                          border: "2px solid #fff",
+                          fontSize: 18,
+                          color: "#fff",
+                        }}
+                      >
+                        ▶
+                      </div>
+                    </div>
+                    <div
+                      className="absolute bottom-0 left-0 right-0"
+                      style={{ height: 4, background: "#24252a" }}
+                    >
+                      <div className="h-full" style={{ width: "60%", background: ORANGE }} />
+                    </div>
+                  </div>
+                  <div
+                    className="mt-1.5 truncate transition-colors group-hover:text-white"
+                    style={{ fontSize: 13, fontWeight: 600, color: "#d0d0d0" }}
+                  >
+                    {a.title}
+                  </div>
+                  <div style={{ fontSize: 11, color: "#a0a0a0" }}>{a.currentProgress}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Popular grid */}
+          <div className="px-8 mt-8 pb-10">
+            <div className="flex items-center justify-between">
+              <h2 className="font-bold text-white" style={{ fontSize: 17 }}>
+                Popular On This Shelf
+              </h2>
+              <button
+                onClick={() => setTab("lists")}
+                className="font-semibold uppercase tracking-wider transition hover:text-white"
+                style={{ fontSize: 12, color: "#a0a0a0" }}
+              >
+                View All
+              </button>
+            </div>
+            <div
+              className="grid gap-x-4 gap-y-6 mt-3"
+              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))" }}
+            >
+              {animeData.map((a) => (
+                <PosterCard key={a.id} anime={a} onOpen={() => setOpenId(a.id)} />
               ))}
             </div>
           </div>
         </div>
+      ) : (
+        <>
+          {/* My Lists filter bar */}
+          <div
+            className="flex items-center gap-2 px-8 flex-shrink-0 flex-wrap"
+            style={{ paddingTop: 14, paddingBottom: 14 }}
+          >
+            {FILTERS.map((f) => (
+              <button
+                key={f.id}
+                onClick={() => setFilter(f.id)}
+                className="rounded-full transition-colors"
+                style={{
+                  fontSize: 12,
+                  padding: "6px 14px",
+                  background: filter === f.id ? ORANGE : "transparent",
+                  color: filter === f.id ? "#000" : "#a0a0a0",
+                  border: `1px solid ${filter === f.id ? ORANGE : "#3a3b41"}`,
+                  fontWeight: filter === f.id ? 700 : 400,
+                }}
+              >
+                {f.label} <span style={{ opacity: 0.7 }}>{counts[f.id]}</span>
+              </button>
+            ))}
+            <div
+              className="ml-auto flex items-center rounded-md px-2.5"
+              style={{ border: "1px solid #3a3b41", background: "#141519" }}
+            >
+              <span className="text-xs mr-1.5" style={{ color: "#8a8a8e" }}>
+                <span className="i-ph:magnifying-glass" />
+              </span>
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search title or genre"
+                className="bg-transparent border-none text-white focus:outline-none"
+                style={{ fontSize: 12, height: 30, width: 170 }}
+              />
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto px-8 pb-10">
+            {list.length === 0 && (
+              <div className="py-16 text-center text-sm" style={{ color: "#6e6e73" }}>
+                Nothing on this shelf yet.
+              </div>
+            )}
+            <div
+              className="grid gap-x-4 gap-y-6"
+              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(148px, 1fr))" }}
+            >
+              {list.map((a) => (
+                <PosterCard key={a.id} anime={a} onOpen={() => setOpenId(a.id)} />
+              ))}
+            </div>
+          </div>
+        </>
       )}
+    </div>
+  );
+}
 
-      {/* Footer / Other Tabs */}
-      {activeTab !== "home" && (
-        <div className="flex-1 flex flex-col items-center justify-center text-[#a0a0a0]">
-          <svg className="w-16 h-16 text-[#24252a] mb-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z" />
-          </svg>
-          <p className="font-semibold">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} section is currently empty.</p>
+function PosterCard({ anime: a, onOpen }: { anime: AnimeItem; onOpen: () => void }) {
+  return (
+    <button onClick={onOpen} className="group text-left transition-all duration-200 hover:-translate-y-1">
+      <div
+        className="relative overflow-hidden rounded-md transition-all duration-200 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.6)] group-hover:ring-1"
+        style={{ aspectRatio: "2 / 3", background: "#141519" }}
+      >
+        <SafeImage
+          src={a.coverImage}
+          alt={a.title}
+          ratio="2 / 3"
+          className="w-full h-full object-cover"
+        />
+        <div
+          className="absolute flex items-center gap-1 rounded px-1.5 py-0.5"
+          style={{
+            top: 8,
+            left: 8,
+            background: "rgba(0,0,0,0.72)",
+            fontSize: 11,
+            fontWeight: 700,
+          }}
+        >
+          <span style={{ color: "#f5c518" }}>★</span>
+          <span className="text-white">{a.score.toFixed(1)}</span>
         </div>
-      )}
+        {a.status === "Currently Watching" && (
+          <div
+            className="absolute rounded px-1.5 py-0.5 font-bold"
+            style={{ top: 8, right: 8, background: ORANGE, color: "#000", fontSize: 10 }}
+          >
+            NEW EP
+          </div>
+        )}
+        <div
+          className="absolute inset-x-0 bottom-0 p-2.5 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
+          style={{
+            background: "linear-gradient(to top, rgba(0,0,0,0.92) 60%, transparent)",
+            paddingTop: 28,
+          }}
+        >
+          <p className="line-clamp-4 leading-snug" style={{ fontSize: 11, color: "#d7d7db" }}>
+            {a.whyILoveIt}
+          </p>
+        </div>
+      </div>
+      <div
+        className="mt-1.5 leading-tight line-clamp-2 transition-colors"
+        style={{ fontSize: 13, fontWeight: 600, color: "#d0d0d0" }}
+      >
+        {a.title}
+      </div>
+      <div className="mt-0.5" style={{ fontSize: 11, color: "#8a8a8e" }}>
+        {a.genres[0]} · {a.year}
+      </div>
+    </button>
+  );
+}
+
+function DetailView({
+  anime: a,
+  onBack,
+  onSelect,
+}: {
+  anime: AnimeItem;
+  onBack: () => void;
+  onSelect: (id: string) => void;
+}) {
+  return (
+    <div className="flex-1 overflow-y-auto">
+      <div className="relative w-full overflow-hidden" style={{ height: 200 }}>
+        <SafeImage src={a.bannerImage} alt="" ratio="21 / 9" className="w-full h-full object-cover" />
+        <div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(to top, #000 2%, transparent 60%)" }}
+        />
+        <button
+          onClick={onBack}
+          className="absolute rounded-full transition hover:bg-white/20"
+          style={{
+            top: 12,
+            left: 16,
+            background: "rgba(0,0,0,0.55)",
+            color: "#fff",
+            fontSize: 13,
+            padding: "6px 14px",
+          }}
+        >
+          ← Back
+        </button>
+        <div
+          className="absolute flex items-center gap-1.5 rounded px-2 py-1"
+          style={{ bottom: 12, right: 16, background: "rgba(0,0,0,0.72)", fontSize: 13, fontWeight: 700 }}
+        >
+          <span style={{ color: "#f5c518", fontSize: 15 }}>★</span>
+          <span className="text-white">{a.score.toFixed(1)}</span>
+        </div>
+      </div>
+
+      <div className="px-6 pb-8 -mt-10 relative flex gap-5">
+        <SafeImage
+          src={a.coverImage}
+          alt={a.title}
+          ratio="2 / 3"
+          className="rounded-md object-cover flex-shrink-0"
+          style={{ width: 150, boxShadow: "0 12px 32px rgba(0,0,0,0.5)" }}
+        />
+        <div className="min-w-0 pt-10">
+          <h1 className="font-bold text-white leading-tight" style={{ fontSize: 22 }}>
+            {a.title}
+          </h1>
+          {a.japaneseTitle && (
+            <div style={{ fontSize: 12, color: "#8a8a8e" }}>{a.japaneseTitle}</div>
+          )}
+          <div className="mt-1.5" style={{ fontSize: 12, color: "#a0a0a0" }}>
+            {a.studio} · {a.episodes} · {a.year} · {a.status}
+          </div>
+          <div className="flex flex-wrap gap-1.5 mt-2.5">
+            {a.genres.map((g) => (
+              <span
+                key={g}
+                className="rounded-full px-2.5 py-1"
+                style={{ background: "#1e1e22", color: "#c9c9ce", fontSize: 11 }}
+              >
+                {g}
+              </span>
+            ))}
+          </div>
+          <button
+            className="mt-3 font-bold uppercase tracking-wider transition active:scale-95"
+            style={{ background: ORANGE, color: "#000", fontSize: 12, padding: "9px 24px" }}
+          >
+            ▶ Start Watching S1 E1
+          </button>
+        </div>
+      </div>
+
+      <div className="px-6 pb-4 grid grid-cols-2 gap-4">
+        <div className="rounded-md p-4" style={{ background: "#141519" }}>
+          <h3 className="font-bold tracking-widest" style={{ fontSize: 11, color: ORANGE }}>
+            WHY I LOVE IT
+          </h3>
+          <p className="mt-1.5 leading-relaxed" style={{ fontSize: 13 }}>
+            {a.whyILoveIt}
+          </p>
+          <p className="mt-2 italic leading-relaxed" style={{ fontSize: 12, color: "#a0a0a0" }}>
+            {a.memorableQuote}
+          </p>
+        </div>
+        <div className="rounded-md p-4" style={{ background: "#141519" }}>
+          <h3 className="font-bold tracking-widest" style={{ fontSize: 11, color: ORANGE }}>
+            FAVORITES
+          </h3>
+          <div className="mt-1.5" style={{ fontSize: 13 }}>
+            <span style={{ color: "#8a8a8e" }}>Character — </span>
+            {a.favoriteCharacter}
+          </div>
+          <div className="mt-1" style={{ fontSize: 12, color: "#a0a0a0" }}>
+            {a.favoriteCharacterRole}
+          </div>
+          <div className="mt-2.5" style={{ fontSize: 13 }}>
+            <span style={{ color: "#8a8a8e" }}>Fight / Episode — </span>
+            {a.favoriteFightOrEpisode}
+          </div>
+          {a.currentProgress && (
+            <div
+              className="mt-2.5 rounded px-2 py-1.5"
+              style={{ background: "#1e1e22", fontSize: 12 }}
+            >
+              <span style={{ color: ORANGE, fontWeight: 700 }}>● </span>
+              {a.currentProgress}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="px-6 pb-8">
+        <h3 className="font-bold tracking-widest mb-2" style={{ fontSize: 11, color: "#8a8a8e" }}>
+          MORE LIKE THIS
+        </h3>
+        <div className="flex gap-2">
+          {animeData
+            .filter((x) => x.id !== a.id)
+            .slice(0, 6)
+            .map((x) => (
+              <button
+                key={x.id}
+                onClick={() => onSelect(x.id)}
+                className="rounded overflow-hidden transition hover:opacity-80"
+                style={{ width: 64, aspectRatio: "2 / 3", background: "#141519" }}
+              >
+                <SafeImage
+                  src={x.coverImage}
+                  alt={x.title}
+                  ratio="2 / 3"
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+        </div>
+      </div>
     </div>
   );
 }

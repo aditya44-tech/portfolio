@@ -8,7 +8,13 @@ import path from "path";
 export default defineConfig({
   server: {
     host: "0.0.0.0",
-    port: 3000
+    port: 3000,
+    // Allow the sandboxed live-preview proxy hosts (plus local dev).
+    allowedHosts: [
+      "localhost",
+      "3000-ij3v8fh61tazaijq7osd1.e2b.app",
+      ".e2b.app",
+    ],
   },
   plugins: [
     unocss(),

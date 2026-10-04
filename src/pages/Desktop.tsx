@@ -68,6 +68,22 @@ export default function Desktop(props: MacActions) {
   const { isMobile } = useWindowSize();
 
   const activeWallpaper = getWallpaper();
+  const currentWallpaperUrl = dark ? activeWallpaper.night : activeWallpaper.day;
+  // Cross-fade: keep the previous wallpaper in an overlay that fades out
+  // over the newly applied one (250ms) instead of an instant cut.
+  const [fadingUrl, setFadingUrl] = useState<string | null>(null);
+  const prevWallpaperUrl = useRef(currentWallpaperUrl);
+  // Timestamp of the last dock click per app (double-click guard below).
+  const lastDockClickRef = useRef<{ [key: string]: number }>({});
+  useEffect(() => {
+    if (prevWallpaperUrl.current !== currentWallpaperUrl) {
+      const oldUrl = prevWallpaperUrl.current;
+      prevWallpaperUrl.current = currentWallpaperUrl;
+      setFadingUrl(oldUrl);
+      const t = setTimeout(() => setFadingUrl(null), 300);
+      return () => clearTimeout(t);
+    }
+  }, [currentWallpaperUrl]);
 
   const handleLaunchpadAppClick = (e: React.MouseEvent, link: string) => {
     e.stopPropagation();
@@ -239,6 +255,42 @@ export default function Desktop(props: MacActions) {
     });
   };
 
+  // Focus without ever (re)opening: a mousedown on an exiting
+  // (already closed) window must not resurrect it.
+  const focusApp = (id: string): void => {
+    const appDef = apps.find((a) => a.id === id);
+    if (!appDef) return;
+    setState((prev) => {
+      if (!prev.showApps[id]) return prev;
+      const maxZ = prev.maxZ + 1;
+      return {
+        ...prev,
+        appsZ: { ...prev.appsZ, [id]: maxZ },
+        maxZ,
+        currentTitle: appDef.title,
+      };
+    });
+  };
+
+  // Dock behavior: clicking the front window's icon minimizes it,
+  // otherwise open/focus/restore as usual.
+  // Double-click guard: a second click within 450ms of the first is treated
+  // as "open", never "minimize" — otherwise double-clicking a closed app's
+  // icon opens it and instantly minimizes it again (looks like it won't open).
+  const toggleAppFromDock = (id: string): void => {
+    const now = Date.now();
+    if (now - (lastDockClickRef.current[id] || 0) < 450) {
+      openApp(id);
+      return;
+    }
+    lastDockClickRef.current[id] = now;
+    if (state.showApps[id] && !state.minApps[id] && state.appsZ[id] === state.maxZ) {
+      minimizeApp(id);
+    } else {
+      openApp(id);
+    }
+  };
+
   const renderAppWindows = () => {
     return apps.map((app) => {
       if (!app.desktop) return null;
@@ -275,7 +327,7 @@ export default function Desktop(props: MacActions) {
         close: closeApp,
         setMax: setAppMax,
         setMin: minimizeApp,
-        focus: openApp,
+        focus: focusApp,
       };
 
       return (
@@ -291,7 +343,7 @@ export default function Desktop(props: MacActions) {
   };
 
   const bgStyle: any = {
-    backgroundImage: `url(${dark ? activeWallpaper.night : activeWallpaper.day})`,
+    backgroundImage: `url(${currentWallpaperUrl})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
     filter: `brightness(${(brightness as number) * 0.7 + 50}%)`
@@ -307,10 +359,30 @@ export default function Desktop(props: MacActions) {
 
   return (
     <div
-      className="size-full overflow-hidden bg-center bg-cover"
+      // NOTE: overflow-clip (not overflow-hidden) — the desktop root must NEVER
+      // scroll. overflow:hidden still allows programmatic/focus scrolling, and
+      // Terminal's autoFocus'd input scrolled the whole desktop up out of view.
+      // overflow:clip forbids all scrolling while clipping identically.
+      className="size-full overflow-clip bg-center bg-cover"
       style={bgStyle}
       onContextMenu={handleContextMenu}
     >
+      {/* Cross-fade layer: previous wallpaper fading out over the new one */}
+      {fadingUrl && (
+        <motion.div
+          key={fadingUrl}
+          className="fixed inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url(${fadingUrl})`,
+            filter: `brightness(${(brightness as number) * 0.7 + 50}%)`,
+            zIndex: -1,
+            pointerEvents: "none",
+          }}
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 0 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+        />
+      )}
       {/* Top Menu Bar */}
       <TopBar
         title={state.currentTitle}
@@ -420,7 +492,7 @@ export default function Desktop(props: MacActions) {
 
       {/* Dock */}
       <Dock
-        open={openApp}
+        open={toggleAppFromDock}
         showApps={state.showApps}
         showLaunchpad={state.showLaunchpad}
         toggleLaunchpad={toggleLaunchpad}
@@ -448,7 +520,7 @@ export default function Desktop(props: MacActions) {
             YOU DIED
           </div>
           <div className="text-amber-500/70 font-mono text-xs mt-4 tracking-widest uppercase">
-            🔥 Resting at the bonfire...
+            <span className="i-ph:fire" /> Resting at the bonfire...
           </div>
         </div>
       )}

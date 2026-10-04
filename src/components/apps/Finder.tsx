@@ -296,13 +296,13 @@ export default function Finder() {
             style={{
               width: "200px",
               flexShrink: 0,
-              borderRight: "0.5px solid rgba(0,0,0,0.1)",
+              borderRight: "0.5px solid var(--c-border)",
               overflowY: "auto",
               padding: "6px 6px",
             }}
           >
             {items.length === 0 && (
-              <div style={{ fontSize: "11px", color: "rgba(0,0,0,0.35)", padding: "8px" }}>
+              <div style={{ fontSize: "11px", color: "var(--c-text-tertiary)", padding: "8px" }}>
                 Empty
               </div>
             )}
@@ -333,7 +333,7 @@ export default function Finder() {
                     cursor: "default",
                     userSelect: "none",
                     background: highlight ? "rgba(0,122,255,0.9)" : "transparent",
-                    color: highlight ? "#fff" : "#1c1c1e",
+                    color: highlight ? "#fff" : "var(--c-text)",
                     transition: "background 0.1s ease",
                   }}
                   onMouseEnter={(e) => {
@@ -362,7 +362,7 @@ export default function Finder() {
                       style={{
                         width: "11px",
                         height: "11px",
-                        backgroundColor: highlight ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.35)",
+                        backgroundColor: highlight ? "rgba(255,255,255,0.9)" : "var(--c-text-tertiary)",
                         WebkitMask: `url(/img/icons/sf-icons/caret-right.svg) center/contain no-repeat`,
                         mask: `url(/img/icons/sf-icons/caret-right.svg) center/contain no-repeat`,
                       }}
@@ -381,9 +381,9 @@ export default function Finder() {
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(90px, 1fr))",
-        gap: "4px",
-        padding: "16px",
+        gridTemplateColumns: "repeat(auto-fill, minmax(104px, 1fr))",
+        gap: "8px",
+        padding: "20px",
       }}
     >
       {sorted.map((item, i) => (
@@ -420,18 +420,21 @@ export default function Finder() {
               (e.currentTarget as HTMLElement).style.background = "transparent";
           }}
         >
-          <FileIcon item={item} size={52} />
+          <FileIcon item={item} size={64} />
           <span
             style={{
               marginTop: "6px",
-              fontSize: "11px",
+              fontSize: "12px",
               color: "var(--c-text, #1c1c1e)",
               textAlign: "center",
               lineHeight: "1.3",
-              maxWidth: "82px",
+              maxWidth: "96px",
+              minHeight: "31px",
               overflow: "hidden",
               textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
             }}
           >
             {item.name}
@@ -449,8 +452,8 @@ export default function Finder() {
           display: "grid",
           gridTemplateColumns: "1fr 80px 80px 80px",
           padding: "4px 16px",
-          borderBottom: "0.5px solid rgba(0,0,0,0.1)",
-          background: "rgba(0,0,0,0.03)",
+          borderBottom: "0.5px solid var(--c-border)",
+          background: "var(--c-bg-secondary)",
         }}
       >
         {["Name", "Date", "Size", "Kind"].map((h) => (
@@ -464,7 +467,7 @@ export default function Finder() {
               fontSize: "11px",
               fontWeight: sortKey === h.toLowerCase() ? 600 : 400,
               color:
-                sortKey === h.toLowerCase() ? "#007AFF" : "rgba(0,0,0,0.5)",
+                sortKey === h.toLowerCase() ? "#007AFF" : "var(--c-text-tertiary)",
               textAlign: "left",
               padding: 0,
             }}
@@ -509,13 +512,13 @@ export default function Finder() {
               {item.name}
             </span>
           </div>
-          <span style={{ fontSize: "11px", color: "rgba(0,0,0,0.5)", alignSelf: "center" }}>
+          <span style={{ fontSize: "11px", color: "var(--c-text-tertiary)", alignSelf: "center" }}>
             {item.date}
           </span>
-          <span style={{ fontSize: "11px", color: "rgba(0,0,0,0.5)", alignSelf: "center" }}>
+          <span style={{ fontSize: "11px", color: "var(--c-text-tertiary)", alignSelf: "center" }}>
             {item.size ?? "—"}
           </span>
-          <span style={{ fontSize: "11px", color: "rgba(0,0,0,0.5)", alignSelf: "center" }}>
+          <span style={{ fontSize: "11px", color: "var(--c-text-tertiary)", alignSelf: "center" }}>
             {item.kind === "folder" ? "Folder" : item.ext?.toUpperCase() ?? "File"}
           </span>
         </motion.div>
@@ -538,7 +541,7 @@ export default function Finder() {
         cursor: "pointer",
         padding: "4px 7px",
         fontSize: "14px",
-        color: active ? "#007AFF" : "rgba(0,0,0,0.55)",
+        color: active ? "#0A84FF" : "var(--c-text-secondary)",
         transition: "background 0.12s ease, border-color 0.12s ease, color 0.12s ease",
         lineHeight: 1,
       }}
@@ -554,7 +557,8 @@ export default function Finder() {
         flexDirection: "column",
         height: "100%",
 
-        background: "rgba(248,248,248,0.98)",
+        background: "var(--c-bg)",
+        color: "var(--c-text)",
         borderRadius: "0 0 14px 14px",
         overflow: "hidden",
       }}
@@ -566,8 +570,8 @@ export default function Finder() {
           alignItems: "center",
           gap: "8px",
           padding: "6px 12px",
-          borderBottom: "0.5px solid rgba(0,0,0,0.1)",
-          background: "rgba(245,245,247,0.98)",
+          borderBottom: "0.5px solid var(--c-border)",
+          background: "var(--c-bg-secondary)",
           backdropFilter: "blur(20px)",
           flexWrap: isMobile ? "wrap" : "nowrap",
         }}
@@ -617,7 +621,7 @@ export default function Finder() {
             flex: 1,
             fontSize: "13px",
             fontWeight: 600,
-            color: "#1c1c1e",
+            color: "var(--c-text)",
             textAlign: "center",
           }}
         >
@@ -625,7 +629,7 @@ export default function Finder() {
         </span>
 
         {/* View mode */}
-        <div style={{ display: "flex", gap: "2px" }}>
+        <div style={{ display: "flex", gap: "2px", background: "var(--c-bg-tertiary)", borderRadius: "8px", padding: "2px" }}>
           {toolbarBtn("Icons", "⊞", viewMode === "icons", () => setViewMode("icons"))}
           {toolbarBtn("List", "≡", viewMode === "list", () => setViewMode("list"))}
           {toolbarBtn("Columns", "⊟", viewMode === "columns", () => setViewMode("columns"))}
@@ -637,13 +641,13 @@ export default function Finder() {
           onChange={(e) => setSortKey(e.target.value as SortKey)}
           style={{
             fontSize: "11px",
-            background: "rgba(0,0,0,0.06)",
+            background: "var(--c-bg-tertiary)",
             border: "none",
             borderRadius: "5px",
             padding: "3px 6px",
             cursor: "pointer",
             outline: "none",
-            color: "#1c1c1e",
+            color: "var(--c-text)",
           }}
         >
           <option value="name">Name</option>
@@ -657,7 +661,7 @@ export default function Finder() {
           style={{
             display: "flex",
             alignItems: "center",
-            background: "rgba(0,0,0,0.06)",
+            background: "var(--c-bg-tertiary)",
             borderRadius: "6px",
             padding: "2px 8px",
             gap: "4px",
@@ -673,8 +677,8 @@ export default function Finder() {
               border: "none",
               outline: "none",
               fontSize: "12px",
-              width: "100px",
-              color: "#1c1c1e",
+              width: "130px",
+              color: "var(--c-text)",
             }}
           />
         </div>
@@ -687,8 +691,8 @@ export default function Finder() {
           alignItems: "center",
           gap: "2px",
           padding: "3px 12px",
-          borderBottom: "0.5px solid rgba(0,0,0,0.08)",
-          background: "rgba(245,245,247,0.95)",
+          borderBottom: "0.5px solid var(--c-border)",
+          background: "var(--c-bg-secondary)",
           overflowX: "auto",
         }}
       >
@@ -713,7 +717,7 @@ export default function Finder() {
                 padding: "2px 10px",
                 fontSize: "12px",
                 fontWeight: isActive ? 600 : 400,
-                color: "#1c1c1e",
+                color: "var(--c-text)",
                 cursor: "pointer",
                 whiteSpace: "nowrap",
               }}
@@ -730,7 +734,7 @@ export default function Finder() {
         {(!isMobile || mobileView === "sidebar") && (
           <div
             style={{
-              width: isMobile ? "100%" : "160px",
+              width: isMobile ? "100%" : "180px",
               flexShrink: 0,
               borderRight: isMobile ? "none" : "var(--lg-border)",
               background: "var(--lg-bg-tinted)",
@@ -746,7 +750,7 @@ export default function Finder() {
                 style={{
                   fontSize: "10px",
                   fontWeight: 700,
-                  color: "rgba(0,0,0,0.35)",
+                  color: "var(--c-text-tertiary)",
                   letterSpacing: "0.5px",
                   textTransform: "uppercase",
                   padding: "8px 12px 2px",
@@ -767,7 +771,7 @@ export default function Finder() {
                       alignItems: "center",
                       gap: "6px",
                       padding: "5px 12px",
-                      background: active ? "rgba(0,122,255,0.13)" : "transparent",
+                      background: active ? "var(--c-bg-tertiary)" : "transparent",
                       border: "none",
                       cursor: "pointer",
                       borderRadius: "6px",
@@ -777,21 +781,6 @@ export default function Finder() {
                       position: "relative",
                     }}
                   >
-                    {active && (
-                      <motion.div
-                        layoutId="finder-sidebar-indicator"
-                        style={{
-                          position: "absolute",
-                          left: 0,
-                          top: "18%",
-                          bottom: "18%",
-                          width: "2.5px",
-                          borderRadius: "2px",
-                          background: "#007AFF",
-                        }}
-                        transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                      />
-                    )}
                     {item.tagColor ? (
                       <div style={{ width: 10, height: 10, borderRadius: "50%", background: item.tagColor, flexShrink: 0 }} />
                     ) : (
@@ -800,7 +789,7 @@ export default function Finder() {
                           width: "14px",
                           height: "14px",
                           flexShrink: 0,
-                          backgroundColor: active ? "#007AFF" : "rgba(0,0,0,0.5)",
+                          backgroundColor: "var(--accent-blue)",
                           WebkitMask: `url(${item.icon}) center/contain no-repeat`,
                           mask: `url(${item.icon}) center/contain no-repeat`,
                         }}
@@ -809,7 +798,7 @@ export default function Finder() {
                     <span
                       style={{
                         fontSize: "12px",
-                        color: active ? "#007AFF" : "#1c1c1e",
+                        color: "var(--c-text)",
                         fontWeight: active ? 600 : 400,
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -858,10 +847,10 @@ export default function Finder() {
           alignItems: "center",
           gap: "4px",
           padding: "4px 12px",
-          borderTop: "0.5px solid rgba(0,0,0,0.08)",
-          background: "rgba(245,245,247,0.98)",
+          borderTop: "0.5px solid var(--c-border)",
+          background: "var(--c-bg-secondary)",
           fontSize: "11px",
-          color: "rgba(0,0,0,0.5)",
+          color: "var(--c-text-tertiary)",
         }}
       >
         {pathStack.map((seg, i) => {
@@ -884,7 +873,7 @@ export default function Finder() {
                   border: "none",
                   cursor: "pointer",
                   fontSize: "11px",
-                  color: i === pathStack.length - 1 ? "#1c1c1e" : "#007AFF",
+                  color: i === pathStack.length - 1 ? "var(--c-text)" : "#007AFF",
                   fontWeight: i === pathStack.length - 1 ? 500 : 400,
                   padding: "0 2px",
                 }}

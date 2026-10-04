@@ -323,11 +323,33 @@ const Safari = ({ width = 800 }: SafariProps) => {
             state.goURL === "" ? (
             <NavPage setGoURL={setGoURL} width={width} />
             ) : (
+            <div style={{ position: "relative", width: "100%", height: "100%" }}>
             <iframe
                 title={"Safari clone browser"}
                 src={state.goURL}
                 style={{ width: "100%", height: "100%", border: "none", background: "#fff" }}
             />
+            <a
+                href={state.goURL}
+                target="_blank"
+                rel="noreferrer"
+                title="If the site refuses to load inside Safari, open it in a real tab"
+                style={{
+                    position: "absolute",
+                    bottom: 12,
+                    right: 12,
+                    background: "rgba(28,28,30,0.85)",
+                    color: "#fff",
+                    fontSize: 12,
+                    padding: "6px 12px",
+                    borderRadius: 8,
+                    textDecoration: "none",
+                    backdropFilter: "blur(8px)",
+                }}
+            >
+                ↗ Open in new tab
+            </a>
+            </div>
             )
         ) : (
             <NoInternetPage />

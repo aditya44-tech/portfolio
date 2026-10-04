@@ -3,3 +3,6 @@
 @import "./component.css";
 @import "./bear.css";
 @import "./typora.css";
+/* Canonical macOS theme (fonts, colors, glass, radii, motion) — imported
+   last so its variables win over legacy duplicates. */
+@import "./theme.css";

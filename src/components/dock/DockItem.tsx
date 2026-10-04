@@ -38,9 +38,10 @@ const useDockHoverAnimation = (
   const beyondTheDistanceLimit = distanceLimit + 1;
 
   const distance = useMotionValue(beyondTheDistanceLimit);
+  // Slightly bouncier magnification spring (was overdamped 1700/90).
   const widthPX = useSpring(useTransform(distance, distanceInput, widthOutput), {
-    stiffness: 1700,
-    damping: 90
+    stiffness: 1300,
+    damping: 60
   });
 
   const width = useTransform(widthPX, (width) => `${width / 16}rem`);

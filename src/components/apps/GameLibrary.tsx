@@ -1,295 +1,767 @@
 import React, { useState } from "react";
-import { gamesData, allAchievements, type GameItem } from "~/data/games";
+import { gamesData, type GameItem } from "~/data/games";
+import SafeImage from "~/components/SafeImage";
+
+/* ------------------------------------------------------------------
+   Steam — faithful Steam-client replica (own code, own layout; Steam
+   logo used nominatively as the app mark). Library: collections
+   sidebar, hero + blue PLAY + stats, links row, post-game summary
+   (achievements), screenshots, activity, friends. Rendered in the
+   Mac system font. Icons only — no emojis.
+   Palette: chrome #171a21 · main #1b2838 · accent #66c0f4 ·
+   play blue #06BFFF→#2D73FF · discount green #a4d007 on #4c6b22.
+------------------------------------------------------------------- */
+
+type TopTab = "store" | "library" | "community" | "profile";
+type StoreTab = "trending" | "sellers" | "upcoming" | "specials";
+
+const AVATAR = "https://avatars.githubusercontent.com/u/239353027?v=4";
+const USER = "Aditya";
+const MAC_FONT = '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", sans-serif';
+
+const FRIENDS = [
+  { name: "Aarav", hrs: 47, color: "#5b8dd9" },
+  { name: "Vihaan", hrs: 23, color: "#8e6cc9" },
+  { name: "Ishaan", hrs: 112, color: "#4fae6a" },
+];
+
+const LAST_PLAYED = ["Today", "Yesterday", "2 days ago", "Last week"];
+
+/* Deterministic demo prices (₹) derived from the game id. */
+const PRICES = [499, 799, 999, 1299, 1499, 1999, 2499, 2999];
+function priceFor(id: string) {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  const base = PRICES[h % PRICES.length];
+  const disc = [0, 0, 0, 25, 40, 50, 67, 75][h % 8];
+  return { base, disc, final: Math.round((base * (100 - disc)) / 100) };
+}
+const inr = (n: number) => "₹ " + n.toLocaleString("en-IN");
+
+function PriceBlock({ id, big }: { id: string; big?: boolean }) {
+  const p = priceFor(id);
+  if (!p.disc)
+    return <span style={{ fontSize: big ? 15 : 12, color: "#acdbf5" }}>{inr(p.final)}</span>;
+  return (
+    <div className="flex items-stretch">
+      <span
+        className="font-bold self-center"
+        style={{
+          background: "#4c6b22",
+          color: "#a4d007",
+          fontSize: big ? 20 : 15,
+          padding: big ? "6px 8px" : "4px 6px",
+        }}
+      >
+        -{p.disc}%
+      </span>
+      <span style={{ background: "#344654", padding: big ? "3px 10px 3px 8px" : "2px 8px 2px 6px" }}>
+        <span className="line-through block" style={{ fontSize: big ? 12 : 10, color: "#738895" }}>
+          {inr(p.base)}
+        </span>
+        <span className="block" style={{ fontSize: big ? 15 : 12, color: "#acdbf5" }}>
+          {inr(p.final)}
+        </span>
+      </span>
+    </div>
+  );
+}
+
+/* Achievement art: icon-font class when the data gives one, else plain text. */
+function AchievementIcon({ icon }: { icon: string }) {
+  if (icon.startsWith("i-")) {
+    return <span className={`${icon} flex-shrink-0`} style={{ fontSize: 28, color: "#c7d5e0" }} />;
+  }
+  return <span className="flex-shrink-0" style={{ fontSize: 28 }}>{icon}</span>;
+}
+
+function GameRow({ x, active, onPick }: { x: GameItem; active: boolean; onPick: () => void }) {
+  return (
+    <button
+      onClick={onPick}
+      className="w-full flex items-center gap-2 pl-5 pr-2 text-left"
+      style={{
+        paddingTop: 3,
+        paddingBottom: 3,
+        background: active ? "linear-gradient(90deg,#2a475e,#3d6b8f)" : "transparent",
+      }}
+    >
+      <SafeImage
+        src={x.coverImage}
+        alt=""
+        className="object-cover rounded-[1px] flex-shrink-0"
+        style={{ width: 16, height: 16 }}
+      />
+      <span
+        className="truncate hover:text-white"
+        style={{ fontSize: 12, color: active ? "#ffffff" : "#8f98a0" }}
+      >
+        {x.title}
+      </span>
+    </button>
+  );
+}
 
 export default function GameLibrary() {
-  const [selectedGame, setSelectedGame] = useState<GameItem>(gamesData[0]);
-  const [activeTab, setActiveTab] = useState<"store" | "library" | "community" | "profile">("library");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [tab, setTab] = useState<TopTab>("library");
+  const [storeTab, setStoreTab] = useState<StoreTab>("trending");
+  const [feat, setFeat] = useState(0);
+  const [shot, setShot] = useState<number | null>(null);
+  const [selected, setSelected] = useState<GameItem>(gamesData[0]);
+  const [query, setQuery] = useState("");
+  const [storeQuery, setStoreQuery] = useState("");
 
-  const filteredGames = gamesData.filter((g) =>
-    g.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    g.genre.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const fg = gamesData[feat % gamesData.length];
+  const specials = gamesData.filter((x) => priceFor(x.id).disc > 0);
+  const offerGames = (specials.length >= 3 ? specials : gamesData).slice(0, 3);
+
+  const storeLists: Record<StoreTab, GameItem[]> = {
+    trending: gamesData.slice(0, 5),
+    sellers: [...gamesData].reverse().slice(0, 5),
+    upcoming: [...gamesData].sort((a, b) => b.releaseYear - a.releaseYear).slice(0, 5),
+    specials: (specials.length ? specials : gamesData).slice(0, 5),
+  };
+
+  /* Library collections */
+  const favPool = gamesData.filter((x) => x.userRating >= 9);
+  const favorites = favPool.length >= 2 ? favPool : gamesData.slice(0, 3);
+  const genres = Array.from(new Set(gamesData.map((x) => x.genre)));
+  const [open, setOpen] = useState<Record<string, boolean>>(() => {
+    const o: Record<string, boolean> = { favorites: true };
+    genres.forEach((gn, i) => {
+      o[gn] = i === 0;
+    });
+    return o;
+  });
+  const toggle = (k: string) => setOpen((o) => ({ ...o, [k]: !o[k] }));
+
+  const matches = (x: GameItem) =>
+    (x.title + " " + x.genre + " " + x.tags.join(" ")).toLowerCase().includes(query.toLowerCase());
+
+  const storeHits =
+    storeQuery.trim() === ""
+      ? null
+      : gamesData.filter((x) =>
+          (x.title + " " + x.genre + " " + x.tags.join(" "))
+            .toLowerCase()
+            .includes(storeQuery.toLowerCase())
+        );
+
+  const unlocked = selected.achievements.length;
+  const totalAch = unlocked + 4;
+  const achPct = Math.round((unlocked / totalAch) * 100);
+  const lastPlayed = LAST_PLAYED[selected.playtimeHours % 4];
 
   return (
-    <div className="flex flex-col h-full select-none font-sans overflow-hidden bg-[#1b2838] text-[#c7d5e0]">
-      {/* Top Steam Nav Bar */}
-      <div className="bg-[#171a21] h-[72px] flex items-center px-4 flex-shrink-0 justify-between">
-        <div className="flex items-center gap-6 h-full">
-          <div className="flex items-center gap-2 text-2xl font-bold tracking-wider text-white">
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
-              <path d="M12 0C5.372 0 0 5.373 0 12c0 4.966 3.023 9.219 7.336 10.99l2.766-4.004c-.035-.19-.057-.384-.057-.584 0-1.895 1.54-3.435 3.437-3.435 1.096 0 2.072.518 2.71 1.328l4.332-1.874V14.39c0-3.155-2.558-5.714-5.714-5.714-3.155 0-5.714 2.56-5.714 5.715 0 .28.026.554.072.822L6.113 19.34C2.52 17.844 0 14.214 0 12 0 5.373 5.373 0 12 0c6.628 0 12 5.373 12 12 0 6.628-5.372 12-12 12-1.226 0-2.408-.184-3.53-.52l3.036-4.396c.162.012.325.02.492.02 1.897 0 3.438-1.54 3.438-3.435 0-.203-.024-.4-.06-.593l4.316-1.866v-.025C19.7 7.747 16.326 4.37 12 4.37c-4.327 0-7.7 3.377-7.7 7.703 0 .445.04.88.113 1.303l-3.328 4.815c-1.026-1.573-1.62-3.473-1.62-5.52 0-5.523 4.478-10 10-10s10 4.477 10 10-4.478 10-10 10c-.392 0-.776-.027-1.155-.072zM15.438 15.65c-.868 0-1.572-.705-1.572-1.573 0-.868.704-1.57 1.572-1.57s1.57.702 1.57 1.57c0 .868-.702 1.573-1.57 1.573zm-6.246 3.104l-1.954-2.83c-.705.215-1.196.864-1.196 1.642 0 .947.768 1.716 1.716 1.716.593 0 1.11-.3 1.434-.528z" />
-            </svg>
-            STEAM
+    <div
+      className="flex flex-col h-full overflow-hidden select-none"
+      style={{ background: "#1b2838", color: "#c7d5e0", fontFamily: MAC_FONT }}
+    >
+      {/* Client chrome */}
+      <div className="flex-shrink-0" style={{ background: "#171a21" }}>
+        <div
+          className="flex items-center gap-3 px-3"
+          style={{ height: 24, fontSize: 11, color: "#8f98a0" }}
+        >
+          <img
+            src="img/icons/steam-logo.svg"
+            alt="Steam"
+            draggable={false}
+            className="flex-shrink-0"
+            style={{ width: 20, height: 20 }}
+          />
+          <span className="font-semibold" style={{ color: "#b8b6b4" }}>Steam</span>
+          <span>View</span>
+          <span>Friends</span>
+          <span>Games</span>
+          <span>Help</span>
+        </div>
+        <div className="flex items-center px-3 gap-3" style={{ height: 46 }}>
+          <div className="flex items-center gap-1 text-xl" style={{ color: "#3d4450" }}>
+            <button className="px-1 hover:text-white">‹</button>
+            <button className="px-1 hover:text-white">›</button>
           </div>
-          <div className="flex h-full text-[15px] font-medium tracking-wide">
-            {["store", "library", "community", "profile"].map((tab) => (
+          <div className="flex items-stretch font-bold h-full" style={{ fontSize: 14, letterSpacing: "0.03em" }}>
+            {(["store", "library", "community", "profile"] as TopTab[]).map((t) => (
               <button
-                key={tab}
-                onClick={() => setActiveTab(tab as any)}
-                className={`px-4 h-full uppercase hover:text-white transition-colors ${
-                  activeTab === tab ? "text-white border-b-2 border-[#1a9fff]" : "text-[#b8b6b4]"
-                }`}
+                key={t}
+                onClick={() => setTab(t)}
+                className="uppercase transition-colors hover:text-white"
+                style={{
+                  color: tab === t ? "#ffffff" : "#b8b6b4",
+                  borderBottom: tab === t ? "2px solid #66c0f4" : "2px solid transparent",
+                  paddingLeft: 12,
+                  paddingRight: 12,
+                }}
               >
-                {tab === "profile" ? "Aditya" : tab}
+                {t === "profile" ? USER : t}
               </button>
             ))}
           </div>
-        </div>
-        <div className="flex items-center gap-4 text-xs font-medium">
-          <div className="bg-[#5c7e10] text-white px-3 py-1.5 rounded-sm hover:bg-[#799905] cursor-pointer shadow-sm">
-            Install Steam
-          </div>
-          <div className="flex items-center gap-2 text-[#b8b6b4] hover:text-white cursor-pointer">
-            <div className="w-5 h-5 bg-[#3d4450] rounded-sm flex items-center justify-center">
-              ✉
-            </div>
-          </div>
-          <div className="flex items-center gap-2 hover:text-white cursor-pointer">
-            <span className="text-[#b8b6b4]">aditya44</span>
-            <div className="w-7 h-7 rounded-sm bg-blue-500 overflow-hidden">
-              <img src="https://avatars.githubusercontent.com/u/101980860?v=4" alt="avatar" />
-            </div>
-            <span className="text-[10px] text-gray-500">▼</span>
+          <div className="ml-auto flex items-center gap-3 text-xs">
+            <span style={{ color: "#b8b6b4" }}>{USER} ▾</span>
+            <SafeImage src={AVATAR} alt="profile" className="object-cover" style={{ width: 28, height: 28 }} />
+            <span className="flex items-center gap-2.5 ml-1" style={{ color: "#67707b", fontSize: 14 }}>
+              <button className="hover:text-white">–</button>
+              <button className="hover:text-white">▢</button>
+              <button className="hover:text-white">✕</button>
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Library View */}
-      {activeTab === "library" && (
-        <div className="flex-1 flex overflow-hidden bg-[#1e1e24]">
-          {/* Left Sidebar (Game List) */}
-          <div className="w-[280px] bg-[#1e1e24] flex-shrink-0 flex flex-col border-r border-[#2a2a33]">
-            {/* Search and Filters */}
-            <div className="p-3 bg-[#1e1e24] sticky top-0 z-10">
-              <div className="flex bg-[#282d33] border border-[#30363e] rounded-sm items-center px-2 py-1 focus-within:border-[#1a9fff] transition-colors">
-                <span className="text-gray-400 text-xs mr-2">🔍</span>
+      {/* ============================== STORE ============================== */}
+      {tab === "store" && (
+        <div className="flex-1 overflow-y-auto" style={{ background: "linear-gradient(180deg,#1b2838 0%,#1b2838 300px,#16202d 100%)" }}>
+          <div className="mx-auto px-4 pb-10" style={{ maxWidth: 948 }}>
+            {/* Store nav */}
+            <div
+              className="flex items-center gap-5 mt-4 px-4"
+              style={{
+                height: 42,
+                background: "linear-gradient(90deg,#3d4450,#23465f 60%,#2a475e)",
+                fontSize: 13,
+                fontWeight: 600,
+              }}
+            >
+              {["Your Store", "New & Noteworthy", "Categories", "Points Shop", "News", "Labs"].map(
+                (l, i) => (
+                  <button
+                    key={l}
+                    className="hover:text-white whitespace-nowrap"
+                    style={{ color: i === 0 ? "#fff" : "#dcdedf" }}
+                  >
+                    {l}
+                  </button>
+                )
+              )}
+              <div className="ml-auto flex items-center gap-2 flex-shrink-0">
                 <input
-                  type="text"
-                  placeholder="Search by name or tag"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-transparent border-none text-xs text-white focus:outline-none w-full"
+                  value={storeQuery}
+                  onChange={(e) => setStoreQuery(e.target.value)}
+                  placeholder="search"
+                  className="border-none focus:outline-none text-white px-2"
+                  style={{ background: "#316282", border: "1px solid #0e1c2b", fontSize: 12, height: 27, width: 150, borderRadius: 3 }}
                 />
+                <span className="i-ph:magnifying-glass" style={{ fontSize: 15, color: "#c7d5e0" }} />
               </div>
             </div>
 
-            {/* List */}
-            <div className="flex-1 overflow-y-auto pb-4">
-              <div className="px-3 py-1 text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-1 mb-1 bg-[#1e1e24] sticky top-0 shadow-[0_4px_4px_rgba(0,0,0,0.1)]">
-                Favorites ({filteredGames.length})
-              </div>
-              <div className="flex flex-col">
-                {filteredGames.map((game) => {
-                  const isSelected = selectedGame.id === game.id;
-                  return (
+            {storeHits !== null ? (
+              <div className="mt-4">
+                <div className="font-bold text-white tracking-widest" style={{ fontSize: 12 }}>
+                  {storeHits.length} RESULT{storeHits.length === 1 ? "" : "S"} FOR “{storeQuery.toUpperCase()}”
+                </div>
+                <div className="mt-2 flex flex-col gap-1">
+                  {storeHits.map((x) => (
                     <button
-                      key={game.id}
-                      onClick={() => setSelectedGame(game)}
-                      className={`text-left flex items-center px-4 py-1.5 group transition-colors ${
-                        isSelected ? "bg-[#3d4450]" : "hover:bg-[#2a2a33]"
-                      }`}
+                      key={x.id}
+                      onClick={() => { setSelected(x); setTab("library"); }}
+                      className="flex items-center gap-3 p-2 text-left hover:bg-[#2a475e]"
+                      style={{ background: "rgba(0,0,0,0.2)" }}
                     >
-                      <div className={`w-4 h-4 mr-3 flex-shrink-0 flex items-center justify-center opacity-80 ${
-                        isSelected ? "opacity-100" : "group-hover:opacity-100"
-                      }`}>
-                        <img src={game.cover} alt="icon" className="w-full h-full object-cover" />
-                      </div>
-                      <span className={`text-[13px] truncate ${
-                        isSelected ? "text-white font-semibold" : "text-[#8f98a0]"
-                      }`}>
-                        {game.title}
+                      <SafeImage src={x.heroImage} alt="" ratio="184 / 69" className="object-cover flex-shrink-0" style={{ width: 184, height: 69 }} />
+                      <span className="flex-1 min-w-0">
+                        <span className="block text-white truncate" style={{ fontSize: 14 }}>{x.title}</span>
+                        <span className="block truncate" style={{ fontSize: 11, color: "#8f98a0" }}>
+                          {x.genre} · {x.tags.slice(0, 3).join(", ")}
+                        </span>
                       </span>
+                      <PriceBlock id={x.id} />
                     </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Main Content Area (Game Details) */}
-          <div className="flex-1 flex flex-col overflow-y-auto bg-[#171a21] relative">
-            
-            {/* Background Blur Image */}
-            <div className="absolute inset-0 pointer-events-none z-0">
-               <img src={selectedGame.banner} className="w-full h-full object-cover opacity-20 blur-sm" alt="bg" />
-               <div className="absolute inset-0 bg-gradient-to-b from-[#1b2838]/80 via-[#171a21]/95 to-[#171a21]" />
-            </div>
-
-            <div className="relative z-10 flex flex-col h-full">
-              {/* Hero Banner Area */}
-              <div className="w-full h-[320px] flex-shrink-0 relative">
-                <img src={selectedGame.banner} alt={selectedGame.title} className="w-full h-full object-cover" style={{ maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)' }} />
-                
-                {/* Title Overlay */}
-                <div className="absolute bottom-6 left-8 drop-shadow-lg">
-                  <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>
-                    {selectedGame.title.split(":")[0]}
-                  </h1>
-                  {selectedGame.title.includes(":") && (
-                    <h2 className="text-2xl font-bold text-[#c7d5e0] mt-1" style={{ textShadow: '0 2px 6px rgba(0,0,0,0.8)' }}>
-                      {selectedGame.title.split(":")[1]}
-                    </h2>
+                  ))}
+                  {storeHits.length === 0 && (
+                    <div className="py-8 text-center text-xs" style={{ color: "#5a6a7a" }}>
+                      No games match that search.
+                    </div>
                   )}
                 </div>
               </div>
-
-              {/* Action Bar */}
-              <div className="px-8 -mt-6 relative z-20 flex gap-4">
-                <button className="bg-gradient-to-r from-[#47bfff] to-[#1a44c2] hover:from-[#47bfff] hover:to-[#2153e9] text-white px-10 py-3 rounded-[3px] text-lg font-bold flex flex-col items-center justify-center shadow-lg transform transition active:scale-95">
-                  PLAY
-                </button>
-                <div className="flex flex-1 bg-black/40 backdrop-blur-md rounded-[3px] border border-white/5 px-6 py-2 items-center justify-between">
-                  <div className="flex gap-12">
-                    <div>
-                      <div className="text-[11px] text-[#8f98a0] font-semibold tracking-wider">PLAY TIME</div>
-                      <div className="text-xl text-white font-light">{selectedGame.playtimeHours} hours</div>
+            ) : (
+              <>
+                {/* Featured */}
+                <div className="mt-5 font-bold text-white tracking-widest" style={{ fontSize: 12 }}>
+                  FEATURED & RECOMMENDED
+                </div>
+                <div className="relative mt-2 shadow-2xl" style={{ background: "#0f1922" }}>
+                  <div className="flex">
+                    <div className="flex-1 min-w-0">
+                      <SafeImage
+                        key={fg.id + (shot ?? "h")}
+                        src={shot !== null && fg.screenshots.length ? fg.screenshots[shot % fg.screenshots.length] : fg.heroImage}
+                        alt={fg.title}
+                        ratio="616 / 353"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
-                    <div>
-                      <div className="text-[11px] text-[#8f98a0] font-semibold tracking-wider">LAST PLAYED</div>
-                      <div className="text-xl text-white font-light">Today</div>
-                    </div>
-                    <div>
-                      <div className="text-[11px] text-[#8f98a0] font-semibold tracking-wider">ACHIEVEMENTS</div>
-                      <div className="flex items-center gap-2 mt-1">
-                        <div className="w-32 h-2 bg-[#2a2a33] rounded-full overflow-hidden">
-                          <div className="h-full bg-[#1a9fff]" style={{ width: '100%' }}></div>
-                        </div>
-                        <div className="text-sm text-white font-light">{selectedGame.achievements.length}/{selectedGame.achievements.length}</div>
+                    <div className="flex-shrink-0 p-3 flex flex-col" style={{ width: 252 }}>
+                      <div className="text-white leading-tight" style={{ fontSize: 19 }}>{fg.title}</div>
+                      <div className="grid grid-cols-2 gap-1.5 mt-2">
+                        {fg.screenshots.slice(0, 4).map((s, i) => (
+                          <div
+                            key={i}
+                            onMouseEnter={() => setShot(i)}
+                            onMouseLeave={() => setShot(null)}
+                            className="cursor-pointer"
+                          >
+                            <SafeImage
+                              src={s}
+                              alt=""
+                              ratio="16 / 9"
+                              className="w-full object-cover"
+                              style={{ height: 62, opacity: shot === i ? 1 : 0.65 }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-auto pt-2" style={{ fontSize: 12, color: "#acdbf5" }}>
+                        Now Available
+                      </div>
+                      <div className="mt-1 flex items-center justify-between">
+                        <span style={{ fontSize: 11, color: "#8f98a0" }}>Win · Mac · Linux</span>
+                        <PriceBlock id={fg.id} />
                       </div>
                     </div>
                   </div>
-                  
-                  <div className="flex gap-2">
-                    <button className="bg-[#2a2a33] hover:bg-[#3d4450] text-[#c7d5e0] px-3 py-1.5 rounded-[3px] text-sm flex items-center transition">
-                      ⚙️ Manage
+                  <button
+                    onClick={() => { setFeat((f) => (f + gamesData.length - 1) % gamesData.length); setShot(null); }}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 text-white"
+                    style={{ background: "rgba(0,0,0,0.45)", fontSize: 26, padding: "14px 8px" }}
+                  >
+                    ‹
+                  </button>
+                  <button
+                    onClick={() => { setFeat((f) => (f + 1) % gamesData.length); setShot(null); }}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-white"
+                    style={{ background: "rgba(0,0,0,0.45)", fontSize: 26, padding: "14px 8px" }}
+                  >
+                    ›
+                  </button>
+                </div>
+                <div className="flex justify-center gap-1.5 mt-2">
+                  {gamesData.map((x, i) => (
+                    <button
+                      key={x.id}
+                      onClick={() => { setFeat(i); setShot(null); }}
+                      className="rounded-sm"
+                      style={{
+                        width: 18,
+                        height: 5,
+                        background: i === feat % gamesData.length ? "#7cb8e4" : "#3d5a73",
+                      }}
+                    />
+                  ))}
+                </div>
+
+                {/* Special offers */}
+                <div className="mt-6 flex items-center justify-between">
+                  <div className="font-bold text-white tracking-widest" style={{ fontSize: 12 }}>
+                    SPECIAL OFFERS
+                  </div>
+                  <button
+                    className="rounded-sm"
+                    style={{ border: "1px solid #4d6b83", color: "#c7d5e0", fontSize: 11, padding: "3px 12px", background: "rgba(0,0,0,0.2)" }}
+                  >
+                    Browse More
+                  </button>
+                </div>
+                <div className="grid grid-cols-3 gap-2.5 mt-2">
+                  {offerGames.map((x) => (
+                    <button
+                      key={x.id}
+                      onClick={() => { setSelected(x); setTab("library"); }}
+                      className="text-left shadow-lg"
+                      style={{ background: "#0f1922" }}
+                    >
+                      <SafeImage src={x.heroImage} alt={x.title} ratio="16 / 8" className="w-full object-cover" style={{ height: 118 }} />
+                      <div className="p-2.5">
+                        <div className="text-white truncate" style={{ fontSize: 13 }}>MIDWEEK DEAL</div>
+                        <div className="truncate" style={{ fontSize: 11, color: "#8f98a0" }}>{x.title}</div>
+                        <div className="mt-2"><PriceBlock id={x.id} /></div>
+                      </div>
                     </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Content Grid */}
-              <div className="p-8 grid grid-cols-3 gap-6">
-                
-                {/* Left Column - Main Content */}
-                <div className="col-span-2 space-y-6">
-                  {/* Recent News / Activity */}
-                  <div className="bg-black/30 border border-white/5 rounded p-5">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-[13px] font-bold text-white uppercase tracking-wider">Activity Feed</h3>
-                      <button className="text-[11px] text-[#1a9fff] hover:text-white uppercase tracking-wider">View All</button>
-                    </div>
-                    
-                    <div className="flex gap-4 items-start pb-4 border-b border-white/5">
-                      <div className="w-8 h-8 rounded-full bg-blue-500 overflow-hidden flex-shrink-0">
-                         <img src="https://avatars.githubusercontent.com/u/101980860?v=4" alt="avatar" />
-                      </div>
-                      <div>
-                        <div className="text-[13px] text-white">
-                          <span className="font-bold">Aditya</span> unlocked an achievement
-                        </div>
-                        <div className="mt-2 bg-[#2a2a33] border border-white/10 rounded p-3 flex items-center gap-4 hover:bg-[#30363e] transition cursor-pointer">
-                           <div className="w-12 h-12 bg-black/50 rounded flex items-center justify-center text-2xl">
-                             {selectedGame.achievements[0]?.icon}
-                           </div>
-                           <div>
-                             <div className="text-sm font-bold text-white">{selectedGame.achievements[0]?.title}</div>
-                             <div className="text-[12px] text-[#8f98a0]">{selectedGame.achievements[0]?.description}</div>
-                           </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 text-[13px] text-[#8f98a0] leading-relaxed">
-                      {selectedGame.personalNotes}
-                    </div>
-                  </div>
-
-                  {/* Screenshots */}
-                  <div>
-                    <h3 className="text-[13px] font-bold text-white uppercase tracking-wider mb-4">Screenshots</h3>
-                    <div className="grid grid-cols-2 gap-3">
-                      {selectedGame.screenshots?.map((shot, idx) => (
-                        <div key={idx} className="aspect-video rounded overflow-hidden cursor-pointer hover:opacity-80 transition bg-black">
-                          <img src={shot} alt="screenshot" className="w-full h-full object-cover" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
+                  ))}
                 </div>
 
-                {/* Right Column - Sidebar info */}
-                <div className="space-y-6">
-                  {/* Achievements */}
-                  <div className="bg-black/30 border border-white/5 rounded p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-[13px] font-bold text-white uppercase tracking-wider">Achievements</h3>
-                    </div>
-                    <div className="space-y-2">
-                      {selectedGame.achievements.map((ach) => (
-                        <div key={ach.id} className="flex items-center gap-3 bg-[#2a2a33]/50 p-2 rounded border border-white/5 group hover:bg-[#3d4450] transition">
-                           <div className="w-10 h-10 bg-black/60 rounded flex items-center justify-center text-lg flex-shrink-0 group-hover:scale-110 transition-transform">
-                             {ach.icon}
-                           </div>
-                           <div className="flex-1 min-w-0">
-                             <div className="text-[13px] font-medium text-white truncate">{ach.title}</div>
-                             <div className="text-[11px] text-[#8f98a0] truncate">{ach.rarity}</div>
-                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Details */}
-                  <div className="bg-black/30 border border-white/5 rounded p-4">
-                     <h3 className="text-[13px] font-bold text-white uppercase tracking-wider mb-3">Game Details</h3>
-                     <div className="text-[13px] space-y-2">
-                       <div className="flex justify-between">
-                         <span className="text-[#8f98a0]">Developer</span>
-                         <span className="text-[#1a9fff]">{selectedGame.studio}</span>
-                       </div>
-                       <div className="flex justify-between">
-                         <span className="text-[#8f98a0]">Publisher</span>
-                         <span className="text-[#1a9fff]">{selectedGame.publisher}</span>
-                       </div>
-                       <div className="flex justify-between">
-                         <span className="text-[#8f98a0]">Release Date</span>
-                         <span className="text-white">{selectedGame.releaseYear}</span>
-                       </div>
-                       <div className="flex justify-between">
-                         <span className="text-[#8f98a0]">Features</span>
-                         <span className="text-[#1a9fff]">Single-player</span>
-                       </div>
-                     </div>
-                  </div>
-
-                  {/* Build/Highlights */}
-                  <div className="bg-black/30 border border-white/5 rounded p-4 space-y-3">
-                     <div>
-                       <div className="text-[11px] font-bold text-[#8f98a0] uppercase tracking-wider mb-1">Favorite Boss</div>
-                       <div className="text-[13px] text-white">{selectedGame.favoriteBoss}</div>
-                     </div>
-                     <div>
-                       <div className="text-[11px] font-bold text-[#8f98a0] uppercase tracking-wider mb-1">Favorite Build</div>
-                       <div className="text-[13px] text-white">{selectedGame.favoriteBuild}</div>
-                     </div>
-                  </div>
-
+                {/* Tabbed list */}
+                <div className="mt-6 flex gap-1" style={{ fontSize: 13 }}>
+                  {(
+                    [
+                      ["trending", "New & Trending"],
+                      ["sellers", "Top Sellers"],
+                      ["upcoming", "Popular Upcoming"],
+                      ["specials", "Specials"],
+                    ] as [StoreTab, string][]
+                  ).map(([v, label]) => (
+                    <button
+                      key={v}
+                      onClick={() => setStoreTab(v)}
+                      className="px-3 py-1.5 rounded-t-sm"
+                      style={{
+                        background: storeTab === v ? "#2a475e" : "transparent",
+                        color: storeTab === v ? "#ffffff" : "#4f94bc",
+                      }}
+                    >
+                      {label}
+                    </button>
+                  ))}
                 </div>
-              </div>
-            </div>
+                <div className="flex flex-col" style={{ background: "rgba(0,0,0,0.2)" }}>
+                  {storeLists[storeTab].map((x) => {
+                    const p = priceFor(x.id);
+                    return (
+                      <button
+                        key={x.id}
+                        onClick={() => { setSelected(x); setTab("library"); }}
+                        className="flex items-center gap-3 p-2 text-left hover:bg-[#2a475e]"
+                      >
+                        <SafeImage src={x.heroImage} alt="" ratio="184 / 69" className="object-cover flex-shrink-0" style={{ width: 184, height: 69 }} />
+                        <span className="flex-1 min-w-0">
+                          <span className="block text-white truncate" style={{ fontSize: 14 }}>{x.title}</span>
+                          <span className="flex items-center gap-1" style={{ fontSize: 11, color: "#8f98a0" }}>
+                            <span className="i-ph:star-fill" style={{ fontSize: 10, color: "#66c0f4" }} />
+                            {x.tags.slice(0, 3).join(" · ")}
+                          </span>
+                        </span>
+                        {p.disc > 0 ? (
+                          <PriceBlock id={x.id} />
+                        ) : (
+                          <span style={{ fontSize: 12, color: "#acdbf5" }}>{inr(p.final)}</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
 
-      {/* Other Tabs Placeholder */}
-      {activeTab !== "library" && (
-        <div className="flex-1 flex items-center justify-center bg-[#1e1e24] text-[#8f98a0]">
-          {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} view coming soon...
+      {/* ============================= LIBRARY ============================= */}
+      {tab === "library" && (
+        <div className="flex flex-col flex-1 min-h-0">
+          <div className="flex flex-1 min-h-0">
+            {/* Collections sidebar */}
+            <aside className="flex-shrink-0 flex flex-col" style={{ width: 216, background: "#171a21" }}>
+              <div className="flex items-center justify-between px-3" style={{ height: 40 }}>
+                <span className="flex items-center gap-2 font-semibold" style={{ fontSize: 12, color: "#8f98a0", letterSpacing: "0.04em" }}>
+                  <span className="i-ph:house" style={{ fontSize: 14 }} /> LIBRARY HOME
+                </span>
+                <span className="i-ph:squares-four" style={{ color: "#5a6a7a", fontSize: 14 }} />
+              </div>
+              <div className="flex items-center justify-between px-3 pb-1.5">
+                <span className="font-bold" style={{ fontSize: 10, color: "#5a6a7a", letterSpacing: "0.08em" }}>
+                  ▾ FILTERED LIST
+                </span>
+                <span className="flex gap-2 items-center" style={{ color: "#5a6a7a", fontSize: 13 }}>
+                  <span className="i-ph:funnel" />
+                  <span className="i-ph:gear" />
+                </span>
+              </div>
+              <div className="px-2.5 pb-2">
+                <div className="flex items-center rounded-sm px-2" style={{ background: "#0e141b", border: "1px solid #000" }}>
+                  <span className="i-ph:magnifying-glass mr-1.5" style={{ color: "#5a6a7a", fontSize: 12 }} />
+                  <input
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="bg-transparent border-none w-full text-white focus:outline-none"
+                    style={{ fontSize: 12, height: 28 }}
+                  />
+                </div>
+              </div>
+              <div className="flex-1 overflow-y-auto pb-2">
+                {/* Favorites */}
+                <button
+                  onClick={() => toggle("favorites")}
+                  className="w-full flex items-center gap-1 px-3 py-1 font-bold text-left"
+                  style={{ fontSize: 10, color: "#5a6a7a", letterSpacing: "0.06em" }}
+                >
+                  {open.favorites ? "▾" : "▸"} FAVORITES ({favorites.filter(matches).length})
+                </button>
+                {open.favorites &&
+                  favorites.filter(matches).map((x) => (
+                    <GameRow key={x.id} x={x} active={selected.id === x.id} onPick={() => setSelected(x)} />
+                  ))}
+                {/* Genre collections */}
+                {genres.map((gn) => {
+                  const list = gamesData.filter((x) => x.genre === gn && matches(x));
+                  if (list.length === 0) return null;
+                  return (
+                    <div key={gn}>
+                      <button
+                        onClick={() => toggle(gn)}
+                        className="w-full flex items-center gap-1 px-3 py-1 font-bold text-left uppercase"
+                        style={{ fontSize: 10, color: "#5a6a7a", letterSpacing: "0.06em" }}
+                      >
+                        {open[gn] ? "▾" : "▸"} {gn} ({list.length})
+                      </button>
+                      {open[gn] &&
+                        list.map((x) => (
+                          <GameRow key={x.id} x={x} active={selected.id === x.id} onPick={() => setSelected(x)} />
+                        ))}
+                    </div>
+                  );
+                })}
+              </div>
+              <button
+                className="text-left px-3 font-semibold"
+                style={{ height: 34, fontSize: 11, color: "#66c0f4", borderTop: "1px solid #000" }}
+              >
+                + ADD A GAME
+              </button>
+            </aside>
+
+            {/* Detail pane */}
+            <main className="flex-1 overflow-y-auto min-w-0" style={{ background: "linear-gradient(180deg,#232e3d 0%,#1b2838 320px)" }}>
+              <div className="relative w-full overflow-hidden" style={{ height: 246 }}>
+                <SafeImage
+                  key={selected.id}
+                  src={selected.heroImage}
+                  alt=""
+                  ratio="21 / 9"
+                  className="w-full h-full object-cover"
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{ background: "linear-gradient(to top, rgba(27,40,56,0.9) 2%, rgba(27,40,56,0.25) 45%, rgba(27,40,56,0))" }}
+                />
+                <h1
+                  className="absolute font-bold text-white leading-none"
+                  style={{ left: 24, bottom: 18, fontSize: 42, textShadow: "0 3px 16px rgba(0,0,0,0.85)", maxWidth: "72%" }}
+                >
+                  {selected.title}
+                </h1>
+                <div className="absolute flex gap-2 items-center" style={{ right: 16, bottom: 12, fontSize: 15, color: "rgba(255,255,255,0.75)" }}>
+                  <span className="i-ph:game-controller" />
+                  <span className="i-ph:keyboard" />
+                </div>
+              </div>
+
+              {/* PLAY + stats */}
+              <div className="flex items-center gap-7 px-6" style={{ height: 62 }}>
+                <button
+                  className="font-bold rounded-sm transition active:scale-95 text-white"
+                  style={{
+                    background: "linear-gradient(90deg,#06BFFF,#2D73FF)",
+                    fontSize: 15,
+                    padding: "8px 42px",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  ▶ PLAY
+                </button>
+                {[
+                  ["LAST PLAYED", lastPlayed],
+                  ["PLAY TIME", `${selected.playtimeHours} hours`],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <div className="font-semibold" style={{ fontSize: 10, color: "#5a6a7a", letterSpacing: "0.08em" }}>
+                      {label}
+                    </div>
+                    <div style={{ fontSize: 12, color: "#c7d5e0" }}>{value}</div>
+                  </div>
+                ))}
+                <div>
+                  <div className="font-semibold" style={{ fontSize: 10, color: "#5a6a7a", letterSpacing: "0.08em" }}>
+                    ACHIEVEMENTS
+                  </div>
+                  <div className="flex items-center gap-2" style={{ fontSize: 12, color: "#c7d5e0" }}>
+                    {unlocked}/{totalAch}
+                    <span className="inline-block rounded-full" style={{ width: 90, height: 5, background: "#0e141b" }}>
+                      <span className="block rounded-full" style={{ width: `${achPct}%`, height: "100%", background: "#66c0f4" }} />
+                    </span>
+                  </div>
+                </div>
+                <div className="ml-auto flex gap-3.5 items-center" style={{ fontSize: 15, color: "#5a6a7a" }}>
+                  <button className="hover:text-white flex"><span className="i-ph:gear" /></button>
+                  <button className="hover:text-white flex"><span className="i-ph:info" /></button>
+                  <button className="hover:text-white flex"><span className="i-ph:star" /></button>
+                </div>
+              </div>
+
+              {/* Links row */}
+              <div
+                className="flex items-center gap-5 px-6 mx-0"
+                style={{ height: 34, background: "rgba(255,255,255,0.04)", fontSize: 12, color: "#5c8fb5" }}
+              >
+                {["Store Page", "Community Hub", "Find Groups", "Discussions", "Guides", "Workshop", "Support"].map((l) => (
+                  <button key={l} className="hover:text-white whitespace-nowrap">{l}</button>
+                ))}
+              </div>
+
+              {/* Screenshots */}
+              <div className="px-6 mt-4">
+                <div className="font-semibold" style={{ fontSize: 11, color: "#5a6a7a", letterSpacing: "0.08em" }}>
+                  SCREENSHOTS
+                </div>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  {selected.screenshots.map((s, i) => (
+                    <div key={i} className="rounded-sm overflow-hidden" style={{ background: "#000" }}>
+                      <SafeImage src={s} alt="" ratio="16 / 9" className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Post-game summary — achievements only */}
+              <div className="flex items-center justify-between px-6 mt-4">
+                <div className="font-semibold" style={{ fontSize: 11, color: "#5a6a7a", letterSpacing: "0.08em" }}>
+                  POST-GAME SUMMARY
+                </div>
+                <div className="flex gap-2 text-base" style={{ color: "#5a6a7a" }}>
+                  <button className="hover:text-white">‹</button>
+                  <button className="hover:text-white">›</button>
+                </div>
+              </div>
+              <div className="grid grid-cols-4 gap-3 px-6 mt-1.5">
+                {selected.achievements.slice(0, 4).map((a, i) => (
+                  <div key={i} className="rounded-[2px] p-2.5" style={{ background: "rgba(0,0,0,0.35)" }}>
+                    <div className="text-right" style={{ fontSize: 11, color: "#5a6a7a" }}>
+                      {i < 2 ? "Today" : "Yesterday"}
+                    </div>
+                    <div className="flex gap-2 mt-1">
+                      {a.steamIcon ? (
+                        <SafeImage
+                          src={a.steamIcon}
+                          alt=""
+                          className="rounded-[2px] flex-shrink-0 object-cover"
+                          style={{ width: 30, height: 30 }}
+                        />
+                      ) : (
+                        <AchievementIcon icon={a.icon} />
+                      )}
+                      <div className="min-w-0">
+                        <div className="text-white leading-tight" style={{ fontSize: 12 }}>{a.title}</div>
+                        <div className="leading-tight mt-0.5" style={{ fontSize: 11, color: "#8f98a0" }}>{a.description}</div>
+                        <div className="leading-tight mt-0.5" style={{ fontSize: 11, color: "#5a6a7a" }}>{a.rarity}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Activity + friends */}
+              <div className="grid grid-cols-3 gap-4 px-6 mt-4 pb-8">
+                <div className="col-span-2">
+                  <div className="font-semibold" style={{ fontSize: 11, color: "#5a6a7a", letterSpacing: "0.08em" }}>
+                    ACTIVITY
+                  </div>
+                  <div className="rounded-sm mt-1.5 px-3 italic" style={{ background: "rgba(0,0,0,0.35)", fontSize: 12, color: "#5a6a7a", height: 38, lineHeight: "38px" }}>
+                    Say something about this game to your friends...
+                  </div>
+                  <div className="mt-3" style={{ fontSize: 11, color: "#5a6a7a", letterSpacing: "0.06em" }}>
+                    RECENT
+                  </div>
+                  <div className="mt-1.5 rounded-sm p-3" style={{ background: "rgba(0,0,0,0.22)", fontSize: 12 }}>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="rounded-full text-white text-center font-bold"
+                        style={{ width: 22, height: 22, lineHeight: "22px", fontSize: 11, background: FRIENDS[0].color }}
+                      >
+                        {FRIENDS[0].name[0]}
+                      </span>
+                      <span style={{ color: "#8f98a0" }}>
+                        <span style={{ color: "#c7d5e0" }}>{FRIENDS[0].name}</span> posted a status update · {lastPlayed}
+                      </span>
+                    </div>
+                    <p className="mt-2 leading-relaxed" style={{ color: "#acb2b8" }}>{selected.favoriteMoment}</p>
+                    <div className="mt-2 flex items-center gap-4" style={{ color: "#5a6a7a", fontSize: 11 }}>
+                      <span className="italic">Add a reply...</span>
+                      <span className="ml-auto flex items-center gap-3">
+                        <span className="flex items-center gap-1"><span className="i-ph:chat-circle" style={{ fontSize: 13 }} /> 0</span>
+                        <span className="flex items-center gap-1"><span className="i-ph:thumbs-up" style={{ fontSize: 13 }} /> 0</span>
+                      </span>
+                    </div>
+                  </div>
+                  <div className="mt-2 rounded-sm p-3" style={{ background: "rgba(0,0,0,0.22)", fontSize: 12 }}>
+                    <div className="flex items-center gap-2">
+                      <SafeImage src={AVATAR} alt="" className="object-cover rounded-full" style={{ width: 22, height: 22 }} />
+                      <span style={{ color: "#8f98a0" }}>
+                        <span style={{ color: "#c7d5e0" }}>{USER}</span> posted a status update · 1h ago
+                      </span>
+                    </div>
+                    <p className="mt-2 leading-relaxed italic" style={{ color: "#acb2b8" }}>“{selected.personalNotes}”</p>
+                    <div className="mt-2 flex items-center gap-4" style={{ color: "#5a6a7a", fontSize: 11 }}>
+                      <span className="italic">Add a reply...</span>
+                      <span className="ml-auto flex items-center gap-3">
+                        <span className="flex items-center gap-1"><span className="i-ph:chat-circle" style={{ fontSize: 13 }} /> 0</span>
+                        <span className="flex items-center gap-1"><span className="i-ph:thumbs-up" style={{ fontSize: 13 }} /> 0</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  <div className="rounded-sm p-3" style={{ background: "rgba(0,0,0,0.35)" }}>
+                    <div className="font-semibold" style={{ fontSize: 11, color: "#5a6a7a", letterSpacing: "0.08em" }}>
+                      FRIENDS WHO PLAY
+                    </div>
+                    <div className="mt-1.5" style={{ fontSize: 12, color: "#8f98a0" }}>
+                      {FRIENDS.length} friends have played recently
+                    </div>
+                    {FRIENDS.map((f) => (
+                      <div key={f.name} className="flex items-center gap-2 mt-2">
+                        <span
+                          className="rounded-full text-white text-center font-bold flex-shrink-0"
+                          style={{ width: 26, height: 26, lineHeight: "26px", fontSize: 12, background: f.color }}
+                        >
+                          {f.name[0]}
+                        </span>
+                        <div className="min-w-0 leading-tight">
+                          <div style={{ fontSize: 12, color: "#c7d5e0" }}>{f.name}</div>
+                          <div style={{ fontSize: 11, color: "#5a6a7a" }}>{f.hrs} hrs on record</div>
+                        </div>
+                      </div>
+                    ))}
+                    <button className="mt-2.5 hover:text-white" style={{ fontSize: 11, color: "#5c8fb5" }}>
+                      View all friends who play
+                    </button>
+                  </div>
+                  <div className="rounded-sm p-3" style={{ background: "rgba(0,0,0,0.35)" }}>
+                    <div className="font-semibold" style={{ fontSize: 11, color: "#5a6a7a", letterSpacing: "0.08em" }}>
+                      ACHIEVEMENTS
+                    </div>
+                    <div className="mt-1.5" style={{ fontSize: 12, color: "#8f98a0" }}>
+                      You've unlocked {unlocked}/{totalAch} ({achPct}%)
+                    </div>
+                    <div className="mt-2 rounded-full" style={{ height: 6, background: "#0e141b" }}>
+                      <div className="rounded-full" style={{ width: `${achPct}%`, height: "100%", background: "#66c0f4" }} />
+                    </div>
+                    <div className="mt-2 flex items-center gap-1" style={{ fontSize: 11, color: "#5a6a7a" }}>
+                      {selected.studio} · {selected.releaseYear} ·
+                      <span className="i-ph:star-fill" style={{ fontSize: 10, color: "#66c0f4" }} />
+                      {selected.userRating.toFixed(1)} / 10
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+          {/* Status bar */}
+          <div
+            className="flex-shrink-0 flex items-center justify-between px-3 font-semibold"
+            style={{ height: 30, background: "#171a21", fontSize: 10, color: "#5a6a7a", letterSpacing: "0.08em" }}
+          >
+            <span />
+            <span>DOWNLOADS · <span style={{ color: "#8f98a0" }}>Manage</span></span>
+            <span className="flex items-center gap-1">FRIENDS & CHAT <span style={{ fontSize: 13 }}>+</span></span>
+          </div>
+        </div>
+      )}
+
+      {/* ====================== COMMUNITY / PROFILE ====================== */}
+      {(tab === "community" || tab === "profile") && (
+        <div className="flex-1 flex flex-col items-center justify-center gap-2">
+          <div className="font-bold text-white tracking-widest" style={{ fontSize: 13 }}>
+            {tab === "profile" ? USER.toUpperCase() : "COMMUNITY"}
+          </div>
+          <div className="text-xs" style={{ color: "#8f98a0" }}>
+            Sign in on the real client to browse {tab === "profile" ? "this profile" : "discussions"} —
+            this demo covers the Store & Library.
+          </div>
         </div>
       )}
     </div>
   );
 }
-

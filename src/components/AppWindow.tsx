@@ -52,6 +52,7 @@ interface WindowState {
 
 const TrafficLights = ({ id, close, aspectRatio, max, setMax, setMin }: TrafficProps) => {
   const disableMax = aspectRatio !== undefined;
+  const accentHex = useStore((s) => s.getAccentHex());
   const [hovered, setHovered] = useState(false);
 
   const btnStyle: React.CSSProperties = {
@@ -63,7 +64,7 @@ const TrafficLights = ({ id, close, aspectRatio, max, setMax, setMin }: TrafficP
     justifyContent: "center",
     border: "none",
     cursor: "default",
-    transition: "filter 0.15s ease",
+    transition: "filter 0.15s ease, box-shadow 0.15s ease",
     padding: 0,
     outline: "none",
     flexShrink: 0,
@@ -77,20 +78,20 @@ const TrafficLights = ({ id, close, aspectRatio, max, setMax, setMin }: TrafficP
       onMouseLeave={() => setHovered(false)}
     >
       <button
-        style={{ ...btnStyle, backgroundColor: "#FF5F57" }}
+        style={{ ...btnStyle, backgroundColor: "#FF5F57", boxShadow: hovered ? `0 0 0 2px ${accentHex}` : "none" }}
         onClick={(e) => { e.stopPropagation(); close(id); }}
       >
         {hovered && <span className="icon i-ph:x-bold" style={{ fontSize: "8px", color: "rgba(0,0,0,0.5)" }} />}
       </button>
       <button
-        style={{ ...btnStyle, backgroundColor: max ? "#999" : "#FDBC40", opacity: max ? 0.5 : 1 }}
+        style={{ ...btnStyle, backgroundColor: max ? "#999" : "#FDBC40", boxShadow: hovered ? `0 0 0 2px ${accentHex}` : "none", opacity: max ? 0.5 : 1 }}
         onClick={(e) => { e.stopPropagation(); setMin(id); }}
         disabled={max}
       >
         {hovered && !max && <span className="icon i-ph:minus-bold" style={{ fontSize: "9px", color: "rgba(0,0,0,0.5)" }} />}
       </button>
       <button
-        style={{ ...btnStyle, backgroundColor: disableMax ? "#999" : "#28C840", opacity: disableMax ? 0.5 : 1 }}
+        style={{ ...btnStyle, backgroundColor: disableMax ? "#999" : "#28C840", boxShadow: hovered ? `0 0 0 2px ${accentHex}` : "none", opacity: disableMax ? 0.5 : 1 }}
         onClick={(e) => { e.stopPropagation(); !disableMax && setMax(id); }}
         disabled={disableMax}
       >
@@ -180,7 +181,13 @@ const Window = (props: WindowProps) => {
             opacity: { times: [0, 0.8, 1], ease: "linear" }
           } 
         }}
-        transition={{ duration: 0.42, ease: [0.32, 0.72, 0, 1] }}
+        transition={{
+          // Apple UIKit-style springs: scale pops with a spring (stiffness 300,
+          // damping 30), genie travel keeps the expo curve, fade lands in ~220ms.
+          default: { type: "spring", stiffness: 300, damping: 30 },
+          y: { duration: 0.42, ease: [0.32, 0.72, 0, 1] },
+          opacity: { duration: 0.22, ease: "easeOut" },
+        }}
         style={{
           width: "100%",
           height: "100%",

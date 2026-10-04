@@ -48,74 +48,99 @@ const saveSetting = (key: string, value: unknown) => {
   }
 };
 
+const prefersDarkOS = (): boolean =>
+  typeof window !== "undefined" &&
+  typeof window.matchMedia === "function" &&
+  window.matchMedia("(prefers-color-scheme: dark)").matches;
+
 // Resolve whether the dark class should be applied for a given appearance mode.
-// "auto" resolves to light by default (no system-preference hook in this env).
-const resolveDark = (mode: AppearanceMode): boolean => mode === "dark";
+// "auto" (the default) follows the OS via prefers-color-scheme.
+const resolveDark = (mode: AppearanceMode): boolean =>
+  mode === "dark" ? true : mode === "light" ? false : prefersDarkOS();
 
 const applyDarkClass = (dark: boolean) => {
+  if (typeof document === "undefined") return;
   if (dark) document.documentElement.classList.add("dark");
   else document.documentElement.classList.remove("dark");
 };
 
-const initialAppearanceMode = loadSetting<AppearanceMode>("appearanceMode", "light");
+const initialAppearanceMode = loadSetting<AppearanceMode>("appearanceMode", "auto");
 const initialDark = resolveDark(initialAppearanceMode);
+applyDarkClass(initialDark);
 
-export const createSystemSlice: StateCreator<SystemSlice> = (set) => ({
-  dark: initialDark,
-  volume: 50,
-  brightness: 50,
-  wifi: true,
-  bluetooth: true,
-  airdrop: true,
-  fullscreen: false,
-  safariUrl: "",
-  focusMode: false,
-  appearanceMode: initialAppearanceMode,
-  iconStyle: loadSetting<IconStyle>("iconStyle", "default"),
-  tintWindows: loadSetting<boolean>("tintWindows", true),
-  toggleDark: () =>
-    set((state: any) => {
-      const next = !state.dark;
-      applyDarkClass(next);
-      const mode: AppearanceMode = next ? "dark" : "light";
-      saveSetting("appearanceMode", mode);
-      if (next && typeof state.pushNotification === "function") {
-        state.pushNotification({
-          title: "BONFIRE LIT",
-          message: "Rest at the bonfire. Estus Flasks refilled.",
-          app: "Dark Souls",
-          icon: "img/icons/games.svg",
-        });
+export const createSystemSlice: StateCreator<SystemSlice> = (set, get) => {
+  // Follow the OS live while appearance is "auto" (respects
+  // prefers-color-scheme; manual override in Control Center / Settings
+  // switches to light/dark and persists to localStorage).
+  if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = (e: MediaQueryListEvent) => {
+      if (get().appearanceMode === "auto") {
+        applyDarkClass(e.matches);
+        set({ dark: e.matches });
       }
-      return { dark: next, appearanceMode: mode };
-    }),
-  toggleWIFI: () => set((state) => ({ wifi: !state.wifi })),
-  toggleBluetooth: () => set((state) => ({ bluetooth: !state.bluetooth })),
-  toggleAirdrop: () => set((state) => ({ airdrop: !state.airdrop })),
-  toggleFullScreen: (v) =>
-    set(() => {
-      v ? enterFullScreen() : exitFullScreen();
-      return { fullscreen: v };
-    }),
-  toggleFocus: () => set((state) => ({ focusMode: !state.focusMode })),
-  setVolume: (v) => set(() => ({ volume: v })),
-  setBrightness: (v) => set(() => ({ brightness: v })),
-  setSafariUrl: (v) => set(() => ({ safariUrl: v })),
-  setAppearanceMode: (v) =>
-    set(() => {
-      const dark = resolveDark(v);
-      applyDarkClass(dark);
-      saveSetting("appearanceMode", v);
-      return { appearanceMode: v, dark };
-    }),
-  setIconStyle: (v) =>
-    set(() => {
-      saveSetting("iconStyle", v);
-      return { iconStyle: v };
-    }),
-  setTintWindows: (v) =>
-    set(() => {
-      saveSetting("tintWindows", v);
-      return { tintWindows: v };
-    }),
-});
+    };
+    if (typeof mq.addEventListener === "function") mq.addEventListener("change", onChange);
+    else (mq as unknown as { addListener: (cb: (e: MediaQueryListEvent) => void) => void }).addListener(onChange);
+  }
+
+  return {
+    dark: initialDark,
+    volume: 50,
+    brightness: 50,
+    wifi: true,
+    bluetooth: true,
+    airdrop: true,
+    fullscreen: false,
+    safariUrl: "",
+    focusMode: false,
+    appearanceMode: initialAppearanceMode,
+    iconStyle: loadSetting<IconStyle>("iconStyle", "default"),
+    tintWindows: loadSetting<boolean>("tintWindows", true),
+    toggleDark: () =>
+      set((state: any) => {
+        const next = !state.dark;
+        applyDarkClass(next);
+        const mode: AppearanceMode = next ? "dark" : "light";
+        saveSetting("appearanceMode", mode);
+        if (next && typeof state.pushNotification === "function") {
+          state.pushNotification({
+            title: "BONFIRE LIT",
+            message: "Rest at the bonfire. Estus Flasks refilled.",
+            app: "Dark Souls",
+            icon: "img/icons/games.svg",
+          });
+        }
+        return { dark: next, appearanceMode: mode };
+      }),
+    toggleWIFI: () => set((state) => ({ wifi: !state.wifi })),
+    toggleBluetooth: () => set((state) => ({ bluetooth: !state.bluetooth })),
+    toggleAirdrop: () => set((state) => ({ airdrop: !state.airdrop })),
+    toggleFullScreen: (v) =>
+      set(() => {
+        v ? enterFullScreen() : exitFullScreen();
+        return { fullscreen: v };
+      }),
+    toggleFocus: () => set((state) => ({ focusMode: !state.focusMode })),
+    setVolume: (v) => set(() => ({ volume: v })),
+    setBrightness: (v) => set(() => ({ brightness: v })),
+    setSafariUrl: (v) => set(() => ({ safariUrl: v })),
+    setAppearanceMode: (v) =>
+      set(() => {
+        const dark = resolveDark(v);
+        applyDarkClass(dark);
+        saveSetting("appearanceMode", v);
+        return { appearanceMode: v, dark };
+      }),
+    setIconStyle: (v) =>
+      set(() => {
+        saveSetting("iconStyle", v);
+        return { iconStyle: v };
+      }),
+    setTintWindows: (v) =>
+      set(() => {
+        saveSetting("tintWindows", v);
+        return { tintWindows: v };
+      }),
+  };
+};

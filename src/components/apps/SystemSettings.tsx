@@ -2,6 +2,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useStore } from "~/stores";
 import { useWindowSize } from "~/hooks";
+import { CATEGORY_GLYPHS } from "~/components/icons/CategoryGlyphs";
+import { FALLBACK_WALLPAPER } from "~/data/wallpapers";
+import type { WallpaperCategory } from "~/data/wallpapers";
 
 type SettingsPanel =
   | "general"
@@ -288,8 +291,10 @@ const AppearancePanel = () => {
     iconStyle, setIconStyle,
     tintWindows, setTintWindows,
     getWallpaper,
-    theme, setTheme,
-    customCursor, setCustomCursor,
+    dockMagnification, setDockMagnification,
+    dockAutoHide, setDockAutoHide,
+    darkMenubar, setDarkMenubar,
+    showBatteryPercentage, setShowBatteryPercentage,
   } = useStore((s) => ({
     accentColor: s.accentColor,
     setAccentColor: s.setAccentColor,
@@ -300,22 +305,26 @@ const AppearancePanel = () => {
     tintWindows: s.tintWindows,
     setTintWindows: s.setTintWindows,
     getWallpaper: s.getWallpaper,
-    theme: s.theme,
-    setTheme: s.setTheme,
-    customCursor: s.customCursor,
-    setCustomCursor: s.setCustomCursor,
+    dockMagnification: s.dockMagnification,
+    setDockMagnification: s.setDockMagnification,
+    dockAutoHide: s.dockAutoHide,
+    setDockAutoHide: s.setDockAutoHide,
+    darkMenubar: s.darkMenubar,
+    setDarkMenubar: s.setDarkMenubar,
+    showBatteryPercentage: s.showBatteryPercentage,
+    setShowBatteryPercentage: s.setShowBatteryPercentage,
   }));
 
   const wallpaper = getWallpaper();
   const colors = [
-    { label: "Blue", value: "#007AFF" },
+    { label: "Blue", value: "#0A84FF" },
     { label: "Purple", value: "#AF52DE" },
-    { label: "Pink", value: "#FF2D55" },
-    { label: "Red", value: "#FF3B30" },
-    { label: "Orange", value: "#FF9500" },
-    { label: "Yellow", value: "#FFCC00" },
-    { label: "Green", value: "#34C759" },
-    { label: "Graphite", value: "#8E8E93" },
+    { label: "Pink", value: "#FF375F" },
+    { label: "Red", value: "#FF453A" },
+    { label: "Orange", value: "#FF9F0A" },
+    { label: "Yellow", value: "#FFD60A" },
+    { label: "Green", value: "#32D74B" },
+    { label: "Graphite", value: "#98989D" },
   ];
 
   const appearanceOptions: { label: string; value: "auto" | "light" | "dark"; preview: string }[] = [
@@ -364,11 +373,14 @@ const AppearancePanel = () => {
                     backgroundPosition: "center",
                     position: "relative",
                     overflow: "hidden",
-                    border: active ? "2px solid #007AFF" : dark ? "2px solid rgba(255,255,255,0.12)" : "2px solid rgba(0,0,0,0.1)",
+                    border: active ? `2px solid ${accentColor}` : dark ? "2px solid rgba(255,255,255,0.12)" : "2px solid rgba(0,0,0,0.1)",
                     boxShadow: "inset 0 0 0 100px transparent",
                   }}
                 >
                   <div style={{ position: "absolute", inset: 0, background: opt.preview, opacity: 0.55 }} />
+                  {/* miniature desktop preview: menubar + dock silhouette */}
+                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "9px", background: opt.value === "light" ? "rgba(255,255,255,0.7)" : opt.value === "dark" ? "rgba(0,0,0,0.55)" : "linear-gradient(90deg,rgba(255,255,255,0.7) 50%,rgba(0,0,0,0.55) 50%)" }} />
+                  <div style={{ position: "absolute", bottom: "4px", left: "50%", transform: "translateX(-50%)", width: "44%", height: "7px", borderRadius: "4px", background: opt.value === "light" ? "rgba(0,0,0,0.28)" : opt.value === "dark" ? "rgba(255,255,255,0.4)" : "linear-gradient(90deg,rgba(0,0,0,0.28) 50%,rgba(255,255,255,0.4) 50%)" }} />
                 </div>
                 <span style={{ fontSize: "12px", fontWeight: active ? 600 : 400, color: dark ? "#f5f5f7" : "#1c1c1e" }}>
                   {opt.label}
@@ -379,80 +391,6 @@ const AppearancePanel = () => {
         </div>
       </Card>
 
-      <SectionTitle>Portfolio Theme &amp; Atmosphere</SectionTitle>
-      <Card>
-        <div style={{ padding: "12px 16px", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px" }}>
-          {[
-            {
-              id: "default",
-              label: "Default (Tahoe)",
-              accent: "#007AFF",
-              bg: "linear-gradient(135deg, #007AFF20, #007AFF40)",
-              desc: "Clean Apple Glass",
-            },
-            {
-              id: "souls",
-              label: "Souls (Ember)",
-              accent: "#F59E0B",
-              bg: "linear-gradient(135deg, #2D1808, #18110D)",
-              desc: "Dark Stone & Gold",
-            },
-            {
-              id: "soul-reaper",
-              label: "Soul Reaper",
-              accent: "#FF5722",
-              bg: "linear-gradient(135deg, #1A0802, #0A0A0C)",
-              desc: "Bankai Orange Reiatsu",
-            },
-          ].map((t) => {
-            const isCurrent = (theme || "default") === t.id;
-            return (
-              <button
-                key={t.id}
-                onClick={() => setTheme(t.id as any)}
-                style={{
-                  background: isCurrent ? (dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)") : "none",
-                  border: isCurrent ? `2px solid ${t.accent}` : dark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.1)",
-                  borderRadius: "10px",
-                  padding: "8px",
-                  cursor: "pointer",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: "6px",
-                  textAlign: "center",
-                }}
-              >
-                <div
-                  style={{
-                    width: "100%",
-                    height: "36px",
-                    borderRadius: "6px",
-                    background: t.bg,
-                    border: `1px solid ${t.accent}60`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <span style={{ fontSize: "16px" }}>
-                    {t.id === "souls" ? "🔥" : t.id === "soul-reaper" ? "⚔️" : "🌊"}
-                  </span>
-                </div>
-                <div style={{ fontSize: "12px", fontWeight: isCurrent ? 700 : 500, color: dark ? "#fff" : "#1c1c1e" }}>
-                  {t.label}
-                </div>
-                <div style={{ fontSize: "10px", color: dark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.45)" }}>
-                  {t.desc}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-        <Row label="Katana / Zanpakuto Cursor">
-          <Toggle checked={!!customCursor} onChange={setCustomCursor} />
-        </Row>
-      </Card>
 
       <SectionTitle>Theme</SectionTitle>
       <Card>
@@ -461,7 +399,7 @@ const AppearancePanel = () => {
             {/* Multicolor swatch */}
             <button
               title="Multicolor"
-              onClick={() => setAccentColor("#007AFF")}
+              onClick={() => setAccentColor("#0A84FF")}
               style={{
                 width: "20px",
                 height: "20px",
@@ -530,7 +468,7 @@ const AppearancePanel = () => {
                     height: "42px",
                     borderRadius: "10px",
                     background: opt.preview,
-                    border: active ? "2px solid #007AFF" : dark ? "2px solid rgba(255,255,255,0.12)" : "2px solid rgba(0,0,0,0.1)",
+                    border: active ? `2px solid ${accentColor}` : dark ? "2px solid rgba(255,255,255,0.12)" : "2px solid rgba(0,0,0,0.1)",
                     boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
                   }}
                 />
@@ -555,21 +493,106 @@ const AppearancePanel = () => {
           <Toggle checked={tintWindows} onChange={setTintWindows} />
         </Row>
       </Card>
+
+      <SectionTitle>Dock &amp; Menubar</SectionTitle>
+      <Card>
+        <Row label="Magnification">
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{ width: "52px", height: "26px", borderRadius: "8px", background: dark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)", display: "flex", alignItems: "center", justifyContent: "center", gap: "3px" }}>
+              <div style={{ width: "8px", height: "8px", borderRadius: "2px", background: dark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.35)" }} />
+              <div style={{ width: dockMagnification ? "14px" : "8px", height: dockMagnification ? "14px" : "8px", borderRadius: "3px", background: accentColor, transition: "all 0.2s ease" }} />
+              <div style={{ width: "8px", height: "8px", borderRadius: "2px", background: dark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.35)" }} />
+            </div>
+            <Toggle checked={dockMagnification} onChange={setDockMagnification} />
+          </div>
+        </Row>
+        <Row label="Automatically hide and show the Dock">
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{ width: "52px", height: "26px", borderRadius: "8px", background: dark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", left: "6px", right: "6px", height: "6px", borderRadius: "3px", background: accentColor, bottom: dockAutoHide ? "-7px" : "4px", transition: "bottom 0.25s ease" }} />
+            </div>
+            <Toggle checked={dockAutoHide} onChange={setDockAutoHide} />
+          </div>
+        </Row>
+        <Row label="Dark menubar always">
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{ width: "52px", height: "26px", borderRadius: "8px", overflow: "hidden", border: dark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(0,0,0,0.1)" }}>
+              <div style={{ height: "9px", background: darkMenubar ? "rgba(0,0,0,0.6)" : dark ? "rgba(30,30,32,0.6)" : "rgba(255,255,255,0.7)", transition: "background 0.2s ease" }} />
+              <div style={{ height: "17px", background: dark ? "#1c1c1e" : "#f5f5f7" }} />
+            </div>
+            <Toggle checked={darkMenubar} onChange={setDarkMenubar} />
+          </div>
+        </Row>
+        <Row label="Show battery percentage">
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{ minWidth: "52px", height: "26px", borderRadius: "8px", background: dark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px", padding: "0 6px", fontSize: "10px", fontWeight: 600, color: dark ? "#f5f5f7" : "#1c1c1e" }}>
+              {showBatteryPercentage && <span>82%</span>}
+              <span style={{ width: "16px", height: "8px", borderRadius: "2px", border: "1px solid " + (dark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)"), position: "relative", display: "inline-block" }}>
+                <span style={{ position: "absolute", top: "1px", left: "1px", bottom: "1px", width: "70%", borderRadius: "1px", background: "#32D74B" }} />
+              </span>
+            </div>
+            <Toggle checked={showBatteryPercentage} onChange={setShowBatteryPercentage} />
+          </div>
+        </Row>
+      </Card>
     </div>
   );
 };
 
+const WALLPAPER_TABS: { id: WallpaperCategory; label: string }[] = [
+  { id: "default", label: "Default" },
+  { id: "gaming", label: "Gaming" },
+  { id: "anime", label: "Anime" },
+  { id: "editing", label: "Editing" },
+];
+
 const WallpaperPanel = () => {
-  const { wallpaperSets, activeWallpaperSet, setActiveWallpaperSet } = useStore((s) => ({
+  const { wallpaperSets, activeWallpaperSet, setActiveWallpaperSet, accentColor } = useStore((s) => ({
     wallpaperSets: s.wallpaperSets,
     activeWallpaperSet: s.activeWallpaperSet,
     setActiveWallpaperSet: s.setActiveWallpaperSet,
+    accentColor: s.accentColor,
   }));
   const dark = useStore((s) => s.dark);
+  const activeSet = wallpaperSets.find((w) => w.id === activeWallpaperSet) ?? wallpaperSets[0];
+  const [tab, setTab] = useState<WallpaperCategory>(activeSet.category);
+  const visible = wallpaperSets.filter((w) => w.category === tab);
+  const nonEmptyTabs = WALLPAPER_TABS.filter((t) => wallpaperSets.some((w) => w.category === t.id));
 
   return (
     <div>
       <SectionTitle>Wallpaper</SectionTitle>
+      <div style={{ display: "flex", gap: "6px", padding: "0 16px 12px" }}>
+        {nonEmptyTabs.map((t) => {
+          const Glyph = CATEGORY_GLYPHS[t.id];
+          const selected = tab === t.id;
+          return (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              style={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "6px",
+                padding: "7px 4px",
+                borderRadius: "8px",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "12px",
+                fontWeight: selected ? 600 : 400,
+                color: selected ? "#fff" : dark ? "#f5f5f7" : "#1c1c1e",
+                background: selected ? accentColor : dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)",
+                transition: "background 0.15s ease",
+              }}
+            >
+              <Glyph size={15} />
+              {t.label}
+            </button>
+          );
+        })}
+      </div>
       <div
         style={{
           display: "grid",
@@ -578,9 +601,9 @@ const WallpaperPanel = () => {
           padding: "0 16px",
         }}
       >
-        {wallpaperSets.map((set) => {
+        {visible.map((set) => {
           const active = set.id === activeWallpaperSet;
-          const preview = dark ? set.night : set.day;
+          const Glyph = CATEGORY_GLYPHS[set.category];
           return (
             <motion.button
               key={set.id}
@@ -589,7 +612,7 @@ const WallpaperPanel = () => {
               whileTap={{ scale: 0.98 }}
               style={{
                 background: "none",
-                border: active ? "2.5px solid #007AFF" : "2.5px solid transparent",
+                border: active ? `2.5px solid ${accentColor}` : "2.5px solid transparent",
                 borderRadius: "12px",
                 padding: "0",
                 cursor: "pointer",
@@ -599,17 +622,42 @@ const WallpaperPanel = () => {
               }}
             >
               <img
-                src={preview}
+                src={set.thumbnail || (dark ? set.night : set.day)}
                 alt={set.name}
+                onError={(e) => {
+                  const el = e.currentTarget;
+                  if (!el.src.endsWith("fallback.jpg")) el.src = FALLBACK_WALLPAPER;
+                }}
                 style={{ width: "100%", height: "90px", objectFit: "cover", display: "block", borderRadius: "10px" }}
               />
+              {set.category !== "default" && (
+                <div
+                  title={set.category}
+                  style={{
+                    position: "absolute",
+                    bottom: "28px",
+                    left: "6px",
+                    background: "rgba(0,0,0,0.55)",
+                    backdropFilter: "blur(4px)",
+                    borderRadius: "50%",
+                    width: "20px",
+                    height: "20px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#fff",
+                  }}
+                >
+                  <Glyph size={12} />
+                </div>
+              )}
               {active && (
                 <div
                   style={{
                     position: "absolute",
                     top: "6px",
                     right: "6px",
-                    background: "#007AFF",
+                    background: accentColor,
                     borderRadius: "50%",
                     width: "18px",
                     height: "18px",
@@ -627,7 +675,7 @@ const WallpaperPanel = () => {
                 style={{
                   padding: "4px 8px",
                   fontSize: "11px",
-                  color: active ? "#007AFF" : dark ? "#f5f5f7" : "#1c1c1e",
+                  color: active ? accentColor : dark ? "#f5f5f7" : "#1c1c1e",
                   fontWeight: active ? 600 : 400,
                   textAlign: "left",
                 }}
@@ -688,7 +736,7 @@ const DockPanel = () => {
             max={max}
             value={value}
             onChange={(e) => onChange(Number(e.target.value))}
-            style={{ width: "120px", accentColor: "#007AFF" }}
+            style={{ width: "120px", accentColor: "var(--accent-blue)" }}
           />
           <span style={{ fontSize: "11px", color: dark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)", minWidth: "30px", textAlign: "right" }}>
             {displayVal ?? value}
@@ -791,7 +839,7 @@ const SoundPanel = () => {
     { label: "iPhone Notification", value: "music/i_phone_notification.mp3" },
     { label: "Error Alert", value: "music/error.wav" },
     { label: "Siri Sound", value: "music/siri.mp3" },
-    { label: "Aditya Intro", value: "music/akashintro.wav" },
+    { label: "Aditya Intro", value: "music/adityaintro.wav" },
   ];
 
   const handleSoundChange = (val: string) => {
@@ -830,7 +878,7 @@ const SoundPanel = () => {
               max="100"
               value={volume}
               onChange={(e) => setVolume(Number(e.target.value))}
-              style={{ width: "120px", accentColor: "#007AFF" }}
+              style={{ width: "120px", accentColor: "var(--accent-blue)" }}
             />
             <img src="/img/icons/sf-icons/sound.svg" alt="sound" style={{ width: "16px", height: "16px", filter: dark ? "invert(1)" : "none", opacity: 0.5 }} />
             <span style={{ fontSize: "11px", color: dark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)", minWidth: "30px", textAlign: "right" }}>
@@ -953,7 +1001,7 @@ const DisplaysPanel = () => {
               max="100"
               value={brightness}
               onChange={(e) => setBrightness(Number(e.target.value))}
-              style={{ width: "120px", accentColor: "#007AFF" }}
+              style={{ width: "120px", accentColor: "var(--accent-blue)" }}
             />
             <img src="/img/icons/sf-icons/sun.svg" alt="sun" style={{ width: "16px", height: "16px", filter: dark ? "invert(1)" : "none", opacity: 0.5 }} />
             <span style={{ fontSize: "11px", color: dark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)", minWidth: "30px", textAlign: "right" }}>
@@ -1193,7 +1241,7 @@ const CloudPanel = () => {
             </button>
           </div>
           <div style={{ background: dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)", borderRadius: "8px", padding: "10px", fontSize: "11px", color: dark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.5)", textAlign: "center" }}>
-            ⚡ Will be fully integrated in a future update
+            <span className="i-ph:lightning" style={{ fontSize: 11 }} /> Will be fully integrated in a future update
           </div>
         </div>
       </Card>

@@ -23,7 +23,7 @@ const appLibraryCategories = [
   },
   {
     name: "Utilities",
-    apps: ["system-settings", "app-store", "safari", "maps", "finder", "siri"]
+    apps: ["system-settings", "safari", "maps", "finder", "siri"]
   }
 ];
 

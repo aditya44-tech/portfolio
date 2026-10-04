@@ -8,17 +8,17 @@ interface Photo {
   liked?: boolean;
 }
 
-// Using Picsum for placeholder photos
+// Local library — real artwork with true labels (no stock placeholders)
 const PHOTOS: Photo[] = [
-  { id: "1", url: "https://picsum.photos/seed/macos1/400/300", label: "Jodhpur Sunset", date: "Jun 1, 2025" },
-  { id: "2", url: "https://picsum.photos/seed/macos2/400/300", label: "Mehrangarh Fort", date: "May 28, 2025", liked: true },
-  { id: "3", url: "https://picsum.photos/seed/macos3/400/300", label: "Blue City", date: "May 20, 2025" },
-  { id: "4", url: "https://picsum.photos/seed/macos4/400/300", label: "MBM Campus", date: "May 15, 2025", liked: true },
-  { id: "5", url: "https://picsum.photos/seed/macos5/400/300", label: "Umaid Bhawan", date: "May 10, 2025" },
-  { id: "6", url: "https://picsum.photos/seed/macos6/400/300", label: "Desert View", date: "Apr 30, 2025" },
-  { id: "7", url: "https://picsum.photos/seed/macos7/400/300", label: "Portfolio Screenshot", date: "Apr 20, 2025" },
-  { id: "8", url: "https://picsum.photos/seed/macos8/400/300", label: "Coding Session", date: "Apr 10, 2025" },
-  { id: "9", url: "https://picsum.photos/seed/macos9/400/300", label: "Hackathon", date: "Apr 1, 2025" },
+  { id: "1", url: "/images/games/elden-ring-s1.jpg", label: "Elden Ring — Screenshot", date: "Jun 1, 2025" },
+  { id: "2", url: "/images/anime/bleach-banner.jpg", label: "BLEACH TYBW — Key Visual", date: "May 28, 2025", liked: true },
+  { id: "3", url: "/images/games/bloodborne-hero.jpg", label: "Bloodborne — Hunter", date: "May 20, 2025" },
+  { id: "4", url: "/images/anime/jjk-poster.jpg", label: "Jujutsu Kaisen — Poster", date: "May 15, 2025", liked: true },
+  { id: "5", url: "/images/games/cyberpunk-2077-s1.jpg", label: "Cyberpunk 2077 — Night City", date: "May 10, 2025" },
+  { id: "6", url: "/images/anime/vinland-banner.jpg", label: "Vinland Saga — Banner", date: "Apr 30, 2025" },
+  { id: "7", url: "/images/games/sekiro-s2.jpg", label: "Sekiro — Ashina", date: "Apr 20, 2025" },
+  { id: "8", url: "/images/anime/bebop-poster.jpg", label: "Cowboy Bebop — Poster", date: "Apr 10, 2025" },
+  { id: "9", url: "/images/games/black-myth-wukong-s1.jpg", label: "Black Myth: Wukong", date: "Apr 1, 2025" },
 ];
 
 const ALBUMS = [

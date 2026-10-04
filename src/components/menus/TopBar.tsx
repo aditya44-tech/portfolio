@@ -92,6 +92,7 @@ const TopBar = (props: TopBarProps) => {
     volume: state.volume,
     wifi: state.wifi
   }));
+  const darkMenubar = useStore((state) => state.darkMenubar);
   const { toggleFullScreen, setVolume, setBrightness } = useStore((state) => ({
     toggleFullScreen: state.toggleFullScreen,
     setVolume: state.setVolume,
@@ -167,9 +168,9 @@ const TopBar = (props: TopBarProps) => {
       } text-sm text-white`}
       style={{
         /* Tahoe: Fully transparent menu bar — no blur, no background */
-        backdropFilter: 'none',
-        WebkitBackdropFilter: 'none',
-        background: 'transparent',
+        backdropFilter: darkMenubar ? 'saturate(180%) blur(20px)' : 'none',
+        WebkitBackdropFilter: darkMenubar ? 'saturate(180%) blur(20px)' : 'none',
+        background: darkMenubar ? 'rgba(0,0,0,0.35)' : 'transparent',
         zIndex: props.hide ? 0 : 99999,
         /* Text readability via subtle drop shadow */
         textShadow: '0 0.5px 2px rgba(0,0,0,0.25)',

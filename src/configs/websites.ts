@@ -37,7 +37,7 @@ const websites: WebsitesData = {
       {
         id: "my-metakeep",
         title: "MetaKeep",
-        img: "img/sites/steam.svg",
+        img: "img/sites/steam-logo.svg",
         link: "https://metakeep.com/",
       },
     ],

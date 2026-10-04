@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { reelsData, REEL_TOOLS, type ReelItem, type ReelCategory } from "~/data/reels";
 import { useStore } from "~/stores";
+import SafeImage from "~/components/SafeImage";
 
 export default function Reels() {
   const [activeReel, setActiveReel] = useState<ReelItem>(reelsData[0]);
@@ -66,7 +67,7 @@ export default function Reels() {
         <div className="flex-1" />
         <div className="flex items-center bg-[#1e1e1e] border border-[#111111] rounded-sm px-2 py-0.5">
           <span className="text-[10px] text-gray-500 mr-2">Search Help</span>
-          🔍
+          <span className="i-ph:magnifying-glass" style={{ fontSize: 10, color: "#6b7280" }} />
         </div>
       </div>
 
@@ -87,7 +88,7 @@ export default function Reels() {
               
               <div className="p-2 border-b border-[#111111] flex gap-2">
                  <div className="w-16 h-12 bg-black border border-white/20">
-                   <img src={activeReel.thumbnail} className="w-full h-full object-cover" alt="thumb" />
+                   <SafeImage src={activeReel.thumbnail} className="w-full h-full object-cover" alt="thumb" ratio="4 / 3" />
                  </div>
                  <div className="flex-1 text-[10px]">
                    <div className="font-bold text-white mb-0.5">{activeReel.title}</div>
@@ -110,7 +111,7 @@ export default function Reels() {
                        onClick={() => { setActiveReel(reel); setIsPlaying(false); }}
                        className={`flex items-center px-2 py-0.5 text-[11px] cursor-pointer ${activeReel.id === reel.id ? 'bg-[#375a7f] text-white' : 'hover:bg-[#333]'}`}
                      >
-                       <div className="w-4 flex justify-center text-[10px]">🎞️</div>
+                       <div className="w-4 flex justify-center text-[10px]"><span className="i-ph:film-strip" /></div>
                        <div className="flex-1 truncate px-1">{reel.title}</div>
                        <div className="w-12 px-1 text-gray-500">Comp</div>
                      </div>
@@ -118,7 +119,7 @@ export default function Reels() {
                  </div>
               </div>
               <div className="h-6 bg-[#2d2d2d] flex items-center px-2 gap-2 text-[14px]">
-                 🗑️ 📁 📄
+                 <span className="i-ph:trash" /> <span className="i-ph:folder" /> <span className="i-ph:file" />
               </div>
             </div>
           </div>
@@ -180,11 +181,11 @@ export default function Reels() {
                </div>
                <div className="p-3 flex flex-col gap-2">
                  <div className="flex items-center justify-center gap-4 text-xl">
-                   <button className="hover:text-white text-gray-400">⏮</button>
-                   <button className="hover:text-white text-gray-400">⏪</button>
-                   <button onClick={togglePlay} className="hover:text-white text-[#2d8ceb] text-2xl w-8 text-center">{isPlaying ? "⏸" : "▶"}</button>
-                   <button className="hover:text-white text-gray-400">⏩</button>
-                   <button className="hover:text-white text-gray-400">⏭</button>
+                   <button className="hover:text-white text-gray-400 flex"><span className="i-ph:skip-back-fill" /></button>
+                   <button className="hover:text-white text-gray-400 flex"><span className="i-ph:rewind-fill" /></button>
+                   <button onClick={togglePlay} className="hover:text-white text-[#2d8ceb] text-2xl w-8 text-center">{isPlaying ? <span className="i-ph:pause-fill" /> : <span className="i-ph:play-fill" />}</button>
+                   <button className="hover:text-white text-gray-400 flex"><span className="i-ph:fast-forward-fill" /></button>
+                   <button className="hover:text-white text-gray-400 flex"><span className="i-ph:skip-forward-fill" /></button>
                  </div>
                  <div className="flex justify-between items-center px-4 mt-2">
                    <div className="flex flex-col items-center">
@@ -233,8 +234,8 @@ export default function Reels() {
              {/* Layer Columns Header */}
              <div className="flex h-5 border-b border-[#111111] bg-[#1e1e1e] text-[9px] font-bold items-center shadow-sm">
                 <div className="w-6 border-r border-[#333] text-center">#</div>
-                <div className="w-6 border-r border-[#333] text-center">👁</div>
-                <div className="w-6 border-r border-[#333] text-center">🔒</div>
+                <div className="w-6 border-r border-[#333] text-center"><span className="i-ph:eye" /></div>
+                <div className="w-6 border-r border-[#333] text-center"><span className="i-ph:lock" /></div>
                 <div className="flex-1 border-r border-[#333] px-2">Layer Name</div>
                 <div className="w-16 border-r border-[#333] text-center">Mode</div>
                 <div className="w-12 text-center">TrkMat</div>
@@ -244,7 +245,7 @@ export default function Reels() {
              <div className="flex-1 overflow-y-auto">
                <div className="flex h-5 border-b border-[#111111] items-center text-[10px] bg-[#2d2d2d]">
                   <div className="w-6 border-r border-[#333] text-center">1</div>
-                  <div className="w-6 border-r border-[#333] text-center text-[#2d8ceb]">👁</div>
+                  <div className="w-6 border-r border-[#333] text-center text-[#2d8ceb]"><span className="i-ph:eye" /></div>
                   <div className="w-6 border-r border-[#333] text-center"></div>
                   <div className="flex-1 border-r border-[#333] px-2 flex items-center gap-1">
                     <span className="text-[8px]">▶</span>
@@ -258,7 +259,7 @@ export default function Reels() {
                {activeReel.category === "Color Grading" && (
                  <div className="flex h-5 border-b border-[#111111] items-center text-[10px]">
                     <div className="w-6 border-r border-[#333] text-center">2</div>
-                    <div className="w-6 border-r border-[#333] text-center text-[#2d8ceb]">👁</div>
+                    <div className="w-6 border-r border-[#333] text-center text-[#2d8ceb]"><span className="i-ph:eye" /></div>
                     <div className="w-6 border-r border-[#333] text-center"></div>
                     <div className="flex-1 border-r border-[#333] px-2 flex items-center gap-1">
                       <span className="text-[8px]">▶</span>
@@ -272,7 +273,7 @@ export default function Reels() {
                
                <div className="flex h-5 border-b border-[#111111] items-center text-[10px]">
                   <div className="w-6 border-r border-[#333] text-center">3</div>
-                  <div className="w-6 border-r border-[#333] text-center text-[#2d8ceb]">👁</div>
+                  <div className="w-6 border-r border-[#333] text-center text-[#2d8ceb]"><span className="i-ph:eye" /></div>
                   <div className="w-6 border-r border-[#333] text-center"></div>
                   <div className="flex-1 border-r border-[#333] px-2 flex items-center gap-1">
                     <span className="text-[8px]">▶</span>

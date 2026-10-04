@@ -4,7 +4,8 @@ export interface GameAchievement {
   game: string;
   description: string;
   dateUnlocked: string;
-  icon: string; // emoji or icon name
+  icon: string; // icon-font class (i-ph:*), or "" for none
+  steamIcon?: string; // real Steam achievement art URL
   rarity: string; // e.g. "0.4% Ultra Rare"
   isRealLife?: boolean;
 }
@@ -19,8 +20,8 @@ export interface GameItem {
   playtimeHours: number;
   userRating: number; // out of 10
   status: "Completed" | "Mastered (100%)" | "Currently Playing" | "All Bosses";
-  banner: string;
-  cover: string;
+  heroImage: string;
+  coverImage: string;
   summary: string;
   favoriteBoss: string;
   favoriteBuild: string;
@@ -42,8 +43,8 @@ export const gamesData: GameItem[] = [
     playtimeHours: 265,
     userRating: 10,
     status: "Mastered (100%)",
-    banner: "/img/media/elden-banner.jpg",
-    cover: "/img/media/elden-cover.jpg",
+    heroImage: "/images/games/elden-ring-hero.jpg",
+    coverImage: "/images/games/elden-ring-cover.jpg",
     summary: "The pinnacle of open-world design and dark fantasy environmental storytelling. A masterclass in player freedom, atmosphere, and punishing boss fights.",
     favoriteBoss: "Malenia, Blade of Miquella & Starscourge Radahn",
     favoriteBuild: "Dexterity / Arcane with Bloodhound's Step Nagakiba & Occult Uchigatana",
@@ -57,33 +58,26 @@ export const gamesData: GameItem[] = [
         game: "Elden Ring",
         description: "Achieved the Age of Stars ending and felled all 165 bosses in the Lands Between.",
         dateUnlocked: "March 2022",
-        icon: "👑",
-        rarity: "8.2% Rare",
+        icon: "",
+        steamIcon: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1245620/e50726be4aca4d2b1f5f14d36859fc8e6f710097.jpg",
+        rarity: "23.9% Common",
+        isRealLife: true,
       },
       {
         id: "ach-2",
         title: "Blade of the Haligtree Vanquished",
         game: "Elden Ring",
-        description: "Defeated Malenia, Blade of Miquella solo with zero spirit ashes.",
-        dateUnlocked: "April 2022",
-        icon: "🌸",
-        rarity: "3.1% Ultra Rare",
-      },
-      {
-        id: "ach-real-1",
-        title: "Polygon Open DeFi Hackathon — 2nd Prize Winner",
-        game: "Real World Odyssey",
-        description: "Engineered a high-performance decentralized finance protocol on Polygon network. Evaluated by core Web3 architects.",
-        dateUnlocked: "Dec 2022",
-        icon: "🏆",
-        rarity: "Top 1% Global",
-        isRealLife: true,
+        description: "Defeated Malenia, Blade of Miquella solo without summons at the Haligtree Roots.",
+        dateUnlocked: "May 2022",
+        icon: "",
+        steamIcon: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1245620/f704fcd82daf933dd3ce81c4d8ffea3ec65f26f4.jpg",
+        rarity: "36.4% Common",
       },
     ],
     screenshots: [
-      "/img/media/elden-s1.jpg",
-      "/img/media/elden-s2.jpg",
-      "/img/media/elden-s3.jpg"
+      "/images/games/elden-ring-s1.jpg",
+      "/images/games/elden-ring-s2.jpg",
+      "/images/games/elden-ring-s3.jpg"
     ],
   },
   {
@@ -96,8 +90,8 @@ export const gamesData: GameItem[] = [
     playtimeHours: 110,
     userRating: 9.9,
     status: "Mastered (100%)",
-    banner: "/img/media/sekiro-banner.jpg",
-    cover: "/img/media/sekiro-cover.jpg",
+    heroImage: "/images/games/sekiro-hero.jpg",
+    coverImage: "/images/games/sekiro-cover.jpg",
     summary: "The single best melee rhythm and parry combat system ever put into code. Unforgiving, cinematic, and profoundly satisfying when mastered.",
     favoriteBoss: "Sword Saint Isshin & Owl (Father) at Hirata Estate",
     favoriteBuild: "Kusabimaru Deflect + Mikiri Counter + Loaded Umbrella + Mortal Draw",
@@ -111,7 +105,7 @@ export const gamesData: GameItem[] = [
         game: "Sekiro",
         description: "Defeated Sword Saint Isshin in all three phases with flawless deflection cadence.",
         dateUnlocked: "Nov 2021",
-        icon: "⚔️",
+        icon: "",
         rarity: "4.7% Ultra Rare",
       },
       {
@@ -120,15 +114,15 @@ export const gamesData: GameItem[] = [
         game: "Real World Odyssey",
         description: "Pioneered hardware-backed Web3 wallet security and scalable cloud-native infrastructure for production developers.",
         dateUnlocked: "2023",
-        icon: "🛡️",
+        icon: "i-ph:shield",
         rarity: "Founding Tier",
         isRealLife: true,
       },
     ],
     screenshots: [
-      "/img/media/sekiro-s1.jpg",
-      "/img/media/sekiro-s2.jpg",
-      "/img/media/sekiro-s3.jpg"
+      "/images/games/sekiro-s1.jpg",
+      "/images/games/sekiro-s2.jpg",
+      "/images/games/sekiro-s3.jpg"
     ],
   },
   {
@@ -141,8 +135,8 @@ export const gamesData: GameItem[] = [
     playtimeHours: 190,
     userRating: 9.8,
     status: "Completed",
-    banner: "/img/media/ds3-banner.jpg",
-    cover: "/img/media/ds3-cover.jpg",
+    heroImage: "/images/games/dark-souls-3-hero.jpg",
+    coverImage: "/images/games/dark-souls-3-cover.jpg",
     summary: "The grand poetic finale to the Dark Souls trilogy. Bleak ash-filled landscapes, melancholic orchestral scores, and legendary endgame encounters.",
     favoriteBoss: "Slave Knight Gael & Sister Friede (Phase 3 Blackflame)",
     favoriteBuild: "Quality 40/40 Refined Claymore & Grass Crest Shield",
@@ -156,8 +150,9 @@ export const gamesData: GameItem[] = [
         game: "Dark Souls III",
         description: "Witnessed the final embers fade peacefully with the Fire Keeper into quiet night.",
         dateUnlocked: "Jan 2020",
-        icon: "🔥",
-        rarity: "11.5% Rare",
+        icon: "",
+        steamIcon: "https://shared.fastly.steamstatic.com/community_assets/images/apps/374320/16f8a5dfef5078c95cb035dd5f2c7827e0e6ae2a.jpg",
+        rarity: "21.3% Common",
       },
       {
         id: "ach-real-3",
@@ -165,15 +160,15 @@ export const gamesData: GameItem[] = [
         game: "Real World Odyssey",
         description: "Completed advanced degrees specializing in scalable data engineering, ML architectures, and statistical inference.",
         dateUnlocked: "2024",
-        icon: "🎓",
+        icon: "i-ph:graduation-cap",
         rarity: "High Honors",
         isRealLife: true,
       },
     ],
     screenshots: [
-      "/img/media/ds3-s1.jpg",
-      "/img/media/ds3-s2.jpg",
-      "/img/media/ds3-s3.jpg"
+      "/images/games/dark-souls-3-s1.jpg",
+      "/images/games/dark-souls-3-s2.jpg",
+      "/images/games/dark-souls-3-s3.jpg"
     ],
   },
   {
@@ -186,8 +181,8 @@ export const gamesData: GameItem[] = [
     playtimeHours: 140,
     userRating: 9.9,
     status: "Completed",
-    banner: "/img/media/bb-banner.jpg",
-    cover: "/img/media/bb-cover.jpg",
+    heroImage: "/images/games/bloodborne-hero.jpg",
+    coverImage: "/images/games/bloodborne-cover.jpg",
     summary: "Victorian Gothic architecture descending into Lovecraftian eldritch madness. Fast, aggressive rally mechanics and trick weapons.",
     favoriteBoss: "Lady Maria of the Astral Clocktower & Ludwig the Holy Blade",
     favoriteBuild: "Skill / Bloodtinge with Threaded Cane & Evelyn Pistol",
@@ -201,7 +196,7 @@ export const gamesData: GameItem[] = [
         game: "Bloodborne",
         description: "Consumed three Third Umbilical Cords and transcended the Hunt into an Infant Great One.",
         dateUnlocked: "Feb 2021",
-        icon: "🌕",
+        icon: "",
         rarity: "6.8% Rare",
       },
       {
@@ -210,13 +205,13 @@ export const gamesData: GameItem[] = [
         game: "Real World Odyssey",
         description: "Architected multi-agent LLM systems with tool calling, Bedrock integration, and sub-second knowledge retrieval.",
         dateUnlocked: "2025",
-        icon: "⚡",
+        icon: "i-ph:lightning",
         rarity: "Production Tier",
         isRealLife: true,
       },
     ],
     screenshots: [
-      "/img/media/bb-s1.jpg"
+      "/images/games/bloodborne-s1.jpg"
     ],
   },
   {
@@ -229,8 +224,8 @@ export const gamesData: GameItem[] = [
     playtimeHours: 125,
     userRating: 9.6,
     status: "Completed",
-    banner: "/img/media/cyberpunk-banner.jpg",
-    cover: "/img/media/cyberpunk-cover.jpg",
+    heroImage: "/images/games/cyberpunk-2077-hero.jpg",
+    coverImage: "/images/games/cyberpunk-2077-cover.jpg",
     summary: "Night City is the most densely realized futuristic urban metropolis ever rendered in real-time ray-traced glory. Phantom Liberty's spy-thriller storyline is top tier.",
     favoriteBoss: "Chimera Tank & Kurt Hansen",
     favoriteBuild: "Militech 'Falcon' Sandevistan + Byakko Katana Shinobi + Dash Deflect",
@@ -244,14 +239,15 @@ export const gamesData: GameItem[] = [
         game: "Cyberpunk 2077",
         description: "Sent Songbird beyond the stars to the Moon and tasted freedom in the Badlands with the Aldecaldos.",
         dateUnlocked: "Oct 2023",
-        icon: "🚀",
-        rarity: "9.1% Rare",
+        icon: "",
+        steamIcon: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1091500/96506dab554565fd3dc78446a6df17040b353f16.jpg",
+        rarity: "16.5% Rare",
       },
     ],
     screenshots: [
-      "/img/media/cyberpunk-s1.jpg",
-      "/img/media/cyberpunk-s2.jpg",
-      "/img/media/cyberpunk-s3.jpg"
+      "/images/games/cyberpunk-2077-s1.jpg",
+      "/images/games/cyberpunk-2077-s2.jpg",
+      "/images/games/cyberpunk-2077-s3.jpg"
     ],
   },
   {
@@ -264,8 +260,8 @@ export const gamesData: GameItem[] = [
     playtimeHours: 85,
     userRating: 9.4,
     status: "Completed",
-    banner: "/img/media/wukong-banner.jpg",
-    cover: "/img/media/wukong-cover.jpg",
+    heroImage: "/images/games/black-myth-wukong-hero.jpg",
+    coverImage: "/images/games/black-myth-wukong-cover.jpg",
     summary: "Journey to the West reimagined with jaw-dropping Unreal Engine 5 Nanite visuals, kinetic staff combat forms, and rich Chinese mythological folklore.",
     favoriteBoss: "Erlang Shen (Sacred Divinity) & The Great Sage's Broken Shell",
     favoriteBuild: "Smash Stance Staff Mastery + Cloud Step Invisibility + Immobilize Spells",
@@ -279,14 +275,14 @@ export const gamesData: GameItem[] = [
         game: "Black Myth: Wukong",
         description: "Reclaimed all six Relics of Sun Wukong and conquered Erlang the Sacred Divinity.",
         dateUnlocked: "Sept 2024",
-        icon: "🐒",
+        icon: "",
         rarity: "5.4% Rare",
       },
     ],
     screenshots: [
-      "/img/media/wukong-s1.jpg",
-      "/img/media/wukong-s2.jpg",
-      "/img/media/wukong-s3.jpg"
+      "/images/games/black-myth-wukong-s1.jpg",
+      "/images/games/black-myth-wukong-s2.jpg",
+      "/images/games/black-myth-wukong-s3.jpg"
     ],
   }
 ];

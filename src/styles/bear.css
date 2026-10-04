@@ -6,7 +6,7 @@
 .bear .markdown h2,
 .bear .markdown h3,
 .bear .markdown h4 {
-  @apply font-bold relative text-c-800;
+  @apply font-bold relative; color: var(--c-text);
 }
 
 .bear .markdown h1,
@@ -90,8 +90,13 @@
   @apply m-0 mb-2;
 }
 
+.bear .markdown code,
+.bear .markdown pre {
+  font-family: var(--font-mono);
+}
+
 .bear .markdown code {
-  @apply text-sm border border-c-300 rounded py-0.5 px-1 bg-c-50;
+  @apply text-sm rounded py-0.5 px-1; border: 1px solid var(--c-border); background: var(--c-bg-tertiary);
 }
 
 .bear .markdown pre {
@@ -103,7 +108,7 @@
 }
 
 .bear .markdown pre div {
-  @apply border border-c-300 rounded;
+  @apply rounded; border: 1px solid var(--c-border);
 }
 
 .bear .markdown .token {
@@ -120,9 +125,9 @@
 
 .bear .markdown table td,
 .bear .markdown table th {
-  @apply px-3 py-2 border border-c-300;
+  @apply px-3 py-2; border: 1px solid var(--c-border);
 }
 
 .bear .markdown table tr {
-  @apply border-t border-gray-300 bg-transparent;
+  @apply bg-transparent; border-top: 1px solid var(--c-border);
 }
