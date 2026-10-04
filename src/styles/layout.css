@@ -32,19 +32,31 @@ html, body, #root {
 }
 
 /* Theme variables and styles */
+.theme-default {
+  --accent-primary: #007AFF;
+  --theme-accent: #007AFF;
+  --font-global: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+}
+
 .theme-souls {
   --accent-primary: #F59E0B;
   --theme-accent: #F59E0B;
+  --font-global: 'Cinzel', 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
 }
 
 .theme-souls .font-fantasy-title {
-  font-family: 'Cinzel', 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
+  font-family: var(--font-global);
   letter-spacing: 0.05em;
 }
 
 .theme-soul-reaper {
   --accent-primary: #FF5722;
   --theme-accent: #FF5722;
+  --font-global: 'Inter', "Avenir Next LT Pro", sans-serif;
+}
+
+body {
+  font-family: var(--font-global, var(--font-system)) !important;
 }
 
 /* Bankai screen flash animation */

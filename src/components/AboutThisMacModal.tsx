@@ -139,8 +139,8 @@ export default function AboutThisMacModal({ show, onClose }: AboutThisMacModalPr
 
             {/* Copyright & Credits */}
             <div style={{ textAlign: "center", padding: "0 16px 14px", fontSize: 10, color: "rgba(0,0,0,0.5)", lineHeight: 1.5 }}>
-              <div style={{ fontWeight: 600 }}>Aditya Dhir (@aditya44-tech)</div>
-              <div>© 2024–2026 Aditya Dhir. All rights reserved.</div>
+              <div style={{ fontWeight: 600 }}>Aditya Salunkhe (@aditya44-tech)</div>
+              <div>© 2024–2026 Aditya Salunkhe. All rights reserved.</div>
               <div style={{ marginTop: 6, paddingTop: 6, borderTop: "0.5px solid rgba(0,0,0,0.08)", fontSize: 9, color: "rgba(0,0,0,0.45)" }}>
                 <span>Art &amp; Media Credits: </span>
                 <span title="Original SVG wallpapers & icons by Aditya; Unsplash Creative Commons photography for game/film showcases; Tite Kubo / Studio Pierrot (Bleach references); FromSoftware (Soulsborne tributes).">

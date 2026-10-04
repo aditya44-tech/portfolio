@@ -1,253 +1,187 @@
 import React, { useState } from "react";
-import { animeData, bleachZanpakutoList, type AnimeItem, type ZanpakutoInfo } from "~/data/anime";
-import { useStore } from "~/stores";
+import { animeData, currentlyWatchingAnime, type AnimeItem } from "~/data/anime";
 
 export default function AnimeShelf() {
-  const [selectedAnime, setSelectedAnime] = useState<AnimeItem>(animeData[0]);
-  const [activeView, setActiveView] = useState<"shelf" | "bleach-bankai">("shelf");
-  const [filterStatus, setFilterStatus] = useState<string>("All");
-
-  const filteredAnime = filterStatus === "All"
-    ? animeData
-    : animeData.filter((a) => a.status === filterStatus);
+  const [activeTab, setActiveTab] = useState<"home" | "browse" | "simulcasts" | "news">("home");
+  const [hoveredAnime, setHoveredAnime] = useState<string | null>(null);
 
   return (
-    <div className="flex flex-col h-full bg-[#16161A] text-[#EDEAF0] select-none font-sans overflow-hidden">
-      {/* Top Bar - Books / Shelf Style */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#282833] bg-[#1C1C24]">
-        <div className="flex items-center gap-3">
-          <span className="text-base">📖</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-orange-400">
-            Anime Shelf • Gotei Archives
-          </span>
-          <div className="flex items-center gap-1 ml-4 bg-black/40 p-1 rounded-md border border-white/10">
-            <button
-              onClick={() => setActiveView("shelf")}
-              className={`px-3 py-1 rounded text-xs font-medium transition-all ${
-                activeView === "shelf"
-                  ? "bg-orange-600 text-white shadow-sm"
-                  : "text-stone-400 hover:text-white"
-              }`}
-            >
-              Collection ({animeData.length})
-            </button>
-            <button
-              onClick={() => setActiveView("bleach-bankai")}
-              className={`px-3 py-1 rounded text-xs font-medium transition-all ${
-                activeView === "bleach-bankai"
-                  ? "bg-orange-600 text-white shadow-sm"
-                  : "text-stone-400 hover:text-white"
-              }`}
-            >
-              ⚡ Bleach: Zanpakuto & Bankai ({bleachZanpakutoList.length})
-            </button>
+    <div className="flex flex-col h-full bg-[#000000] text-white font-sans overflow-y-auto overflow-x-hidden selection:bg-[#f47521] selection:text-white">
+      {/* Top Navigation Bar */}
+      <div className="bg-[#141519] h-16 flex items-center justify-between px-6 sticky top-0 z-50 border-b border-[#24252a]">
+        <div className="flex items-center gap-8 h-full">
+          {/* Logo (CR color #F47521) */}
+          <div className="flex items-center gap-2 text-[#f47521] font-black text-xl tracking-tight cursor-pointer">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 4.195c4.31 0 7.805 3.495 7.805 7.805S16.31 19.805 12 19.805 4.195 16.31 4.195 12 7.69 4.195 12 4.195z" />
+              <path d="M12 7.747c-2.348 0-4.253 1.905-4.253 4.253 0 2.348 1.905 4.253 4.253 4.253 2.348 0 4.253-1.905 4.253-4.253 0-2.348-1.905-4.253-4.253-4.253zm0 6.643c-1.32 0-2.39-1.07-2.39-2.39s1.07-2.39 2.39-2.39 2.39 1.07 2.39 2.39-1.07 2.39-2.39 2.39z" />
+            </svg>
+            CRUNCHYROLL
           </div>
-        </div>
-
-        {activeView === "shelf" && (
-          <div className="flex items-center gap-1 text-xs">
-            {["All", "Currently Watching", "Completed"].map((status) => (
+          {/* Nav Links */}
+          <div className="flex items-center h-full gap-1">
+            {["home", "browse", "manga", "games", "news"].map((tab) => (
               <button
-                key={status}
-                onClick={() => setFilterStatus(status)}
-                className={`px-2.5 py-0.5 rounded-full text-[11px] transition-colors ${
-                  filterStatus === status
-                    ? "bg-white/20 text-white font-medium"
-                    : "text-stone-400 hover:text-white"
+                key={tab}
+                onClick={() => tab !== "manga" && tab !== "games" && setActiveTab(tab as any)}
+                className={`px-4 h-full flex items-center text-sm font-semibold transition-colors capitalize ${
+                  activeTab === tab ? "text-white border-b-[3px] border-[#f47521]" : "text-[#a0a0a0] hover:text-[#d0d0d0] hover:bg-white/5"
                 }`}
               >
-                {status}
+                {tab} <span className="ml-1 text-[10px] opacity-50">▼</span>
               </button>
             ))}
           </div>
-        )}
-      </div>
-
-      {activeView === "shelf" ? (
-        <div className="flex-1 flex overflow-hidden">
-          {/* Left Column: Anime Titles List (260px) */}
-          <div className="w-[260px] flex-shrink-0 border-r border-[#282833] bg-[#191921] overflow-y-auto p-2 space-y-1">
-            {filteredAnime.map((anime) => {
-              const isSelected = selectedAnime.id === anime.id;
-              return (
-                <button
-                  key={anime.id}
-                  onClick={() => setSelectedAnime(anime)}
-                  className={`w-full text-left p-2.5 rounded-lg flex items-center gap-3 transition-all ${
-                    isSelected
-                      ? "bg-orange-950/40 border border-orange-500/50 text-white"
-                      : "hover:bg-white/5 text-stone-400 hover:text-white border border-transparent"
-                  }`}
-                >
-                  <img
-                    src={anime.coverImage}
-                    alt={anime.title}
-                    className="w-10 h-14 object-cover rounded shadow"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs font-semibold truncate text-white">
-                      {anime.title}
-                    </div>
-                    <div className="text-[10px] text-orange-400/90 font-mono mt-0.5">
-                      ⭐ {anime.score} • {anime.studio}
-                    </div>
-                    <div className="text-[10px] text-stone-500 truncate mt-0.5">
-                      {anime.status} {anime.currentProgress && `(${anime.currentProgress})`}
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Right Main Detail Pane */}
-          <div className="flex-1 overflow-y-auto">
-            {/* Banner Header */}
-            <div className="relative h-56 w-full bg-black overflow-hidden flex-shrink-0">
-              <img
-                src={selectedAnime.bannerImage}
-                alt={selectedAnime.title}
-                className="w-full h-full object-cover opacity-80"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#16161A] via-[#16161A]/50 to-transparent" />
-              <div className="absolute bottom-4 left-6 right-6 flex items-end justify-between">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="px-2 py-0.5 rounded bg-orange-600/90 text-white font-mono text-[10px] font-bold uppercase">
-                      {selectedAnime.status}
-                    </span>
-                    <span className="text-xs text-stone-300 font-mono">
-                      {selectedAnime.studio} • {selectedAnime.year}
-                    </span>
-                  </div>
-                  <h1 className="text-2xl font-bold text-white tracking-tight">
-                    {selectedAnime.title}
-                  </h1>
-                  {selectedAnime.japaneseTitle && (
-                    <div className="text-xs text-orange-300/80 font-serif">
-                      {selectedAnime.japaneseTitle}
-                    </div>
-                  )}
-                </div>
-                <div className="px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-right backdrop-blur">
-                  <div className="text-[10px] text-stone-400">RATING</div>
-                  <div className="text-base font-bold font-mono text-orange-400">
-                    ⭐ {selectedAnime.score}/10
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Anime Review Details */}
-            <div className="p-6 space-y-5 max-w-4xl">
-              {/* Genres Strip */}
-              <div className="flex flex-wrap gap-1.5">
-                {selectedAnime.genres.map((g) => (
-                  <span
-                    key={g}
-                    className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[11px] text-stone-300"
-                  >
-                    {g}
-                  </span>
-                ))}
-              </div>
-
-              {/* Why I Love It */}
-              <div className="p-4 rounded-xl border border-white/10 bg-[#1D1D26] space-y-1.5">
-                <div className="text-xs font-bold uppercase tracking-wider text-orange-400">
-                  💭 Why It Resonates
-                </div>
-                <p className="text-xs text-stone-300 leading-relaxed">
-                  {selectedAnime.whyILoveIt}
-                </p>
-              </div>
-
-              {/* Favorite Character & Fight */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl border border-white/10 bg-[#1D1D26] space-y-1">
-                  <div className="text-[11px] font-bold uppercase tracking-wider text-orange-400">
-                    👑 Favorite Character
-                  </div>
-                  <div className="text-sm font-semibold text-white">
-                    {selectedAnime.favoriteCharacter}
-                  </div>
-                  <div className="text-xs text-stone-400">
-                    {selectedAnime.favoriteCharacterRole}
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-xl border border-white/10 bg-[#1D1D26] space-y-1">
-                  <div className="text-[11px] font-bold uppercase tracking-wider text-orange-400">
-                    ⚔️ Iconic Fight / Peak Episode
-                  </div>
-                  <div className="text-xs font-semibold text-white leading-snug">
-                    {selectedAnime.favoriteFightOrEpisode}
-                  </div>
-                </div>
-              </div>
-
-              {/* Memorable Quote */}
-              <div className="p-4 rounded-xl border border-orange-500/30 bg-orange-950/20 italic text-stone-300 text-xs">
-                "{selectedAnime.memorableQuote}"
-              </div>
-            </div>
+        </div>
+        {/* Right Actions */}
+        <div className="flex items-center gap-6">
+          <button className="text-[#a0a0a0] hover:text-white transition">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </button>
+          <button className="text-[#a0a0a0] hover:text-white transition">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+          </button>
+          <div className="flex items-center gap-2 hover:bg-white/5 p-1 rounded cursor-pointer transition">
+             <div className="w-8 h-8 rounded-full bg-orange-500 overflow-hidden">
+               <img src="https://avatars.githubusercontent.com/u/101980860?v=4" alt="profile" />
+             </div>
+             <span className="text-[10px] text-gray-500">▼</span>
           </div>
         </div>
-      ) : (
-        /* Bleach Zanpakuto & Bankai Showcase View */
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          <div className="max-w-4xl mx-auto space-y-5">
-            <div className="p-5 rounded-2xl bg-gradient-to-r from-orange-950/50 via-black to-zinc-950 border border-orange-500/40 shadow-xl">
-              <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-orange-600 text-white font-bold uppercase">
-                Featured • Gotei 13 Zanpakuto Compendium
-              </span>
-              <h2 className="text-xl font-bold text-white mt-2">
-                BLEACH: Thousand-Year Blood War — The Spirit Swords
-              </h2>
-              <p className="text-xs text-stone-300 mt-1 leading-relaxed">
-                "The blade is me." Explore the Shikai releases, release commands, and devastating Bankai forms of the Soul Reapers.
-              </p>
-            </div>
+      </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {bleachZanpakutoList.map((z) => (
-                <div
-                  key={z.name}
-                  className="p-4 rounded-xl border border-white/10 bg-[#191922] hover:border-orange-500/40 transition-all space-y-2.5"
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="text-base font-bold text-white">{z.name}</h3>
-                      <div className="text-xs text-orange-400 font-medium">
-                        {z.wielder} • {z.division}
-                      </div>
-                    </div>
-                    <span className="text-xs px-2 py-0.5 rounded bg-orange-900/40 text-orange-300 border border-orange-700/40 font-mono">
-                      {z.releaseCommand}
-                    </span>
+      {activeTab === "home" && (
+        <div className="flex-1 pb-20">
+          {/* Hero Carousel Area */}
+          <div className="relative w-full h-[450px] md:h-[500px] overflow-hidden bg-[#141519]">
+             {animeData[0] && (
+                <>
+                  <div className="absolute inset-0">
+                    <img src={animeData[0].bannerImage} alt="hero" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#000000] via-transparent to-transparent" />
                   </div>
-
-                  <div className="text-xs text-stone-400">
-                    <strong className="text-stone-300">Shikai:</strong> {z.shikai}
-                  </div>
-
-                  <div className="p-2.5 rounded-lg bg-black/50 border border-white/5 text-xs text-stone-300 space-y-1">
-                    <div className="font-bold text-orange-400 flex items-center gap-1.5">
-                      <span>⚡ BANKAI:</span>
-                      <span className="text-white">{z.bankai}</span>
+                  <div className="relative z-10 w-full max-w-[1200px] mx-auto h-full flex flex-col justify-center px-8 md:px-16 pt-10">
+                    <img src={animeData[0].coverImage} alt="logo" className="w-48 h-auto object-contain mb-4 hidden" />
+                    <h1 className="text-4xl md:text-5xl font-black text-white mb-2 leading-tight max-w-2xl" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+                      {animeData[0].title}
+                    </h1>
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="px-1.5 py-0.5 bg-[#f47521] text-black text-[11px] font-bold uppercase rounded-sm">Sub | Dub</span>
+                      <span className="text-sm font-semibold text-[#a0a0a0]">Action, Supernatural</span>
                     </div>
-                    <p className="text-[11px] text-stone-400 leading-snug">
-                      {z.bankaiAbility}
+                    <p className="text-[#d0d0d0] text-sm max-w-xl leading-relaxed mb-8 line-clamp-3">
+                      {animeData[0].whyILoveIt}
                     </p>
+                    <div className="flex items-center gap-4">
+                       <button className="bg-[#f47521] hover:bg-[#ff8c42] text-black font-bold uppercase tracking-wider px-8 py-3 rounded-sm flex items-center gap-2 transition transform active:scale-95">
+                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd"></path></svg>
+                         Start Watching
+                       </button>
+                       <button className="bg-transparent border border-white/40 hover:border-white text-white font-bold uppercase tracking-wider px-6 py-3 rounded-sm flex items-center gap-2 transition">
+                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                         Add to Watchlist
+                       </button>
+                    </div>
                   </div>
+                </>
+             )}
+          </div>
 
-                  <p className="text-[11px] italic text-stone-400 border-l-2 border-orange-500 pl-2">
-                    "{z.quote}"
-                  </p>
+          {/* Continue Watching Row */}
+          <div className="px-8 md:px-16 mt-8">
+            <h2 className="text-xl font-bold mb-4">Continue Watching</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {currentlyWatchingAnime.map((anime) => (
+                <div key={anime.id} className="group cursor-pointer">
+                   <div className="relative aspect-video overflow-hidden bg-[#141519] rounded-sm mb-2 border border-white/5 group-hover:border-white/20 transition">
+                      <img src={anime.bannerImage} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" alt={anime.title} />
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition" />
+                      
+                      {/* Play overlay on hover */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                         <div className="w-12 h-12 bg-black/60 rounded-full flex items-center justify-center border-2 border-white">
+                           <svg className="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd"></path></svg>
+                         </div>
+                      </div>
+
+                      {/* Progress bar */}
+                      <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#24252a]">
+                         <div className="h-full bg-[#f47521]" style={{ width: '65%' }}></div>
+                      </div>
+                   </div>
+                   <h3 className="text-sm font-semibold text-[#d0d0d0] group-hover:text-[#f47521] transition truncate">
+                     {anime.title}
+                   </h3>
+                   <div className="text-[11px] text-[#a0a0a0] mt-0.5">{anime.currentProgress}</div>
                 </div>
               ))}
             </div>
           </div>
+
+          {/* Just Updated / Favorites Row */}
+          <div className="px-8 md:px-16 mt-12 mb-10">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold">Top Recommendations for You</h2>
+              <button className="text-sm font-semibold text-[#a0a0a0] hover:text-white uppercase tracking-wider transition">View All</button>
+            </div>
+            <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-3">
+              {animeData.map((anime) => (
+                <div 
+                  key={anime.id} 
+                  className="group cursor-pointer relative"
+                  onMouseEnter={() => setHoveredAnime(anime.id)}
+                  onMouseLeave={() => setHoveredAnime(null)}
+                >
+                   {/* Portrait Cover */}
+                   <div className="relative aspect-[2/3] overflow-hidden bg-[#141519] mb-2">
+                     <img src={anime.coverImage} className="w-full h-full object-cover" alt={anime.title} />
+                     <div className="absolute top-2 right-2 bg-black/70 px-1.5 py-0.5 rounded-sm text-[10px] font-bold text-white border border-white/20">
+                       ⭐ {anime.score}
+                     </div>
+                   </div>
+                   <h3 className="text-[13px] font-medium text-[#d0d0d0] group-hover:text-[#f47521] transition line-clamp-2 leading-tight">
+                     {anime.title}
+                   </h3>
+                   <div className="text-[11px] text-[#a0a0a0] mt-1">{anime.genres[0]}</div>
+
+                   {/* Hover Detail Card (simplified for inline) */}
+                   {hoveredAnime === anime.id && (
+                     <div className="absolute z-50 left-full top-0 ml-2 w-[300px] bg-[#141519] border border-[#24252a] p-4 shadow-2xl hidden md:block">
+                        <h4 className="text-lg font-bold mb-1">{anime.title}</h4>
+                        <div className="flex items-center gap-2 mb-3 text-[11px] font-bold">
+                           <span className="text-[#32b55b]">{anime.score} Score</span>
+                           <span className="text-[#a0a0a0]">{anime.year}</span>
+                           <span className="text-[#a0a0a0]">{anime.episodes}</span>
+                        </div>
+                        <p className="text-xs text-[#d0d0d0] leading-relaxed mb-4 line-clamp-4">
+                          {anime.whyILoveIt}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <button className="flex-1 bg-[#f47521] hover:bg-[#ff8c42] text-black font-bold uppercase py-2 text-xs flex items-center justify-center gap-1">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd"></path></svg>
+                            Play
+                          </button>
+                          <button className="w-8 h-8 flex items-center justify-center border border-white/40 hover:border-white">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                          </button>
+                        </div>
+                     </div>
+                   )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Footer / Other Tabs */}
+      {activeTab !== "home" && (
+        <div className="flex-1 flex flex-col items-center justify-center text-[#a0a0a0]">
+          <svg className="w-16 h-16 text-[#24252a] mb-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z" />
+          </svg>
+          <p className="font-semibold">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} section is currently empty.</p>
         </div>
       )}
     </div>

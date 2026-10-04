@@ -23,7 +23,7 @@ const launchpadApps: LaunchpadData[] = [
     id: "medium-blog",
     title: "Medium Blog",
     img: "img/icons/launchpad/medium-2.0.png",
-    link: "https://medium.com/@adityadhir97"
+    link: "https://medium.com/@adityasalunkhe97"
   },
   {
     id: "github-profile",

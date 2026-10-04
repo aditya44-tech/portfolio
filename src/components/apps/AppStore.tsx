@@ -348,7 +348,7 @@ export default function AppStore() {
           <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "var(--system-blue, #007AFF)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: "bold" }}>
             A
           </div>
-          <span style={{ fontSize: "14px", flex: 1 }}>Aditya Dhir</span>
+          <span style={{ fontSize: "14px", flex: 1 }}>Aditya Salunkhe</span>
         </button>
       </div>
 

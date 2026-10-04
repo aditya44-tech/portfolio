@@ -13,7 +13,7 @@ const terminal: TerminalData[] = [
         content: (
           <div className="py-1">
             <div>
-              Hi, I'm Aditya Dhir (@aditya44-tech / adi44).
+              Hi, I'm Aditya Salunkhe (@aditya44-tech / adi44).
               Senior Software Engineer, AI Systems Builder, and Tech Advisor.
               I specialize in designing AI-native products, building agentic workflows,
               and architecting resilient cloud-native backend and Web3 infrastructure.
@@ -67,22 +67,22 @@ const terminal: TerminalData[] = [
               Linkedin:{" "}
               <a
                 className="text-blue-300"
-                href="https://www.linkedin.com/in/adityadhir"
+                href="https://www.linkedin.com/in/adityasalunkhe"
                 target="_blank"
                 rel="noreferrer"
               >
-                in/adityadhir
+                in/adityasalunkhe
               </a>
             </li>
             <li>
               Medium:{" "}
               <a
                 className="text-blue-300"
-                href="https://medium.com/@adityadhir97"
+                href="https://medium.com/@adityasalunkhe97"
                 target="_blank"
                 rel="noreferrer"
               >
-                @adityadhir97
+                @adityasalunkhe97
               </a>
             </li>
           </ul>

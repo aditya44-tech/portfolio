@@ -20,13 +20,13 @@ const websites: WebsitesData = {
         id: "my-linkedin",
         title: "Linkedin",
         img: "img/sites/linkedin.svg",
-        link: "https://www.linkedin.com/in/adityadhir",
+        link: "https://www.linkedin.com/in/adityasalunkhe",
       },
       {
         id: "my-medium",
         title: "Medium",
         img: "img/sites/artstation.svg",
-        link: "https://medium.com/@adityadhir97",
+        link: "https://medium.com/@adityasalunkhe97",
       },
       {
         id: "my-polygon",

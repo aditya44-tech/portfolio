@@ -92,31 +92,32 @@ const PANEL_GROUPS = [
 ];
 
 // ─── Shared sub-components ────────────────────────────────────────────────────
-// ─── Shared sub-components ────────────────────────────────────────────────────
 const Toggle = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) => {
   const dark = useStore((s) => s.dark);
+  const accentHex = useStore((s) => s.getAccentHex());
   return (
     <div
       onClick={() => onChange(!checked)}
       style={{
-        width: "36px",
-        height: "20px",
-        borderRadius: "10px",
-        background: checked ? "#30d158" : dark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.12)",
+        width: "44px",
+        height: "24px",
+        borderRadius: "12px",
+        background: checked ? accentHex : dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
         position: "relative",
         cursor: "pointer",
-        transition: "background-color 0.2s ease",
+        transition: "background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        boxShadow: checked ? `0 0 10px ${accentHex}80` : "inset 0 2px 4px rgba(0,0,0,0.1)",
       }}
     >
       <motion.div
-        animate={{ x: checked ? 17 : 2 }}
-        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+        animate={{ x: checked ? 22 : 2 }}
+        transition={{ type: "spring", stiffness: 600, damping: 30 }}
         style={{
-          width: "16px",
-          height: "16px",
+          width: "20px",
+          height: "20px",
           borderRadius: "50%",
           background: "#fff",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+          boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
           position: "absolute",
           top: "2px",
         }}
@@ -140,14 +141,22 @@ const Select = ({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       style={{
-        fontSize: "12px",
-        background: dark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.05)",
-        border: "none",
-        borderRadius: "6px",
-        padding: "4px 8px",
+        fontSize: "13px",
+        fontWeight: 500,
+        background: dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.04)",
+        border: dark ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(0,0,0,0.1)",
+        borderRadius: "8px",
+        padding: "6px 28px 6px 12px",
         cursor: "pointer",
         color: dark ? "#fff" : "#1c1c1e",
         outline: "none",
+        appearance: "none",
+        backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23${dark ? 'fff' : '1c1c1e'}%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`,
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "right 10px top 50%",
+        backgroundSize: "10px auto",
+        transition: "all 0.2s ease",
+        fontFamily: "var(--font-global, inherit)",
       }}
     >
       {options.map((opt) => {
@@ -158,7 +167,7 @@ const Select = ({
             key={val}
             value={val}
             style={{
-              background: dark ? "#1e1e1e" : "#fff",
+              background: dark ? "#2c2c2e" : "#fff",
               color: dark ? "#fff" : "#1c1c1e",
             }}
           >
@@ -184,11 +193,14 @@ const Row = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "10px 16px",
-        borderBottom: dark ? "0.5px solid rgba(255,255,255,0.08)" : "0.5px solid rgba(0,0,0,0.06)",
+        padding: "12px 20px",
+        borderBottom: dark ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(0,0,0,0.05)",
+        transition: "background 0.2s ease",
       }}
+      onMouseEnter={(e) => (e.currentTarget.style.background = dark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)")}
+      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
     >
-      <span style={{ fontSize: "13px", color: dark ? "#f5f5f7" : "#1c1c1e" }}>{label}</span>
+      <span style={{ fontSize: "14px", fontWeight: 500, color: dark ? "#f5f5f7" : "#1c1c1e" }}>{label}</span>
       {children}
     </div>
   );
@@ -197,35 +209,45 @@ const Row = ({
 const SectionTitle = ({ children }: { children: React.ReactNode }) => {
   const dark = useStore((s) => s.dark);
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 5 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
       style={{
-        fontSize: "11px",
+        fontSize: "12px",
         fontWeight: 700,
-        color: dark ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.45)",
+        color: dark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
         textTransform: "uppercase",
-        letterSpacing: "0.5px",
-        padding: "12px 16px 4px",
+        letterSpacing: "1px",
+        padding: "20px 20px 8px",
+        fontFamily: "var(--font-global, inherit)",
       }}
     >
       {children}
-    </div>
+    </motion.div>
   );
 };
 
 const Card = ({ children }: { children: React.ReactNode }) => {
   const dark = useStore((s) => s.dark);
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 30 }}
       style={{
-        background: dark ? "rgba(45,45,45,0.5)" : "rgba(255,255,255,0.75)",
-        border: dark ? "0.5px solid rgba(255,255,255,0.12)" : "0.5px solid rgba(0,0,0,0.08)",
-        borderRadius: "12px",
-        margin: "0 16px 12px",
+        background: dark ? "linear-gradient(145deg, rgba(45,45,45,0.6), rgba(30,30,30,0.6))" : "linear-gradient(145deg, rgba(255,255,255,0.9), rgba(250,250,250,0.9))",
+        border: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.08)",
+        borderRadius: "16px",
+        margin: "0 20px 16px",
         overflow: "hidden",
+        boxShadow: dark ? "0 4px 15px rgba(0,0,0,0.2)" : "0 4px 15px rgba(0,0,0,0.05)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
       }}
     >
       {children}
-    </div>
+    </motion.div>
   );
 };
 
@@ -1301,7 +1323,7 @@ const AboutPanel = () => {
           ["Memory", "16 GB"],
           ["Storage", "Powered by Cloud"],
           ["macOS", "Tahoe 26.0"],
-          ["Developer", "Aditya Dhir"],
+          ["Developer", "Aditya Salunkhe"],
           ["GitHub", "@aditya44-tech"],
         ].map(([key, val]) => (
           <Row key={key} label={key}>
@@ -1388,25 +1410,29 @@ export default function SystemSettings() {
         display: "flex",
         height: "100%",
         flexDirection: isMobile ? "column" : "row",
-        background: dark ? "rgba(30,30,30,0.95)" : "rgba(242,242,247,0.98)",
+        background: dark ? "rgba(20,20,22,0.85)" : "rgba(240,240,245,0.85)",
         color: dark ? "#f5f5f7" : "#1c1c1e",
-        borderRadius: isMobile ? "0" : "0 0 14px 14px",
+        borderRadius: isMobile ? "0" : "0 0 16px 16px",
         overflow: "hidden",
+        backdropFilter: "blur(40px)",
+        WebkitBackdropFilter: "blur(40px)",
+        fontFamily: "var(--font-global, inherit)",
       }}
     >
       {/* ── Sidebar / List View ── */}
       {(!isMobile || mobileView === "list") && (
         <div
           style={{
-            width: isMobile ? "100%" : "220px",
+            width: isMobile ? "100%" : "260px",
             flexShrink: 0,
-            borderRight: isMobile ? "none" : (dark ? "0.5px solid rgba(255,255,255,0.1)" : "var(--lg-border)"),
-            background: isMobile ? (dark ? "#000" : "#f2f2f7") : (dark ? "rgba(42,42,42,0.95)" : "var(--lg-bg-tinted)"),
-            backdropFilter: isMobile ? "none" : "var(--lg-blur-light)",
-            WebkitBackdropFilter: isMobile ? "none" : "var(--lg-blur-light)",
+            borderRight: isMobile ? "none" : (dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)"),
+            background: isMobile ? (dark ? "#000" : "#f2f2f7") : (dark ? "rgba(30,30,32,0.6)" : "rgba(255,255,255,0.5)"),
+            backdropFilter: isMobile ? "none" : "blur(30px)",
+            WebkitBackdropFilter: isMobile ? "none" : "blur(30px)",
             display: "flex",
             flexDirection: "column",
             overflowY: "auto",
+            boxShadow: dark ? "inset -1px 0 0 rgba(0,0,0,0.3)" : "none",
           }}
         >
           {isMobile && (
@@ -1474,7 +1500,7 @@ export default function SystemSettings() {
                 <img src="/img/ui/avatar.jpg" alt="profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               </div>
               <div>
-                <div style={{ fontSize: "20px", fontWeight: 400, color: dark ? "#fff" : "#000", letterSpacing: "-0.5px" }}>Aditya Dhir</div>
+                <div style={{ fontSize: "20px", fontWeight: 400, color: dark ? "#fff" : "#000", letterSpacing: "-0.5px" }}>Aditya Salunkhe</div>
                 <div style={{ fontSize: "13px", color: dark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)", marginTop: "2px" }}>Apple ID, iCloud, Media & App Store</div>
               </div>
             </div>
@@ -1654,11 +1680,11 @@ export default function SystemSettings() {
       {(!isMobile || mobileView === "panel") && (
         <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", background: isMobile ? (dark ? "#000" : "#f2f2f7") : "transparent" }}>
           {isMobile && (
-            <div style={{ display: "flex", alignItems: "center", padding: "12px 16px", borderBottom: dark ? "0.5px solid rgba(255,255,255,0.1)" : "0.5px solid rgba(0,0,0,0.1)" }}>
+            <div style={{ display: "flex", alignItems: "center", padding: "12px 16px", borderBottom: dark ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(0,0,0,0.05)" }}>
               <button
                 onClick={() => setMobileView("list")}
                 style={{
-                  background: "none", border: "none", color: "#007AFF", fontSize: "16px", display: "flex", alignItems: "center", gap: "4px", cursor: "pointer", padding: 0
+                  background: "none", border: "none", color: "var(--accent-primary, #007AFF)", fontSize: "16px", display: "flex", alignItems: "center", gap: "4px", cursor: "pointer", padding: 0
                 }}
               >
                 <img src="/img/icons/sf-icons/caret-right.svg" alt="back" style={{ width: "12px", height: "12px", transform: "rotate(180deg)", filter: "invert(40%) sepia(100%) saturate(3000%) hue-rotate(200deg) brightness(100%) contrast(100%)" }} />
@@ -1670,29 +1696,28 @@ export default function SystemSettings() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={activePanel}
-                initial={{ opacity: 0, x: 16, filter: "blur(2px)" }}
-                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, x: -10, filter: "blur(2px)" }}
-                transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
+                initial={{ opacity: 0, y: 15, filter: "blur(4px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
+                transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
                 style={{ paddingBottom: "24px" }}
               >
                 {/* Panel title */}
                 {!isMobile && (
                   <div
                     style={{
-                      fontSize: "20px",
+                      fontSize: "24px",
                       fontWeight: 700,
                       color: dark ? "#fff" : "#1c1c1e",
-                      padding: "16px 16px 8px",
-                      borderBottom: dark ? "0.5px solid rgba(255,255,255,0.1)" : "0.5px solid rgba(0,0,0,0.06)",
-                      marginBottom: "4px",
+                      padding: "24px 20px 8px",
+                      letterSpacing: "-0.5px",
                     }}
                   >
                     {PANEL_ITEMS.find((p) => p.id === activePanel)?.label}
                   </div>
                 )}
                 {isMobile && (
-                   <div style={{ fontSize: "28px", fontWeight: 700, padding: "16px 16px 8px", color: dark ? "#fff" : "#000" }}>
+                   <div style={{ fontSize: "28px", fontWeight: 700, padding: "20px 20px 8px", color: dark ? "#fff" : "#000", letterSpacing: "-0.5px" }}>
                      {PANEL_ITEMS.find((p) => p.id === activePanel)?.label}
                    </div>
                 )}

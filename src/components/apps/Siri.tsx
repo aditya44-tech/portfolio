@@ -7,7 +7,7 @@ import type { ChatMessage } from "~/utils/groq";
 type SiriPhase = "idle" | "recording" | "processing" | "speaking" | "error";
 
 //  Aditya resume context for conversational answers 
-const ADITYA_INFO = `Aditya Dhir (@aditya44-tech) is a Senior Software Engineer, AI Systems Builder, and Tech Advisor.
+const ADITYA_INFO = `Aditya Salunkhe (@aditya44-tech) is a Senior Software Engineer, AI Systems Builder, and Tech Advisor.
 He has over five years of experience building AI-enabled products, scalable backend systems, and Web3 infrastructure.
 His focus areas include Agentic AI, Multi-Agent Systems, AI Product Strategy, RAG & Knowledge Systems, and AI-powered SaaS platforms.
 Key Career Highlights:
@@ -16,12 +16,12 @@ Key Career Highlights:
 - 2nd Prize Winner at the Polygon Open DeFi Hackathon
 - Master's in Data Science & PG Diploma in Data Engineering
 - Tech Stack: Python, TypeScript, JavaScript, Solidity, SQL, Amazon Bedrock, OpenAI, LangChain, AWS, Docker, Kubernetes, Ethereum, Polygon, PostgreSQL, Kafka
-- Writes on Medium (@adityadhir97) on AI product development, agentic workflows, and system design
-Contact: Email adityasalunkhe126@gmail.com | GitHub @aditya44-tech | LinkedIn: adityadhir | Medium: @adityadhir97`;
+- Writes on Medium (@adityasalunkhe97) on AI product development, agentic workflows, and system design
+Contact: Email adityasalunkhe126@gmail.com | GitHub @aditya44-tech | LinkedIn: adityasalunkhe | Medium: @adityasalunkhe97`;
 
 const SIRI_FALLBACK = "Hey, I appreciate the curiosity! But I can only perform actions that Aditya has set up for me. He built me to help navigate his portfolio — try asking me to open an app, play music, toggle dark mode, or check the time!";
 
-const SYSTEM_PROMPT = `You are Siri, a friendly and chill virtual assistant running inside Aditya Dhir's macOS-style web portfolio.
+const SYSTEM_PROMPT = `You are Siri, a friendly and chill virtual assistant running inside Aditya Salunkhe's macOS-style web portfolio.
 You control the interface through tool calls. Keep replies short, warm, and conversational (1-2 sentences max).
 Use a casual, friendly tone — like talking to a buddy. Say things like "Sure thing!", "You got it!", "No worries!", "Here you go!".
 
@@ -145,7 +145,7 @@ export default function Siri({ closeSiri }: { closeSiri?: () => void }) {
     // console.log("[Tool]  Triggering resume download");
     const link = document.createElement("a");
     link.href = "/resume.pdf";
-    link.download = "Aditya_Dhir_Resume.pdf";
+    link.download = "Aditya_Salunkhe_Resume.pdf";
     link.target = "_blank";
     document.body.appendChild(link);
     link.click();

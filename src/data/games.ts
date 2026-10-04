@@ -42,8 +42,8 @@ export const gamesData: GameItem[] = [
     playtimeHours: 265,
     userRating: 10,
     status: "Mastered (100%)",
-    banner: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1600&auto=format&fit=crop&q=80",
-    cover: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&auto=format&fit=crop&q=80",
+    banner: "/img/media/elden-banner.jpg",
+    cover: "/img/media/elden-cover.jpg",
     summary: "The pinnacle of open-world design and dark fantasy environmental storytelling. A masterclass in player freedom, atmosphere, and punishing boss fights.",
     favoriteBoss: "Malenia, Blade of Miquella & Starscourge Radahn",
     favoriteBuild: "Dexterity / Arcane with Bloodhound's Step Nagakiba & Occult Uchigatana",
@@ -81,9 +81,9 @@ export const gamesData: GameItem[] = [
       },
     ],
     screenshots: [
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&auto=format&fit=crop&q=80",
+      "/img/media/elden-s1.jpg",
+      "/img/media/elden-s2.jpg",
+      "/img/media/elden-s3.jpg"
     ],
   },
   {
@@ -96,8 +96,8 @@ export const gamesData: GameItem[] = [
     playtimeHours: 110,
     userRating: 9.9,
     status: "Mastered (100%)",
-    banner: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80",
-    cover: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&auto=format&fit=crop&q=80",
+    banner: "/img/media/sekiro-banner.jpg",
+    cover: "/img/media/sekiro-cover.jpg",
     summary: "The single best melee rhythm and parry combat system ever put into code. Unforgiving, cinematic, and profoundly satisfying when mastered.",
     favoriteBoss: "Sword Saint Isshin & Owl (Father) at Hirata Estate",
     favoriteBuild: "Kusabimaru Deflect + Mikiri Counter + Loaded Umbrella + Mortal Draw",
@@ -126,8 +126,9 @@ export const gamesData: GameItem[] = [
       },
     ],
     screenshots: [
-      "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=800&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&auto=format&fit=crop&q=80",
+      "/img/media/sekiro-s1.jpg",
+      "/img/media/sekiro-s2.jpg",
+      "/img/media/sekiro-s3.jpg"
     ],
   },
   {
@@ -140,8 +141,8 @@ export const gamesData: GameItem[] = [
     playtimeHours: 190,
     userRating: 9.8,
     status: "Completed",
-    banner: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&auto=format&fit=crop&q=80",
-    cover: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=600&auto=format&fit=crop&q=80",
+    banner: "/img/media/ds3-banner.jpg",
+    cover: "/img/media/ds3-cover.jpg",
     summary: "The grand poetic finale to the Dark Souls trilogy. Bleak ash-filled landscapes, melancholic orchestral scores, and legendary endgame encounters.",
     favoriteBoss: "Slave Knight Gael & Sister Friede (Phase 3 Blackflame)",
     favoriteBuild: "Quality 40/40 Refined Claymore & Grass Crest Shield",
@@ -170,7 +171,9 @@ export const gamesData: GameItem[] = [
       },
     ],
     screenshots: [
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&auto=format&fit=crop&q=80",
+      "/img/media/ds3-s1.jpg",
+      "/img/media/ds3-s2.jpg",
+      "/img/media/ds3-s3.jpg"
     ],
   },
   {
@@ -183,8 +186,8 @@ export const gamesData: GameItem[] = [
     playtimeHours: 140,
     userRating: 9.9,
     status: "Completed",
-    banner: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1600&auto=format&fit=crop&q=80",
-    cover: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=80",
+    banner: "/img/media/bb-banner.jpg",
+    cover: "/img/media/bb-cover.jpg",
     summary: "Victorian Gothic architecture descending into Lovecraftian eldritch madness. Fast, aggressive rally mechanics and trick weapons.",
     favoriteBoss: "Lady Maria of the Astral Clocktower & Ludwig the Holy Blade",
     favoriteBuild: "Skill / Bloodtinge with Threaded Cane & Evelyn Pistol",
@@ -213,7 +216,7 @@ export const gamesData: GameItem[] = [
       },
     ],
     screenshots: [
-      "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800&auto=format&fit=crop&q=80",
+      "/img/media/bb-s1.jpg"
     ],
   },
   {
@@ -226,8 +229,8 @@ export const gamesData: GameItem[] = [
     playtimeHours: 125,
     userRating: 9.6,
     status: "Completed",
-    banner: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1600&auto=format&fit=crop&q=80",
-    cover: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80",
+    banner: "/img/media/cyberpunk-banner.jpg",
+    cover: "/img/media/cyberpunk-cover.jpg",
     summary: "Night City is the most densely realized futuristic urban metropolis ever rendered in real-time ray-traced glory. Phantom Liberty's spy-thriller storyline is top tier.",
     favoriteBoss: "Chimera Tank & Kurt Hansen",
     favoriteBuild: "Militech 'Falcon' Sandevistan + Byakko Katana Shinobi + Dash Deflect",
@@ -246,7 +249,9 @@ export const gamesData: GameItem[] = [
       },
     ],
     screenshots: [
-      "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&auto=format&fit=crop&q=80",
+      "/img/media/cyberpunk-s1.jpg",
+      "/img/media/cyberpunk-s2.jpg",
+      "/img/media/cyberpunk-s3.jpg"
     ],
   },
   {
@@ -259,8 +264,8 @@ export const gamesData: GameItem[] = [
     playtimeHours: 85,
     userRating: 9.4,
     status: "Completed",
-    banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&auto=format&fit=crop&q=80",
-    cover: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=80",
+    banner: "/img/media/wukong-banner.jpg",
+    cover: "/img/media/wukong-cover.jpg",
     summary: "Journey to the West reimagined with jaw-dropping Unreal Engine 5 Nanite visuals, kinetic staff combat forms, and rich Chinese mythological folklore.",
     favoriteBoss: "Erlang Shen (Sacred Divinity) & The Great Sage's Broken Shell",
     favoriteBuild: "Smash Stance Staff Mastery + Cloud Step Invisibility + Immobilize Spells",
@@ -279,7 +284,9 @@ export const gamesData: GameItem[] = [
       },
     ],
     screenshots: [
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80",
+      "/img/media/wukong-s1.jpg",
+      "/img/media/wukong-s2.jpg",
+      "/img/media/wukong-s3.jpg"
     ],
   }
 ];

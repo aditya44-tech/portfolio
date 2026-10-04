@@ -50,7 +50,7 @@ const MESSAGES: MailMessage[] = [
   },
   {
     id: "4",
-    from: "Aditya Dhir",
+    from: "Aditya Salunkhe",
     fromEmail: "adityasalunkhe126@gmail.com",
     subject: "Portfolio notes",
     preview: "Things to finish: Liquid Glass polish, macOS 26 branding update, new apps...",

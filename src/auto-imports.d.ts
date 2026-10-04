@@ -6,6 +6,7 @@
 export {}
 declare global {
   const AboutThisMacModal: typeof import('./components/AboutThisMacModal')['default']
+  const AnimeShelf: typeof import('./components/apps/AnimeShelf')['default']
   const AppStore: typeof import('./components/apps/AppStore')['default']
   const AppWindow: typeof import('./components/AppWindow')['default']
   const AppleMenu: typeof import('./components/menus/AppleMenu')['default']
@@ -27,6 +28,7 @@ declare global {
   const FolderDockIcon: typeof import('./components/DesktopIcons')['FolderDockIcon']
   const FolderHomeIcon: typeof import('./components/DesktopIcons')['FolderHomeIcon']
   const FolderIcon: typeof import('./components/DesktopIcons')['FolderIcon']
+  const GameLibrary: typeof import('./components/apps/GameLibrary')['default']
   const Launchpad: typeof import('./components/Launchpad')['default']
   const Mail: typeof import('./components/apps/Mail')['default']
   const Maps: typeof import('./components/apps/Maps')['default']
@@ -39,6 +41,7 @@ declare global {
   const NotificationCenter: typeof import('./components/NotificationCenter')['default']
   const PdfIcon: typeof import('./components/DesktopIcons')['PdfIcon']
   const Photos: typeof import('./components/apps/Photos')['default']
+  const Reels: typeof import('./components/apps/Reels')['default']
   const Safari: typeof import('./components/apps/Safari')['default']
   const Siri: typeof import('./components/apps/Siri')['default']
   const Spotify: typeof import('./components/apps/Spotify')['default']
@@ -91,4 +94,10 @@ declare global {
   const useTransition: typeof import('react')['useTransition']
   const useWindowSize: typeof import('./hooks/useWindowSize')['useWindowSize']
   const weatherWidgetTsxTmp27497: typeof import('./components/widgets/WeatherWidget.tsx.tmp.27497.eb98ea4b5b23')['default']
+}
+// for type re-export
+declare global {
+  // @ts-ignore
+  export type { Terminal } from './components/apps/Terminal'
+  import('./components/apps/Terminal')
 }

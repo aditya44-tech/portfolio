@@ -80,7 +80,7 @@ const bear: BearData[] = [
         file: "markdown/about-me.md",
         icon: "i-ph:article",
         excerpt: "Deep-dives on Agentic AI, system design, software engineering, and blockchain...",
-        link: "https://medium.com/@adityadhir97"
+        link: "https://medium.com/@adityasalunkhe97"
       }
     ]
   }
