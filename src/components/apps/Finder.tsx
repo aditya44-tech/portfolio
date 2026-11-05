@@ -1,6 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWindowSize } from "~/hooks/useWindowSize";
+import profile from "~/config/profile";
+import { useProjectsData, type ProjectData } from "~/hooks/useProjectsData";
+import { languageColor, timeAgo } from "~/hooks/useGithub";
+import { consumePendingFinderPath } from "./finder/finderNav";
+import {
+  findNode,
+  formatBytes,
+  githubContentUrl,
+  type FSNode,
+} from "./finder/finderTypes";
+import { FileTypeIcon } from "./finder/FileTypeIcon";
+import FinderContextMenu from "./finder/FinderContextMenu";
+import QuickLook, { type QuickLookTarget } from "./finder/QuickLook";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type ViewMode = "icons" | "list" | "columns";
@@ -16,6 +29,36 @@ interface FileItem {
   icon: string;
   color?: string;
   children?: FileItem[];
+  /** Present on live project nodes (Resume file + GitHub repos). */
+  repo?: { repo: string; branch: string; path: string; title: string };
+  /** Snapshot README text shown without a network fetch. */
+  virtualReadme?: string;
+  /** Local PDF served from /public (resume). */
+  pdfUrl?: string;
+  /** Raw byte size for preview guards (repo files). */
+  sizeBytes?: number;
+}
+
+// ─── Live locations ───────────────────────────────────────────────────────────
+// "resume" and "projects" are first-class Finder locations (sidebar + home).
+// Repo folders/files use ids "repo:{Repo}" and "file:repo:{Repo}/{path}".
+const RESUME_ID = "resume";
+const PROJECTS_ID = "projects";
+const repoFolderId = (repo: string, rel = "") => `repo:${repo}${rel ? `/${rel}` : ""}`;
+const isRepoId = (id: string) => id.startsWith("repo:");
+const parseRepoId = (id: string): { repo: string; rel: string } | null => {
+  if (!isRepoId(id)) return null;
+  const rest = id.slice("repo:".length);
+  const slash = rest.indexOf("/");
+  if (slash === -1) return { repo: rest, rel: "" };
+  return { repo: rest.slice(0, slash), rel: rest.slice(slash + 1) };
+};
+
+function shortDate(iso: string): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
 }
 
 // ─── Mock Filesystem ─────────────────────────────────────────────────────────
@@ -112,6 +155,8 @@ const SIDEBAR_SECTIONS = [
       { id: "documents", label: "Documents", icon: "/img/icons/sf-icons/doc.svg", parent: "home" },
       { id: "downloads", label: "Downloads", icon: "/img/icons/sf-icons/download.svg", parent: "home" },
       { id: "pictures", label: "Screenshots", icon: "/img/icons/sf-icons/image.svg", parent: "home" },
+      { id: "resume", label: "Resume", icon: "/img/icons/sf-icons/doc.svg", parent: "home" },
+      { id: "projects", label: "Projects", icon: "/img/icons/sf-icons/folder.svg", parent: "home" },
     ],
   },
   {
@@ -142,9 +187,13 @@ const SIDEBAR_SECTIONS = [
 
 // ─── File Icon Component ──────────────────────────────────────────────────────
 const FileIcon = ({ item, size = 56 }: { item: FileItem; size?: number }) => {
+  // Live repo / resume files get crisp type icons (md, code, JSON, image, PDF).
+  if (item.kind === "file" && (item.repo || item.pdfUrl)) {
+    return <FileTypeIcon node={{ name: item.name, kind: "file", ext: item.ext }} size={size} />;
+  }
   if (item.kind === "folder") {
     let customImg = "/img/icons/folder-generic.png";
-    if (item.id === "repos" || item.id === "projects-folder") {
+    if (item.id === "repos" || item.id === "projects-folder" || isRepoId(item.id)) {
       customImg = "/img/icons/folder-dock.png";
     } else if (item.id === "home") {
       customImg = "/img/icons/folder-home.png";
@@ -183,23 +232,159 @@ export default function Finder() {
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
+  const [quickLook, setQuickLook] = useState<QuickLookTarget | null>(null);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; item: FileItem | null } | null>(null);
+  const [resumeState, setResumeState] = useState<"checking" | "ok" | "missing">("checking");
+
+  const { byRepo, ordered: projectsOrdered } = useProjectsData();
 
   const size = useWindowSize();
   const isMobile = size.winWidth < 768;
   const [mobileView, setMobileView] = useState<"sidebar" | "content">("content");
 
+  // Resume PDF existence check (friendly state instead of a blank window).
+  useEffect(() => {
+    let live = true;
+    fetch(profile.resume.file, { method: "HEAD" })
+      .then((r) => {
+        if (r.ok) {
+          if (live) setResumeState("ok");
+        } else {
+          fetch(profile.resume.file)
+            .then((g) => live && setResumeState(g.ok ? "ok" : "missing"))
+            .catch(() => live && setResumeState("missing"));
+        }
+      })
+      .catch(() => live && setResumeState("missing"));
+    return () => {
+      live = false;
+    };
+  }, []);
+
+  // Deep-link into Finder (desktop folder icons): open at the requested path.
+  useEffect(() => {
+    const apply = (stack: string[]) => {
+      setPathStack(stack);
+      setLocation(stack[stack.length - 1]);
+      setSelected(null);
+      setQuickLook(null);
+      setMobileView("content");
+    };
+    const pending = consumePendingFinderPath();
+    if (pending) apply(pending);
+    const onNav = () => {
+      const p = consumePendingFinderPath();
+      if (p) apply(p);
+    };
+    window.addEventListener("finder:navigate", onNav);
+    return () => window.removeEventListener("finder:navigate", onNav);
+  }, []);
+
+  const resumeFolderItem: FileItem = {
+    id: RESUME_ID, name: "Resume", kind: "folder", date: "Today",
+    icon: "/img/icons/sf-icons/folder.svg", color: "#4A90E2",
+  };
+  const projectsFolderItem: FileItem = {
+    id: PROJECTS_ID, name: "Projects", kind: "folder", date: "Today",
+    icon: "/img/icons/sf-icons/folder.svg", color: "#0A84FF",
+  };
+
+  const resumeChildren = (): FileItem[] =>
+    resumeState === "ok"
+      ? [{
+          id: "resume-file", name: profile.resume.displayName, kind: "file", ext: "pdf",
+          date: "Today", icon: "/img/icons/sf-icons/doc.svg", pdfUrl: profile.resume.file,
+        }]
+      : [];
+
+  const toFileItem = (
+    repo: string, branch: string, title: string, relPath: string, node: FSNode, readme: string | null
+  ): FileItem => {
+    const id = node.kind === "folder" ? repoFolderId(repo, relPath) : `file:${repoFolderId(repo)}/${relPath}`;
+    return {
+      id,
+      name: node.name,
+      kind: node.kind,
+      ext: node.ext,
+      size: node.size !== undefined ? formatBytes(node.size) : undefined,
+      date: "—",
+      icon: "/img/icons/sf-icons/doc.svg",
+      repo: { repo, branch, path: relPath, title },
+      ...(node.kind === "file" && node.ext === "md" && node.name === "README.md" && readme
+        ? { virtualReadme: readme }
+        : {}),
+      ...(node.size !== undefined ? { sizeBytes: node.size } : {}),
+    };
+  };
+
+  /** Raw children of a repo folder ("" = repo root, README first). */
+  const repoItems = (repo: string, rel: string): FileItem[] => {
+    const d = byRepo[repo];
+    if (!d || d.nodes.length === 0) return [];
+    const list = rel === "" ? d.nodes : (findNode(d.nodes, rel.split("/"))?.children ?? []);
+    const items: FileItem[] = [];
+    if (rel === "" && d.readme) {
+      items.push({
+        id: `file:${repoFolderId(repo)}/README.md`, name: "README.md", kind: "file", ext: "md",
+        date: shortDate(d.meta.updatedAt), icon: "/img/icons/sf-icons/doc.svg",
+        repo: { repo, branch: d.meta.branch, path: "README.md", title: d.entry.title },
+        virtualReadme: d.readme,
+      });
+    }
+    for (const n of list) {
+      if (rel === "" && n.name.toLowerCase() === "readme.md" && d.readme) continue;
+      const rp = rel ? `${rel}/${n.name}` : n.name;
+      items.push(toFileItem(repo, d.meta.branch, d.entry.title, rp, n, d.readme));
+    }
+    return items;
+  };
+
+  const repoStatus = (repo: string): { loading: boolean; error: string | null } => {
+    const d = byRepo[repo];
+    if (!d) return { loading: false, error: `Unknown project "${repo}".` };
+    if (d.nodes.length === 0) {
+      return {
+        loading: d.refreshing,
+        error: d.refreshing
+          ? null
+          : (d.error ?? "Couldn't load this folder. Check your connection, or open it on GitHub."),
+      };
+    }
+    return { loading: false, error: null };
+  };
+
+  const projectRootItems = (): FileItem[] =>
+    projectsOrdered.map((d) => ({
+      id: repoFolderId(d.entry.repo),
+      name: d.entry.title,
+      kind: "folder",
+      date: shortDate(d.meta.updatedAt),
+      icon: "/img/icons/sf-icons/folder.svg",
+      color: d.configured ? "#0A84FF" : undefined,
+      repo: { repo: d.entry.repo, branch: d.meta.branch, path: "", title: d.entry.title },
+    }));
+
   // Get current items
   const currentItems = (): FileItem[] => {
     if (search.trim()) {
       const q = search.toLowerCase();
-      return Object.values(FILESYSTEM)
+      const mock = Object.values(FILESYSTEM)
         .flat()
         .flatMap((f) => [f, ...(f.children ?? [])])
         .filter((f) => f.name.toLowerCase().includes(q));
+      const live: FileItem[] = [...resumeChildren(), ...projectRootItems()].filter((f) =>
+        f.name.toLowerCase().includes(q)
+      );
+      return [...mock, ...live];
     }
 
+    if (location === "home") return [...FILESYSTEM.home, resumeFolderItem, projectsFolderItem];
+    if (location === RESUME_ID) return resumeChildren();
+    if (location === PROJECTS_ID) return projectRootItems();
+    const parsed = parseRepoId(location);
+    if (parsed) return repoItems(parsed.repo, parsed.rel);
+
     const rootItem = FILESYSTEM.home.find((f) => f.id === location);
-    if (location === "home") return FILESYSTEM.home;
     if (rootItem?.children) return rootItem.children;
     // nested
     for (const root of FILESYSTEM.home) {
@@ -217,11 +402,100 @@ export default function Finder() {
     return 0;
   });
 
+  const labelFor = (seg: string): string => {
+    if (seg === "home") return "Aditya";
+    if (seg === RESUME_ID) return "Resume";
+    if (seg === PROJECTS_ID) return "Projects";
+    const parsed = parseRepoId(seg);
+    if (parsed) {
+      const d = byRepo[parsed.repo];
+      const base = d ? d.entry.title : parsed.repo;
+      return parsed.rel ? (parsed.rel.split("/").pop() ?? base) : base;
+    }
+    const root = FILESYSTEM.home.find((f) => f.id === seg);
+    if (root) return root.name;
+    for (const r of FILESYSTEM.home) {
+      const nested = r.children?.find((c) => c.id === seg);
+      if (nested) return nested.name;
+    }
+    return seg;
+  };
+
+  const toFSNode = (item: FileItem, childNames?: string[]): FSNode => ({
+    name: item.name,
+    kind: item.kind,
+    ext: item.ext,
+    children:
+      item.kind === "folder"
+        ? (childNames ?? []).map((n) => ({ name: n, kind: "file" as const }))
+        : undefined,
+  });
+
+  const githubUrlFor = (item: FileItem): string | undefined => {
+    if (!item.repo) return undefined;
+    const d = byRepo[item.repo.repo];
+    if (!d) return undefined;
+    return githubContentUrl(d.meta.htmlUrl, d.meta.branch, item.repo.path, item.kind);
+  };
+
+  const openQuickLook = (item: FileItem) => {
+    if (item.pdfUrl) {
+      setQuickLook({
+        node: toFSNode(item),
+        subtitle: "Resume",
+        pdfUrl: item.pdfUrl,
+        downloadUrl: item.pdfUrl,
+      });
+      return;
+    }
+    if (!item.repo) return;
+    const d = byRepo[item.repo.repo];
+    if (!d) return;
+    const githubUrl = githubUrlFor(item);
+    const liveDemoUrl = d.meta.homepage ?? undefined;
+    if (item.virtualReadme !== undefined) {
+      setQuickLook({
+        node: toFSNode(item),
+        subtitle: `${item.repo.title}/README.md`,
+        inlineMarkdown: item.virtualReadme,
+        githubUrl: d.meta.htmlUrl,
+        liveDemoUrl,
+      });
+      return;
+    }
+    if (item.kind === "folder") {
+      const kids = repoItems(item.repo.repo, item.repo.path).map((c) => c.name);
+      setQuickLook({
+        node: toFSNode(item, kids),
+        subtitle: item.repo.path ? `${item.repo.title}/${item.repo.path}` : item.repo.title,
+        githubUrl,
+        liveDemoUrl,
+      });
+      return;
+    }
+    setQuickLook({
+      node: toFSNode(item),
+      subtitle: `${item.repo.title}/${item.repo.path}`,
+      fileTarget: {
+        user: profile.githubUser,
+        repo: item.repo.repo,
+        branch: item.repo.branch,
+        path: item.repo.path,
+        name: item.name,
+        size: item.sizeBytes,
+      },
+      githubUrl,
+      liveDemoUrl,
+    });
+  };
+
   const navigate = (item: FileItem) => {
     if (item.kind === "folder") {
       setPathStack((p) => [...p, item.id]);
       setLocation(item.id);
       setSelected(null);
+    } else {
+      openQuickLook(item);
     }
   };
 
@@ -235,16 +509,7 @@ export default function Finder() {
 
   const goForward = () => { };
 
-  const locationLabel = () => {
-    if (location === "home") return "Aditya";
-    const item = FILESYSTEM.home.find((f) => f.id === location);
-    if (item) return item.name;
-    for (const root of FILESYSTEM.home) {
-      const nested = root.children?.find((c) => c.id === location);
-      if (nested) return nested.name;
-    }
-    return location;
-  };
+  const locationLabel = () => labelFor(location);
 
   // ── Sidebar click handler ─────────────────────────────────────────────────
   const sidebarClick = (id: string, parent?: string) => {
@@ -265,11 +530,61 @@ export default function Finder() {
     setMobileView("content");
   };
 
+  // ── Toolbar contextual actions (resume + repo links) ──────────────────────
+  /** Repo scope of the current location, if any. */
+  const currentRepo: ProjectData | null = (() => {
+    if (location === PROJECTS_ID) return null;
+    const parsed = parseRepoId(location);
+    if (parsed) return byRepo[parsed.repo] ?? null;
+    return null;
+  })();
+
+  const selectedItem: FileItem | null = selected
+    ? (sorted.find((i) => i.id === selected) ?? null)
+    : null;
+
+  const actionBtn: React.CSSProperties = {
+    fontSize: "12px",
+    background: "var(--c-bg-tertiary)",
+    borderRadius: "6px",
+    padding: "4px 10px",
+    color: "var(--c-text)",
+    textDecoration: "none",
+    whiteSpace: "nowrap",
+    fontWeight: 500,
+  };
+  const actionPrimary: React.CSSProperties = { ...actionBtn, background: "#0A84FF", color: "#fff" };
+
+  const selectedUrl = selectedItem ? githubUrlFor(selectedItem) : undefined;
+  const folderUrl = (() => {
+    if (location === PROJECTS_ID) return undefined;
+    const parsed = parseRepoId(location);
+    if (!parsed) return undefined;
+    const d = byRepo[parsed.repo];
+    if (!d) return undefined;
+    return githubContentUrl(d.meta.htmlUrl, d.meta.branch, parsed.rel, "folder");
+  })();
+  const toolbarGitHubUrl = selectedUrl ?? folderUrl;
+  const toolbarDemoRepo =
+    (selectedItem?.repo ? byRepo[selectedItem.repo.repo] : undefined) ?? currentRepo;
+  const toolbarDemoUrl = toolbarDemoRepo?.meta.homepage ?? undefined;
+
+  // Repo loading / error status for the current location.
+  const repoStatusHere = (() => {
+    const parsed = parseRepoId(location);
+    if (!parsed) return { loading: false, error: null as string | null };
+    return repoStatus(parsed.repo);
+  })();
+
   // ── Render items ──────────────────────────────────────────────────────────
 
   // Helpers shared by Columns (miller) view
   const getChildrenOf = (id: string): FileItem[] => {
-    if (id === "home") return FILESYSTEM.home;
+    if (id === "home") return [...FILESYSTEM.home, resumeFolderItem, projectsFolderItem];
+    if (id === RESUME_ID) return resumeChildren();
+    if (id === PROJECTS_ID) return projectRootItems();
+    const parsed = parseRepoId(id);
+    if (parsed) return repoItems(parsed.repo, parsed.rel);
     const root = FILESYSTEM.home.find((f) => f.id === id);
     if (root?.children) return root.children;
     for (const r of FILESYSTEM.home) {
@@ -277,6 +592,68 @@ export default function Finder() {
       if (nested?.children) return nested.children;
     }
     return [];
+  };
+
+  const copyLink = async (url: string | undefined) => {
+    if (!url) return;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // clipboard unavailable — no-op
+    }
+    setContextMenu(null);
+  };
+
+  const menuItemsFor = (item: FileItem | null) => {
+    const url = item ? githubUrlFor(item) : undefined;
+    const items: { label: string; hint?: string; onClick?: () => void }[] = [];
+    if (item) {
+      items.push({ label: "Open", onClick: () => navigate(item) });
+      items.push({ label: "Quick Look", hint: "Space", onClick: () => openQuickLook(item) });
+    }
+    if (url) {
+      items.push({
+        label: "Open on GitHub",
+        onClick: () => window.open(url, "_blank", "noopener,noreferrer"),
+      });
+      items.push({ label: "Copy link", onClick: () => copyLink(url) });
+    } else if (item?.pdfUrl) {
+      items.push({
+        label: "Copy link",
+        onClick: () => copyLink(`${window.location.origin}${item.pdfUrl}`),
+      });
+    }
+    return items;
+  };
+
+  const openContextMenu = (item: FileItem, x: number, y: number) => {
+    setSelected(item.id);
+    setContextMenu({ x, y, item });
+  };
+
+  const onContentKeyDown = (e: React.KeyboardEvent) => {
+    const el = e.target as HTMLElement;
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      if (sorted.length === 0) return;
+      const idx = sorted.findIndex((i) => i.id === (selected ?? sorted[0].id));
+      const dir = e.key === "ArrowDown" ? 1 : -1;
+      const next = sorted[(idx + dir + sorted.length) % sorted.length];
+      setSelected(next.id);
+    } else if (e.key === "Enter") {
+      const item = sorted.find((i) => i.id === selected);
+      if (item) {
+        e.preventDefault();
+        navigate(item);
+      }
+    } else if (e.key === " ") {
+      const item = sorted.find((i) => i.id === selected);
+      if (item && (item.repo || item.pdfUrl)) {
+        e.preventDefault();
+        openQuickLook(item);
+      }
+    }
   };
 
   const sortItems = (items: FileItem[]) =>
@@ -323,6 +700,11 @@ export default function Finder() {
                       setLocation(segId);
                       setSelected(item.id);
                     }
+                  }}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openContextMenu(item, e.clientX, e.clientY);
                   }}
                   style={{
                     display: "flex",
@@ -394,6 +776,11 @@ export default function Finder() {
           transition={{ delay: i * 0.025, duration: 0.25, ease: [0.34, 1.56, 0.64, 1] }}
           onClick={() => setSelected(item.id)}
           onDoubleClick={() => navigate(item)}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openContextMenu(item, e.clientX, e.clientY);
+          }}
           style={{
             display: "flex",
             flexDirection: "column",
@@ -484,6 +871,11 @@ export default function Finder() {
           transition={{ delay: i * 0.02, duration: 0.2 }}
           onClick={() => setSelected(item.id)}
           onDoubleClick={() => navigate(item)}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openContextMenu(item, e.clientX, e.clientY);
+          }}
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 80px 80px 80px",
@@ -561,6 +953,7 @@ export default function Finder() {
         color: "var(--c-text)",
         borderRadius: "0 0 14px 14px",
         overflow: "hidden",
+        position: "relative",
       }}
     >
       {/* ── Toolbar ── */}
@@ -627,6 +1020,28 @@ export default function Finder() {
         >
           {locationLabel()}
         </span>
+
+        {/* Contextual actions */}
+        {location === RESUME_ID && resumeState === "ok" && (
+          <>
+            <a href={profile.resume.file} download={profile.resume.displayName} style={actionBtn}>
+              Download
+            </a>
+            <a href={profile.resume.file} target="_blank" rel="noopener noreferrer" style={actionBtn}>
+              New Tab
+            </a>
+          </>
+        )}
+        {toolbarGitHubUrl && (
+          <a href={toolbarGitHubUrl} target="_blank" rel="noopener noreferrer" style={actionPrimary}>
+            GitHub
+          </a>
+        )}
+        {toolbarDemoUrl && (
+          <a href={toolbarDemoUrl} target="_blank" rel="noopener noreferrer" style={actionBtn}>
+            Live Demo
+          </a>
+        )}
 
         {/* View mode */}
         <div style={{ display: "flex", gap: "2px", background: "var(--c-bg-tertiary)", borderRadius: "8px", padding: "2px" }}>
@@ -697,10 +1112,7 @@ export default function Finder() {
         }}
       >
         {pathStack.map((seg, i) => {
-          const label =
-            seg === "home"
-              ? "Aditya"
-              : FILESYSTEM.home.find((f) => f.id === seg)?.name ?? seg;
+          const label = labelFor(seg);
           const isActive = i === pathStack.length - 1;
           return (
             <button
@@ -727,6 +1139,41 @@ export default function Finder() {
           );
         })}
       </div>
+
+      {/* ── Repo info bar (repo root only) ── */}
+      {(() => {
+        const parsed = parseRepoId(location);
+        const d = parsed && parsed.rel === "" ? byRepo[parsed.repo] : null;
+        if (!d) return null;
+        return (
+          <div
+            style={{
+              padding: "8px 16px",
+              borderBottom: "0.5px solid var(--c-border)",
+              background: "var(--c-bg-secondary)",
+              flexShrink: 0,
+            }}
+          >
+            {d.meta.description && (
+              <div style={{ fontSize: "12.5px", lineHeight: 1.5, marginBottom: 6 }}>{d.meta.description}</div>
+            )}
+            <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", fontSize: "11.5px", color: "var(--c-text-secondary)" }}>
+              {d.meta.language && (
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <span aria-hidden style={{ width: 9, height: 9, borderRadius: "50%", background: languageColor(d.meta.language) }} />
+                  {d.meta.language}
+                </span>
+              )}
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>
+                <span className="i-ph:star" style={{ width: 12, height: 12 }} aria-hidden />
+                {d.meta.stars}
+              </span>
+              {d.meta.updatedAt && <span>Updated {timeAgo(d.meta.updatedAt)}</span>}
+              {d.refreshing && <span>Refreshing…</span>}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ── Body ── */}
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
@@ -817,7 +1264,67 @@ export default function Finder() {
 
         {/* Content */}
         {(!isMobile || mobileView === "content") && (
-        <div style={{ flex: 1, overflowY: "auto", overflowX: viewMode === "columns" && !search.trim() ? "auto" : "hidden" }}>
+        <div
+          style={{ flex: 1, overflowY: "auto", overflowX: viewMode === "columns" && !search.trim() ? "auto" : "hidden" }}
+          tabIndex={0}
+          role="region"
+          aria-label={`${locationLabel()} contents`}
+          onKeyDown={onContentKeyDown}
+          onFocus={(e) => {
+            if (e.target === e.currentTarget)
+              (e.currentTarget as HTMLElement).style.outline = "2px solid var(--accent-blue)";
+          }}
+          onBlur={(e) => {
+            (e.currentTarget as HTMLElement).style.outline = "none";
+          }}
+        >
+          {repoStatusHere.loading ? (
+            <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 10 }} aria-label="Loading folder">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <motion.div
+                  key={i}
+                  aria-hidden
+                  animate={{ opacity: [0.4, 0.9, 0.4] }}
+                  transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+                  style={{ display: "flex", gap: 12, alignItems: "center" }}
+                >
+                  <div style={{ width: 28, height: 28, borderRadius: 6, background: "var(--c-bg-tertiary)" }} />
+                  <div style={{ flex: 1, height: 14, borderRadius: 6, background: "var(--c-bg-tertiary)" }} />
+                </motion.div>
+              ))}
+            </div>
+          ) : repoStatusHere.error ? (
+            <div
+              role="alert"
+              style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, padding: 32, textAlign: "center" }}
+            >
+              <span className="i-ph:warning-circle" style={{ width: 40, height: 40, color: "var(--c-text-tertiary)" }} aria-hidden />
+              <div style={{ fontSize: 14, fontWeight: 600 }}>Couldn&apos;t load this folder</div>
+              <div style={{ fontSize: 12.5, color: "var(--c-text-secondary)", maxWidth: 380 }}>{repoStatusHere.error}</div>
+              {(() => {
+                const parsed = parseRepoId(location);
+                const d = parsed ? byRepo[parsed.repo] : null;
+                const url = d?.meta.htmlUrl ?? (parsed ? `https://github.com/${profile.githubUser}/${parsed.repo}` : undefined);
+                return url ? (
+                  <a href={url} target="_blank" rel="noopener noreferrer" style={{ ...actionPrimary, textDecoration: "none" }}>
+                    Open on GitHub
+                  </a>
+                ) : null;
+              })()}
+            </div>
+          ) : location === RESUME_ID && resumeState === "missing" ? (
+            <div
+              role="alert"
+              style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, padding: 32, textAlign: "center" }}
+            >
+              <span className="i-ph:file-x" style={{ width: 44, height: 44, color: "var(--c-text-tertiary)" }} aria-hidden />
+              <div style={{ fontSize: 14, fontWeight: 600 }}>Resume not found</div>
+              <div style={{ fontSize: 12.5, color: "var(--c-text-secondary)", maxWidth: 400, lineHeight: 1.6 }}>
+                Place your PDF at <code style={{ fontFamily: "var(--font-mono)" }}>public/resume/Aditya_Salunkhe_Resume.pdf</code> and
+                reload — it will appear here automatically.
+              </div>
+            </div>
+          ) : (
           <AnimatePresence mode="wait">
             <motion.div
               key={location + viewMode}
@@ -836,6 +1343,7 @@ export default function Finder() {
                     : renderIcons()}
             </motion.div>
           </AnimatePresence>
+          )}
         </div>
         )}
       </div>
@@ -854,11 +1362,7 @@ export default function Finder() {
         }}
       >
         {pathStack.map((seg, i) => {
-          const label =
-            seg === "home"
-              ? "Aditya"
-              : FILESYSTEM.home.find((f) => f.id === seg)?.name ??
-              seg;
+          const label = labelFor(seg);
           return (
             <React.Fragment key={seg}>
               {i > 0 && <span>›</span>}
@@ -884,6 +1388,21 @@ export default function Finder() {
           );
         })}
       </div>
+
+      {/* Item context menu */}
+      {contextMenu && (
+        <FinderContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          items={menuItemsFor(contextMenu.item)}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
+
+      {/* Quick Look preview */}
+      <AnimatePresence>
+        {quickLook && <QuickLook target={quickLook} onClose={() => setQuickLook(null)} />}
+      </AnimatePresence>
     </div>
   );
 }

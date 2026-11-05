@@ -9,6 +9,8 @@ import CalendarWidget from "~/components/widgets/CalendarWidget";
 import WeatherWidget from "~/components/widgets/WeatherWidget";
 import ContextMenu from "~/components/menus/ContextMenu";
 import { FolderIcon, FolderHomeIcon, FolderDockIcon, PdfIcon } from "~/components/DesktopIcons";
+import DesktopFolderIcons from "~/components/DesktopFolderIcons";
+import { requestFinderPath } from "~/components/apps/finder/finderNav";
 import { AnimatePresence, motion } from "framer-motion";
 import { useWindowSize } from "~/hooks";
 
@@ -366,6 +368,13 @@ export default function Desktop(props: MacActions) {
       className="size-full overflow-clip bg-center bg-cover"
       style={bgStyle}
       onContextMenu={handleContextMenu}
+      onMouseDown={(e) => {
+        // Clicking empty desktop deselects folder icons (windows, dock,
+        // widgets and icons themselves are separate targets).
+        if (e.target === e.currentTarget) {
+          window.dispatchEvent(new CustomEvent("desktop:deselect-icons"));
+        }
+      }}
     >
       {/* Cross-fade layer: previous wallpaper fading out over the new one */}
       {fadingUrl && (
@@ -423,20 +432,8 @@ export default function Desktop(props: MacActions) {
         </div>
       </div>
 
-      {/* Desktop Icons - top-right */}
-      <div
-        style={{
-          position: "fixed",
-          top: 48,
-          right: 24,
-          zIndex: 55,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 24,
-        }}
-      >
-      </div>
+      {/* Desktop Icons - top-right (Resume + Projects folders) */}
+      <DesktopFolderIcons openApp={openApp} />
 
       {isMobile && (
         <div className="absolute top-[48px] left-0 right-0 bottom-24 p-6 grid grid-cols-4 gap-y-6 gap-x-2 content-start z-40">
@@ -457,6 +454,27 @@ export default function Desktop(props: MacActions) {
               </div>
               <span className="text-white text-xs font-light text-center tracking-wide" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}>
                 {app.mobileTitle || app.title}
+              </span>
+            </div>
+          ))}
+          {/* Resume + Projects folders (open inside Finder, same as desktop icons) */}
+          {[
+            { id: "resume", title: "Resume", path: ["home", "resume"] },
+            { id: "projects", title: "Projects", path: ["home", "projects"] },
+          ].map(folder => (
+            <div
+              key={`mobile-folder-${folder.id}`}
+              className="flex flex-col items-center gap-1.5 cursor-pointer"
+              onClick={() => {
+                openApp("finder");
+                requestFinderPath(folder.path);
+              }}
+            >
+              <div className="w-[60px] h-[60px] bg-transparent rounded-[22.5%] shadow-sm overflow-hidden flex items-center justify-center">
+                <img src="img/icons/folder-generic.png" alt="" className="w-full h-full object-cover" />
+              </div>
+              <span className="text-white text-xs font-light text-center tracking-wide" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}>
+                {folder.title}
               </span>
             </div>
           ))}

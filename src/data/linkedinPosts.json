@@ -1,0 +1,32 @@
+[
+  {
+    "id": "placeholder-1",
+    "date": "2026-01-15",
+    "text": "[Placeholder] Excited to share that I just shipped a macOS-style portfolio built with React and TypeScript — complete with draggable windows, a Dock, and dark mode. Replace this post with a real one from your LinkedIn profile.",
+    "image": null,
+    "likes": 42,
+    "comments": 5,
+    "url": "YOUR_LINKEDIN_URL_HERE",
+    "placeholder": true
+  },
+  {
+    "id": "placeholder-2",
+    "date": "2026-02-02",
+    "text": "[Placeholder] TIL: caching GitHub API responses for 10 minutes in sessionStorage keeps portfolio apps fast and safely under the rate limit. What's your favorite lightweight caching trick?",
+    "image": null,
+    "likes": 27,
+    "comments": 3,
+    "url": "YOUR_LINKEDIN_URL_HERE",
+    "placeholder": true
+  },
+  {
+    "id": "placeholder-3",
+    "date": "2026-03-10",
+    "text": "[Placeholder] Open to work! I'm a developer who loves crafting delightful, native-feeling web experiences. If you're hiring, let's connect — my inbox is always open.",
+    "image": null,
+    "likes": 58,
+    "comments": 9,
+    "url": "YOUR_LINKEDIN_URL_HERE",
+    "placeholder": true
+  }
+]

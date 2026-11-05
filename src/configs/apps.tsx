@@ -1,5 +1,7 @@
 import { appBarHeight } from "~/utils";
 import type { AppsData } from "~/types";
+import GitHub from "~/components/apps/GitHub";
+import LinkedIn from "~/components/apps/LinkedIn";
 
 const apps: AppsData[] = [
   {
@@ -89,12 +91,31 @@ const apps: AppsData[] = [
   },
   {
     id: "github",
-    title: "Github",
-    desktop: false,
-    hideOnMobile: true,
+    title: "GitHub",
+    desktop: true,
+    width: 880,
+    height: 560,
+    minWidth: 600,
+    minHeight: 400,
+    x: -20,
+    y: -10,
     img: "img/icons/github.png",
-    link: "https://github.com/aditya44-tech",
+    content: <GitHub />,
   },
+  {
+    id: "linkedin",
+    title: "LinkedIn",
+    desktop: true,
+    width: 880,
+    height: 560,
+    minWidth: 600,
+    minHeight: 400,
+    x: 20,
+    y: 10,
+    img: "img/icons/linkedin.svg",
+    content: <LinkedIn />,
+  },
+
   {
     id: "spotify",
     title: "Spotify",
