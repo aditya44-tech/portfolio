@@ -3,6 +3,7 @@ import { useAudioContext } from "~/context/AudioContext";
 import { useStore } from "~/stores";
 import { transcribeAudio, getGroqChatCompletion } from "~/utils/groq";
 import type { ChatMessage } from "~/utils/groq";
+import profile from "~/config/profile";
 
 type SiriPhase = "idle" | "recording" | "processing" | "speaking" | "error";
 
@@ -144,8 +145,8 @@ export default function Siri({ closeSiri }: { closeSiri?: () => void }) {
   const downloadResume = useCallback(() => {
     // console.log("[Tool]  Triggering resume download");
     const link = document.createElement("a");
-    link.href = "/resume.pdf";
-    link.download = "Aditya_Salunkhe_Resume.pdf";
+    link.href = profile.resume.file;
+    link.download = profile.resume.displayName;
     link.target = "_blank";
     document.body.appendChild(link);
     link.click();

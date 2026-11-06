@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-14T18:48:25.957Z",
+  "generatedAt": "2026-11-06T12:25:42.930Z",
   "user": "aditya44-tech",
   "repos": {
     "Sentinel": {
@@ -2454,7 +2454,7 @@
       "description": null,
       "language": "TypeScript",
       "stars": 0,
-      "updatedAt": "2026-10-04T20:55:29Z",
+      "updatedAt": "2026-11-05T15:59:53Z",
       "homepage": null,
       "htmlUrl": "https://github.com/aditya44-tech/portfolio",
       "tree": [
@@ -2556,7 +2556,7 @@
         {
           "path": "package.json",
           "type": "blob",
-          "size": 1407
+          "size": 1483
         },
         {
           "path": "public",
@@ -3055,6 +3055,11 @@
           "path": "public/img/icons/launchpad/zelda.png",
           "type": "blob",
           "size": 12130
+        },
+        {
+          "path": "public/img/icons/linkedin.svg",
+          "type": "blob",
+          "size": 544
         },
         {
           "path": "public/img/icons/macos-monterey.png",
@@ -4418,6 +4423,15 @@
           "size": 117971
         },
         {
+          "path": "public/resume",
+          "type": "tree"
+        },
+        {
+          "path": "public/resume/Aditya_Salunkhe_Resume.pdf",
+          "type": "blob",
+          "size": 8181
+        },
+        {
           "path": "public/screenshots",
           "type": "tree"
         },
@@ -4524,13 +4538,22 @@
           "size": 2228
         },
         {
+          "path": "scripts",
+          "type": "tree"
+        },
+        {
+          "path": "scripts/syncGithub.ts",
+          "type": "blob",
+          "size": 5840
+        },
+        {
           "path": "src",
           "type": "tree"
         },
         {
           "path": "src/auto-imports.d.ts",
           "type": "blob",
-          "size": 7647
+          "size": 11120
         },
         {
           "path": "src/components",
@@ -4545,6 +4568,11 @@
           "path": "src/components/AppWindow.tsx",
           "type": "blob",
           "size": 9983
+        },
+        {
+          "path": "src/components/DesktopFolderIcons.tsx",
+          "type": "blob",
+          "size": 9572
         },
         {
           "path": "src/components/DesktopIcons.tsx",
@@ -4613,7 +4641,7 @@
         {
           "path": "src/components/apps/Finder.tsx",
           "type": "blob",
-          "size": 31600
+          "size": 52139
         },
         {
           "path": "src/components/apps/GameLibrary.tsx",
@@ -4621,9 +4649,19 @@
           "size": 37507
         },
         {
+          "path": "src/components/apps/GitHub.tsx",
+          "type": "blob",
+          "size": 26073
+        },
+        {
+          "path": "src/components/apps/LinkedIn.tsx",
+          "type": "blob",
+          "size": 15932
+        },
+        {
           "path": "src/components/apps/Mail.tsx",
           "type": "blob",
-          "size": 18227
+          "size": 24463
         },
         {
           "path": "src/components/apps/Maps.tsx",
@@ -4694,6 +4732,44 @@
           "path": "src/components/apps/YouTube.tsx",
           "type": "blob",
           "size": 939
+        },
+        {
+          "path": "src/components/apps/finder",
+          "type": "tree"
+        },
+        {
+          "path": "src/components/apps/finder/FileTypeIcon.tsx",
+          "type": "blob",
+          "size": 3873
+        },
+        {
+          "path": "src/components/apps/finder/FinderContextMenu.tsx",
+          "type": "blob",
+          "size": 2765
+        },
+        {
+          "path": "src/components/apps/finder/QuickLook.tsx",
+          "type": "blob",
+          "size": 11797
+        },
+        {
+          "path": "src/components/apps/finder/finderNav.ts",
+          "type": "blob",
+          "size": 602
+        },
+        {
+          "path": "src/components/apps/finder/finderTypes.ts",
+          "type": "blob",
+          "size": 5337
+        },
+        {
+          "path": "src/components/apps/shared",
+          "type": "tree"
+        },
+        {
+          "path": "src/components/apps/shared/mac.tsx",
+          "type": "blob",
+          "size": 9854
         },
         {
           "path": "src/components/dock",
@@ -4796,13 +4872,22 @@
           "size": 6054
         },
         {
+          "path": "src/config",
+          "type": "tree"
+        },
+        {
+          "path": "src/config/profile.ts",
+          "type": "blob",
+          "size": 2597
+        },
+        {
           "path": "src/configs",
           "type": "tree"
         },
         {
           "path": "src/configs/apps.tsx",
           "type": "blob",
-          "size": 5385
+          "size": 5761
         },
         {
           "path": "src/configs/bear.tsx",
@@ -4868,6 +4953,16 @@
           "size": 12259
         },
         {
+          "path": "src/data/githubSnapshot.json",
+          "type": "blob",
+          "size": 236168
+        },
+        {
+          "path": "src/data/linkedinPosts.json",
+          "type": "blob",
+          "size": 1167
+        },
+        {
           "path": "src/data/reels.ts",
           "type": "blob",
           "size": 6291
@@ -4889,7 +4984,7 @@
         {
           "path": "src/hooks/index.ts",
           "type": "blob",
-          "size": 157
+          "size": 255
         },
         {
           "path": "src/hooks/useAudio.ts",
@@ -4907,9 +5002,24 @@
           "size": 1082
         },
         {
+          "path": "src/hooks/useFilePreview.ts",
+          "type": "blob",
+          "size": 4504
+        },
+        {
+          "path": "src/hooks/useGithub.ts",
+          "type": "blob",
+          "size": 6105
+        },
+        {
           "path": "src/hooks/useInterval.ts",
           "type": "blob",
           "size": 405
+        },
+        {
+          "path": "src/hooks/useProjectsData.ts",
+          "type": "blob",
+          "size": 10667
         },
         {
           "path": "src/hooks/useTheme.ts",
@@ -4938,7 +5048,7 @@
         {
           "path": "src/pages/Desktop.tsx",
           "type": "blob",
-          "size": 19100
+          "size": 20412
         },
         {
           "path": "src/pages/Login.tsx",
@@ -7104,6 +7214,338 @@
         }
       ],
       "readme": "# SafeSignal\n\nAI-powered workplace safety early-warning system. Every safety report is classified in seconds, the right departments are alerted via SMS, and corrective actions are tracked through to resolution — all in one place.\n\n## Features\n\n- **Dual AI Assessment (Severity + SIF Potential)** — Every report is analyzed in under 2 seconds using Groq LLM. The AI produces **two independent assessments**: *incident severity* (how serious the actual outcome was — high / medium / low) and *SIF potential* (whether the situation could realistically have caused a Serious Injury or Fatality — SIF-Unlikely → SIF-Critical / Hi-Po). A near miss with no injury is correctly rated low severity with high SIF potential, so latent killers aren't buried.\n- **Human Review Overrides** — HSE reviewers can override either the AI risk level or the SIF potential with a required reason. Overrides keep the original AI assessment visible in an AI-vs-human comparison, write an audit entry, and raise an SMS alert when a rating is escalated to high risk or high/critical SIF.\n- **Life-Saving Rules Mapping** — The 9 IOGP-aligned Life-Saving Rules are matched to each report's hazard category (e.g. fall hazards → Working at Height, welding near fuel → Hot Work) and shown as expandable cards on the report detail.\n- **Instant SMS Alerts** — High-risk or high-SIF reports (and overrides raised to those levels) trigger SMS notifications to category-mapped departments via Textbee, with a safety-officer fallback. No manual routing required.\n- **Heinrich's Law Scoring** — Site scores follow the industry-standard escalation model. Critical patterns surface before incidents occur.\n- **Multilingual Reporting + Voice Input** — Reports can be typed or spoken (Hindi, Marathi, English, Hinglish…). Language is auto-detected on submit; non-English text is translated to English for analysis, with a preview before creation.\n- **Offline Reporting** — IndexedDB stores reports locally when there is no connectivity and auto-syncs once the network returns.\n- **Task Management** — Corrective tasks are auto-generated from medium/high-risk reports and tracked through open → in-progress → done / cancelled states.\n- **Dashboard & Analytics** — Real-time dashboards with anomaly detection, site scorecards, trend analysis, escalation risk, and Recharts-powered visualizations.\n- **Regulatory & Safety Standards Mapping** — Curated knowledge base for upstream oil & gas. Activity-aware mapping to applicable standards (Oil Mines Regulations 2017, OISD standards, Mines Act, Factories Act, etc.).\n- **Audit Logging** — Every action on a report (analysis, overrides, status changes, SMS alerts, compliance mapping) is recorded with timestamps and user attribution.\n\n## Tech Stack\n\n| Layer | Technology |\n|-------|-----------|\n| Framework | Next.js 16 (App Router) |\n| Language | TypeScript |\n| Database | PostgreSQL (Neon serverless) |\n| ORM | Prisma 7 with Neon driver adapter |\n| AI | Groq LLM (OpenAI-compatible API) |\n| SMS | Textbee SDK |\n| Styling | Tailwind CSS 4 |\n| Charts | Recharts |\n| PWA | Serwist (service worker) |\n\n## Getting Started\n\n### Prerequisites\n\n- Node.js 18+\n- A Neon PostgreSQL database (or any PostgreSQL instance)\n- Groq API key\n- Textbee API key (for SMS alerts)\n\n### Setup\n\n```bash\n# Clone the repository\ngit clone <repo-url>\ncd sif-watch\n\n# Install dependencies\nnpm install\n\n# Copy environment file (contains DATABASE_URL, GROQ_API_KEY, TEXTBEE_API_KEY, etc.)\ncp ../.env .env\n\n# Generate Prisma client\nnpx prisma generate\n\n# Push schema to database\nnpx prisma db push\n\n# (Optional) Seed sample data\nnpx tsx prisma/seed.ts\n\n# Start development server\nnpm run dev\n```\n\nOpen [http://localhost:3000](http://localhost:3000) to see the landing page.\n\n### Scripts\n\n| Command | Description |\n|---------|-------------|\n| `npm run dev` | Start development server |\n| `npm run build` | Generate Prisma client and build for production |\n| `npm start` | Start production server |\n| `npm run lint` | Run ESLint |\n\n## Project Structure\n\n```\nsif-watch/\n├── prisma/\n│   ├── schema.prisma        # Database schema (SafetyReport, Task, SiteScore, etc.)\n│   ├── seed.ts              # Sample data seeder\n│   └── seed-data.json       # Seed data\n├── src/\n│   ├── app/\n│   │   ├── page.tsx         # Landing page\n│   │   ├── reports/         # Report list & detail views\n│   │   ├── dashboard/       # Analytics dashboard\n│   │   ├── admin/           # Admin panel (task management)\n│   │   ├── alerts/          # SMS alert configuration\n│   │   ├── map/             # Site map view\n│   │   ├── scoreboard/      # Site scoring\n│   │   ├── query/           # Natural language query\n│   │   ├── landing/         # Marketing landing page\n│   │   └── api/             # API routes (report creation, analysis, SMS)\n│   ├── components/          # Shared UI components (Navbar, RiskBadge, SifBadge, StatusBadge)\n│   ├── lib/\n│   │   ├── helpers.ts       # AI prompt, classifier fallback, SLA, scoring logic\n│   │   ├── prisma.ts        # Prisma client singleton\n│   │   ├── offline-queue.ts # IndexedDB offline report queue\n│   │   ├── regulatory-kb.ts # Oil & gas regulatory standards knowledge base\n│   │   ├── life-saving-rules.ts # IOGP-aligned Life-Saving Rules data\n│   │   └── org-context.tsx  # Organization context provider\n│   └── generated/prisma/    # Auto-generated Prisma client\n├── public/                  # Static assets\n└── package.json\n```\n\n## Environment Variables\n\n| Variable | Description |\n|----------|-------------|\n| `DATABASE_URL` | PostgreSQL connection string (Neon pooler) |\n| `GROQ_API_KEY` | API key for AI classification, translation & query (Groq, OpenAI-compatible) |\n| `TEXTBEE_API_KEY` | API key for SMS alerts via Textbee |\n| `SAFETY_OFFICER_PHONE` | Fallback SMS recipient when no category-mapped numbers exist |\n\n## Database Schema\n\nKey models:\n\n- **SafetyReport** — Core entity with report text, site, independent AI assessments (risk level + SIF potential with reasoning/confidence), hazard category, status, SLA deadline, human override fields (risk & SIF, each with reason and reviewer), and audit trail.\n- **Task** — Corrective actions auto-generated from medium/high-risk reports, assigned to departments.\n- **SiteScore** — Heinrich's Law scoring per site based on report frequency and severity.\n- **Organization** — Multi-tenant support with per-org SMS recipients and site scores.\n- **SmsRecipient** — Category-mapped phone numbers for automated SMS alerts.\n- **ComplianceReference** — Curated regulatory knowledge base with activity-aware hazard mapping for upstream oil & gas operations.\n- **AuditLog** — Full action history on every report.\n\n## License\n\nPrivate — SIH Demo\n"
+    },
+    "akatsuki-draft": {
+      "repo": "akatsuki-draft",
+      "title": "akatsuki-draft",
+      "branch": "main",
+      "description": null,
+      "language": "JavaScript",
+      "stars": 0,
+      "updatedAt": "2026-10-28T15:10:56Z",
+      "homepage": "https://akatsuki-draft-sooty.vercel.app",
+      "htmlUrl": "https://github.com/aditya44-tech/akatsuki-draft",
+      "tree": [
+        {
+          "path": ".gitignore",
+          "type": "blob",
+          "size": 57
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 7827
+        },
+        {
+          "path": "package.json",
+          "type": "blob",
+          "size": 837
+        },
+        {
+          "path": "postman_collection.json",
+          "type": "blob",
+          "size": 6193
+        },
+        {
+          "path": "src",
+          "type": "tree"
+        },
+        {
+          "path": "src/app.js",
+          "type": "blob",
+          "size": 1982
+        },
+        {
+          "path": "src/config",
+          "type": "tree"
+        },
+        {
+          "path": "src/config/db.js",
+          "type": "blob",
+          "size": 1661
+        },
+        {
+          "path": "src/config/gemini.js",
+          "type": "blob",
+          "size": 5760
+        },
+        {
+          "path": "src/controllers",
+          "type": "tree"
+        },
+        {
+          "path": "src/controllers/adminController.js",
+          "type": "blob",
+          "size": 2472
+        },
+        {
+          "path": "src/controllers/aiController.js",
+          "type": "blob",
+          "size": 2239
+        },
+        {
+          "path": "src/controllers/authController.js",
+          "type": "blob",
+          "size": 2577
+        },
+        {
+          "path": "src/controllers/postController.js",
+          "type": "blob",
+          "size": 7483
+        },
+        {
+          "path": "src/middlewares",
+          "type": "tree"
+        },
+        {
+          "path": "src/middlewares/auth.js",
+          "type": "blob",
+          "size": 2494
+        },
+        {
+          "path": "src/middlewares/error.js",
+          "type": "blob",
+          "size": 1778
+        },
+        {
+          "path": "src/middlewares/upload.js",
+          "type": "blob",
+          "size": 1368
+        },
+        {
+          "path": "src/models",
+          "type": "tree"
+        },
+        {
+          "path": "src/models/Post.js",
+          "type": "blob",
+          "size": 1599
+        },
+        {
+          "path": "src/models/User.js",
+          "type": "blob",
+          "size": 1598
+        },
+        {
+          "path": "src/routes",
+          "type": "tree"
+        },
+        {
+          "path": "src/routes/adminRoutes.js",
+          "type": "blob",
+          "size": 564
+        },
+        {
+          "path": "src/routes/aiRoutes.js",
+          "type": "blob",
+          "size": 428
+        },
+        {
+          "path": "src/routes/authRoutes.js",
+          "type": "blob",
+          "size": 362
+        },
+        {
+          "path": "src/routes/postRoutes.js",
+          "type": "blob",
+          "size": 1009
+        },
+        {
+          "path": "src/seed.js",
+          "type": "blob",
+          "size": 3797
+        },
+        {
+          "path": "src/server.js",
+          "type": "blob",
+          "size": 1196
+        },
+        {
+          "path": "test",
+          "type": "tree"
+        },
+        {
+          "path": "test/test.js",
+          "type": "blob",
+          "size": 10957
+        },
+        {
+          "path": "uploads",
+          "type": "tree"
+        },
+        {
+          "path": "uploads/.gitkeep",
+          "type": "blob",
+          "size": 30
+        }
+      ],
+      "readme": "# Akatsuki's Draft: AI-Enabled Content Sharing Platform (Backend)\n\n\nAkatsuki's Draft is a high-performance content creation and publishing REST API platform. Users can register securely, manage private drafts, submit content for editorial moderation, and improve their writing using **Google Gemini AI** while strictly preserving the original draft as a distinct version.\n\nBuilt with **Node.js**, **Express 5**, **MongoDB Atlas**, **JWT (JSON Web Tokens)**, and the **Google Gemini 2.5 Flash SDK**.\n\n---\n\n## ☁️ Architecture & Features\n\n1. **Authentication & RBAC**:\n   - Secure password hashing using `bcryptjs`.\n   - Stateless JWT authentication with role-based access control (`user` and `admin`).\n   - Profile retrieval via `GET /auth/me`.\n\n2. **Content & Draft Lifecycle Management**:\n   - Save posts as private `draft` or submit as `pending` for review.\n   - Author-scoped updates and deletions (`PATCH /posts/:id`, `DELETE /posts/:id`).\n   - Personal dashboard endpoint (`GET /posts/my-posts`) with status filters.\n   - Public feed with search and category filters (`GET /posts`).\n\n3. **Admin Moderation & Approval Pipeline**:\n   - Pending posts review queue: `GET /admin/posts/pending`.\n   - Real-time post approval: `PATCH /admin/posts/approve/:id` (publishes to public feed).\n   - Post rejection handling: `PATCH /admin/posts/reject/:id`.\n\n4. **AI Content Improvement (Google Gemini 2.5 Flash)**:\n   - Endpoint: `POST /ai/improve/:postId`.\n   - Automatically polishes grammar, vocabulary, markdown structure, and engagement.\n   - **Draft Version Preservation**: Preserves the original draft intact and generates a brand new draft with a separate `_id` linked via `originalPostId`.\n   - Built-in heuristic fallback engine if an API key is not configured.\n\n---\n\n## 🛠️ Tech Stack\n\n- **Runtime**: Node.js (v24+ / ES Modules)\n- **Framework**: Express.js 5\n- **Database**: MongoDB Atlas with Mongoose (with automated in-memory fallback)\n- **AI Engine**: Google Gemini API (`@google/genai`)\n- **Security**: JWT (`jsonwebtoken`) & `bcryptjs`\n- **File Uploads**: `multer` (Local disk storage in `/uploads`)\n- **Testing**: Automated native test suite (`npm test`)\n\n---\n\n## 🗄️ Database Schema Design\n\n### 1. User Schema\n```json\n{\n  \"name\": \"String (required, trim)\",\n  \"email\": \"String (required, unique, lowercase)\",\n  \"password\": \"String (required, hashed with bcrypt)\",\n  \"role\": \"admin | user (default: 'user')\",\n  \"createdAt\": \"Date\",\n  \"updatedAt\": \"Date\"\n}\n```\n\n### 2. Post Schema\n```json\n{\n  \"title\": \"String (required, trim)\",\n  \"description\": \"String (trim)\",\n  \"content\": \"String (required)\",\n  \"image\": \"String (image URL or upload path)\",\n  \"category\": \"String (default: 'General')\",\n  \"createdBy\": \"ObjectId (ref: User, required)\",\n  \"status\": \"draft | pending | approved | rejected (default: 'draft')\",\n  \"createdAt\": \"Date (default: Date.now)\",\n  \"originalPostId\": \"ObjectId (ref: Post, optional - tracks AI draft lineage)\",\n  \"aiImproved\": \"Boolean (default: false)\"\n}\n```\n\n---\n\n## 📡 API Reference\n\n### 🔐 1. Authentication\n\n| Method | Endpoint | Description | Auth Required |\n|---|---|---|---|\n| `POST` | `/auth/register` | Register a new user | No |\n| `POST` | `/auth/login` | Log in and receive JWT token | No |\n| `GET` | `/auth/me` | Get currently logged-in user details | Bearer `<token>` |\n\n#### `POST /auth/register`\n**Request Body**:\n```json\n{\n  \"name\": \"Itachi Uchiha\",\n  \"email\": \"itachi@akatsuki.dev\",\n  \"password\": \"MangekyoSharingan123\",\n  \"role\": \"user\"\n}\n```\n\n#### `POST /auth/login`\n**Request Body**:\n```json\n{\n  \"email\": \"itachi@akatsuki.dev\",\n  \"password\": \"MangekyoSharingan123\"\n}\n```\n\n---\n\n### 📝 2. User — Post Management\n\n| Method | Endpoint | Description | Auth Required |\n|---|---|---|---|\n| `POST` | `/posts` | Create new post or draft | Bearer `<token>` |\n| `GET` | `/posts` | View all approved posts (Public feed) | No |\n| `GET` | `/posts/:id` | View approved post by ID | Optional |\n| `GET` | `/posts/my-posts` | View your own posts and drafts | Bearer `<token>` |\n| `PATCH` | `/posts/:id` | Update your own post | Bearer `<token>` |\n| `DELETE` | `/posts/:id` | Delete your own post | Bearer `<token>` |\n\n#### `POST /posts`\nHeaders: `Authorization: Bearer <token>`\n**Request Body**:\n```json\n{\n  \"title\": \"Secrets of Event-Driven Microservices\",\n  \"description\": \"An architectural exploration of asynchronous messaging.\",\n  \"content\": \"Designing scalable backends requires idempotent endpoints and robust message separation.\",\n  \"category\": \"Technology\",\n  \"status\": \"draft\"\n}\n```\n\n---\n\n### 🛡️ 3. Admin — Post Approval\n\n| Method | Endpoint | Description | Auth Required |\n|---|---|---|---|\n| `GET` | `/admin/posts/pending` | View posts awaiting approval | Admin Bearer `<token>` |\n| `PATCH` | `/admin/posts/approve/:id` | Approve a post (publishes to public feed) | Admin Bearer `<token>` |\n| `PATCH` | `/admin/posts/reject/:id` | Reject a post | Admin Bearer `<token>` |\n\n---\n\n### ✨ 4. AI Integration — Content Improvement\n\n| Method | Endpoint | Description | Auth Required |\n|---|---|---|---|\n| `POST` | `/ai/improve/:postId` | Enhance content via Gemini AI | Bearer `<token>` |\n\n**Behavior**:\n1. Fetches the target post by `:postId`.\n2. Verifies that the caller owns the post.\n3. Prompts Google Gemini 2.5 Flash to enhance title, description, structure, and readability.\n4. **Preserves the original draft intact**.\n5. Creates and returns a **brand new draft** with a new `_id`, referencing `originalPostId`.\n\n**Request Body** (optional):\n```json\n{\n  \"instruction\": \"Structure with clear markdown subheadings and optimize vocabulary.\"\n}\n```\n\n---\n\n## 🚀 Getting Started\n\n### 1. Install Dependencies\n```bash\nnpm install\n```\n\n### 2. Configure Environment Variables\nCopy `.env.example` to `.env`:\n```bash\ncp .env.example .env\n```\n\nSet your configuration:\n```ini\nPORT=5000\nMONGODB_URI=mongodb+srv://<username>:<password>@cluster0.vvdxaav.mongodb.net/akatsuki_draft?retryWrites=true&w=majority\nJWT_SECRET=akatsuki_secret_sharing_key_nodevember_2026\nJWT_EXPIRES_IN=7d\nGEMINI_API_KEY=your_gemini_api_key_here\n```\n\n### 3. Seed Sample Data (Optional)\nPopulates demo accounts and sample posts in your database:\n```bash\nnpm run seed\n```\n\nDefault credentials:\n- **Admin**: `admin@akatsuki.dev` / `Admin@123` (`role: admin`)\n- **Author**: `author@akatsuki.dev` / `Author@123` (`role: user`)\n- **User**: `user@akatsuki.dev` / `User@123` (`role: user`)\n\n### 4. Run the Server\n```bash\n# Start server\nnpm start\n\n# Development mode with auto-reload\nnpm run dev\n```\n\nBase URL: `http://localhost:5000`\nHealth check: `http://localhost:5000/api/health`\n\n---\n\n## 🧪 Automated Testing\n\nRun the test suite verifying all 15 endpoints:\n```bash\nnpm test\n```\n\nTest Results:\n```text\n✔ [1/15]  GET /api/health\n✔ [2/15]  POST /auth/register (Regular User)\n✔ [3/15]  POST /auth/register (Admin)\n✔ [4/15]  POST /auth/login\n✔ [5/15]  GET /auth/me\n✔ [6/15]  POST /posts (Create Draft)\n✔ [7/15]  POST /posts (Create Pending Post for Admin Approval)\n✔ [8/15]  GET /posts/my-posts (View User Posts & Drafts)\n✔ [9/15]  PATCH /posts/:id (Update Own Post)\n✔ [10/15] POST /ai/improve/:postId (AI Content Improvement & Draft Branching)\n✔ [11/15] GET /admin/posts/pending (Admin Review Queue)\n✔ [12/15] PATCH /admin/posts/approve/:id (Admin Approve Post)\n✔ [13/15] GET /posts & GET /posts/:id (Public Feed Verification)\n✔ [14/15] PATCH /admin/posts/reject/:id (Admin Reject Post)\n✔ [15/15] DELETE /posts/:id (Delete Own Post)\n\n======================================================\n  ALL 15 ENDPOINT TESTS PASSED WITH 100% SUCCESS!\n======================================================\n```\n\n---\n\n## 📮 Postman Collection\n\nImport `postman_collection.json` into Postman to instantly test all endpoints with pre-configured requests, bodies, and variables.\n\n---\n"
+    },
+    "Cold-Mailer-Backend-project": {
+      "repo": "Cold-Mailer-Backend-project",
+      "title": "Cold-Mailer-Backend-project",
+      "branch": "main",
+      "description": null,
+      "language": "JavaScript",
+      "stars": 0,
+      "updatedAt": "2026-10-25T13:03:37Z",
+      "homepage": "https://cold-mailer-backend-project.vercel.app",
+      "htmlUrl": "https://github.com/aditya44-tech/Cold-Mailer-Backend-project",
+      "tree": [
+        {
+          "path": ".gitignore",
+          "type": "blob",
+          "size": 27
+        },
+        {
+          "path": ".vscode",
+          "type": "tree"
+        },
+        {
+          "path": ".vscode/settings.json",
+          "type": "blob",
+          "size": 42
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 32
+        },
+        {
+          "path": "config",
+          "type": "tree"
+        },
+        {
+          "path": "config/cloud.config.js",
+          "type": "blob",
+          "size": 267
+        },
+        {
+          "path": "config/db.js",
+          "type": "blob",
+          "size": 322
+        },
+        {
+          "path": "controller",
+          "type": "tree"
+        },
+        {
+          "path": "controller/auth.controller.js",
+          "type": "blob",
+          "size": 2137
+        },
+        {
+          "path": "controller/extraction.controller.js",
+          "type": "blob",
+          "size": 1776
+        },
+        {
+          "path": "controller/file.controller.js",
+          "type": "blob",
+          "size": 1660
+        },
+        {
+          "path": "controller/mail.controller.js",
+          "type": "blob",
+          "size": 4347
+        },
+        {
+          "path": "index.js",
+          "type": "blob",
+          "size": 718
+        },
+        {
+          "path": "middleware",
+          "type": "tree"
+        },
+        {
+          "path": "middleware/auth.middleware.js",
+          "type": "blob",
+          "size": 743
+        },
+        {
+          "path": "middleware/multer.middleware.js",
+          "type": "blob",
+          "size": 194
+        },
+        {
+          "path": "model",
+          "type": "tree"
+        },
+        {
+          "path": "model/auth.model.js",
+          "type": "blob",
+          "size": 755
+        },
+        {
+          "path": "model/extraction.model.js",
+          "type": "blob",
+          "size": 463
+        },
+        {
+          "path": "model/file.model.js",
+          "type": "blob",
+          "size": 397
+        },
+        {
+          "path": "model/mail.model.js",
+          "type": "blob",
+          "size": 512
+        },
+        {
+          "path": "package.json",
+          "type": "blob",
+          "size": 503
+        },
+        {
+          "path": "routes",
+          "type": "tree"
+        },
+        {
+          "path": "routes/auth.routes.js",
+          "type": "blob",
+          "size": 237
+        },
+        {
+          "path": "routes/file.routes.js",
+          "type": "blob",
+          "size": 507
+        },
+        {
+          "path": "routes/mail.routes.js",
+          "type": "blob",
+          "size": 588
+        },
+        {
+          "path": "services",
+          "type": "tree"
+        },
+        {
+          "path": "services/email.service.js",
+          "type": "blob",
+          "size": 498
+        },
+        {
+          "path": "services/mail.service.js",
+          "type": "blob",
+          "size": 3709
+        },
+        {
+          "path": "util",
+          "type": "tree"
+        },
+        {
+          "path": "util/ai.util.js",
+          "type": "blob",
+          "size": 2464
+        },
+        {
+          "path": "vercel.json",
+          "type": "blob",
+          "size": 231
+        }
+      ],
+      "readme": "��#\u0000 \u0000C\u0000o\u0000l\u0000d\u0000-\u0000M\u0000a\u0000i\u0000l\u0000e\u0000r\u0000\r\u0000\n\u0000"
     }
   }
 }
