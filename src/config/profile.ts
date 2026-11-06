@@ -70,12 +70,10 @@ const profile: ProfileConfig = {
   ],
   linkedin: {
     name: "Aditya Salunkhe",
-    // TODO: e.g. "Software Engineer | React & TypeScript".
-    headline: "YOUR_HEADLINE_HERE",
-    // TODO: e.g. "https://www.linkedin.com/in/your-handle".
-    url: "YOUR_LINKEDIN_URL_HERE",
-    // TODO: e.g. "Mumbai, India".
-    location: "YOUR_LOCATION_HERE",
+    headline:
+      "CSE'29 @RCPIT | Technical Team Member @Akatsuki Coding Club | Learning Full-Stack Development | Motion Graphics Editor",
+    url: "https://www.linkedin.com/in/aditya-salunkhe-7128b4385/",
+    location: "Shirpur, Maharashtra, India",
   },
 };
 
