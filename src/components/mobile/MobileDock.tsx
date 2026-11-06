@@ -3,7 +3,7 @@ import { apps } from "~/configs";
 import { useStore } from "~/stores";
 
 export default function MobileDock({ openApp }: { openApp: (id: string) => void }) {
-  const dockApps = ["facetime", "messages", "safari", "music"];
+  const dockApps = ["finder", "messages", "music", "github"];
 
   const { dark, iconStyle } = useStore((s) => ({
     dark: s.dark,

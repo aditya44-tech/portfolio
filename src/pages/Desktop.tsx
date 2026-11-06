@@ -90,16 +90,11 @@ export default function Desktop(props: MacActions) {
   const handleLaunchpadAppClick = (e: React.MouseEvent, link: string) => {
     e.stopPropagation();
     e.preventDefault();
-    useStore.getState().setSafariUrl(link);
-    window.dispatchEvent(new CustomEvent("launchpad:openSafari"));
+    window.open(link, "_blank", "noopener,noreferrer");
   };
 
   // Listen for cross-component events and global keyboard shortcuts
   useEffect(() => {
-    const handleOpenSafari = () => {
-      toggleLaunchpad(false);
-      openApp("safari");
-    };
     const handleOpenLaunchpad = () => toggleLaunchpad(true);
     const handleBankai = () => {
       setBankaiFlash(true);
@@ -153,7 +148,6 @@ export default function Desktop(props: MacActions) {
       }
     };
 
-    window.addEventListener("launchpad:openSafari", handleOpenSafari);
     window.addEventListener("siri:openLaunchpad", handleOpenLaunchpad);
     window.addEventListener("siri:bankaiFlash", handleBankai);
     window.addEventListener("desktop:openApp", handleOpenAppEvent);
@@ -162,7 +156,6 @@ export default function Desktop(props: MacActions) {
     window.addEventListener("keydown", handleKeyDown);
     
     return () => {
-      window.removeEventListener("launchpad:openSafari", handleOpenSafari);
       window.removeEventListener("siri:openLaunchpad", handleOpenLaunchpad);
       window.removeEventListener("siri:bankaiFlash", handleBankai);
       window.removeEventListener("desktop:openApp", handleOpenAppEvent);

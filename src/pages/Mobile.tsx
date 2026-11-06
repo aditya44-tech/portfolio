@@ -58,7 +58,7 @@ export default function Mobile(props: MacActions) {
     transition: "filter 0.3s ease",
   };
 
-  const dockApps = ["facetime", "messages", "safari", "music"];
+  const dockApps = ["finder", "messages", "music", "github"];
 
   return (
     <div className="size-full overflow-hidden relative" style={bgStyle}>

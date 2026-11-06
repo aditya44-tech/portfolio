@@ -11,7 +11,7 @@ const APPS: { [key: string]: (LaunchpadData | AppsData)[] } = {
 const appLibraryCategories = [
   {
     name: "Social",
-    apps: ["messages", "facetime", "mail"]
+    apps: ["messages", "mail", "github"]
   },
   {
     name: "Productivity",
@@ -23,7 +23,7 @@ const appLibraryCategories = [
   },
   {
     name: "Utilities",
-    apps: ["system-settings", "safari", "maps", "finder", "siri"]
+    apps: ["system-settings", "finder", "siri"]
   }
 ];
 

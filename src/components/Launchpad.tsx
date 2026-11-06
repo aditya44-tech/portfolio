@@ -15,7 +15,6 @@ const placeholderText = "Search";
 
 export default function Launchpad({ show, toggleLaunchpad }: LaunchpadProps) {
   const dark = useStore((state) => state.dark);
-  const setSafariUrl = useStore((state) => state.setSafariUrl);
   const getWallpaper = useStore((state) => state.getWallpaper);
   const activeWallpaper = getWallpaper();
   const { winWidth } = useWindowSize();
@@ -73,8 +72,7 @@ export default function Launchpad({ show, toggleLaunchpad }: LaunchpadProps) {
   const handleAppClick = (e: React.MouseEvent, link: string) => {
     e.stopPropagation();
     e.preventDefault();
-    setSafariUrl(link);
-    window.dispatchEvent(new CustomEvent("launchpad:openSafari"));
+    window.open(link, "_blank", "noopener,noreferrer");
   };
 
   // Group apps into rows of ITEMS_PER_FOLDER; last group becomes a "More" folder if it has fewer items
